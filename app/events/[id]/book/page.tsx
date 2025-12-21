@@ -1,0 +1,136 @@
+"use client";
+
+/**
+ * Страница бронирования билетов на дегустацию или мероприятие.
+ * Содержит пошаговую форму: выбор даты, количество гостей, подтверждение и успех.
+ */
+
+import React, { useState } from 'react';
+import { useParams, useRouter } from 'next/navigation';
+import { useTranslation } from '@/lib/i18n';
+import { Calendar, Users, ArrowLeft, CheckCircle2, CreditCard } from 'lucide-react';
+import Link from 'next/link';
+
+export default function BookingPage() {
+    const { t } = useTranslation();
+    const [step, setStep] = useState(1);
+    const router = useRouter();
+
+    const handleNext = () => {
+        if (step < 3) setStep(step + 1);
+        else {
+            // Mock success
+            setStep(4);
+        }
+    };
+
+    if (step === 4) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-white dark:bg-zinc-950 px-4">
+                <div className="max-w-md w-full text-center space-y-8 animate-in fade-in zoom-in duration-500">
+                    <div className="inline-flex p-6 bg-green-50 dark:bg-green-900/20 rounded-full">
+                        <CheckCircle2 className="w-20 h-20 text-green-500" />
+                    </div>
+                    <div>
+                        <h1 className="text-3xl font-black serif dark:text-white mb-4 italic">Vielen Dank!</h1>
+                        <p className="text-zinc-500 dark:text-zinc-400">
+                            Ihre Buchung wurde erfolgreich entgegengenommen. Sie erhalten in Kürze eine Bestätigung per E-Mail.
+                        </p>
+                    </div>
+                    <Link
+                        href="/events"
+                        className="inline-block w-full py-5 bg-wine-dark text-white rounded-2xl font-black uppercase tracking-widest hover:bg-wine-gold hover:text-wine-dark transition-all"
+                    >
+                        Zurück zu den Events
+                    </Link>
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 pt-32 pb-24">
+            <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+                <Link href="/events" className="inline-flex items-center text-zinc-400 hover:text-wine-gold mb-12 transition-colors group">
+                    <ArrowLeft className="w-5 h-5 mr-3 group-hover:-translate-x-1 transition-transform" />
+                    <span className="text-[10px] font-black uppercase tracking-widest">Abbrechen</span>
+                </Link>
+
+                <div className="bg-white dark:bg-zinc-900 rounded-[3rem] p-10 md:p-16 border border-zinc-100 dark:border-zinc-800 shadow-2xl">
+                    <div className="mb-12">
+                        <h1 className="text-4xl font-black serif dark:text-white mb-2 italic">{t("booking_title")}</h1>
+                        <div className="flex gap-2 mt-4">
+                            {[1, 2, 3].map((i) => (
+                                <div
+                                    key={i}
+                                    className={`h-1 flex-grow rounded-full transition-colors ${step >= i ? 'bg-wine-gold' : 'bg-zinc-100 dark:bg-zinc-800'}`}
+                                />
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="space-y-12">
+                        {step === 1 && (
+                            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                                <h3 className="text-xl font-bold dark:text-white mb-6 serif">{t("booking_step_1")}</h3>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    {["Fr, 24. Feb", "Sa, 25. Feb", "Fr, 02. Mär"].map((date) => (
+                                        <button key={date} className="p-6 border border-zinc-100 dark:border-zinc-800 rounded-2xl text-left hover:border-wine-gold transition-colors group">
+                                            <Calendar className="w-5 h-5 text-wine-gold mb-4" />
+                                            <span className="block font-bold dark:text-white">{date}</span>
+                                            <span className="text-xs text-zinc-500">18:30 Uhr</span>
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {step === 2 && (
+                            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                                <h3 className="text-xl font-bold dark:text-white mb-6 serif">{t("booking_step_2")}</h3>
+                                <div className="flex items-center justify-between p-6 bg-zinc-50 dark:bg-zinc-800 rounded-2xl">
+                                    <div className="flex items-center gap-4">
+                                        <Users className="w-6 h-6 text-wine-gold" />
+                                        <span className="font-bold dark:text-white">Gäste</span>
+                                    </div>
+                                    <div className="flex items-center gap-6">
+                                        <button className="w-10 h-10 rounded-full border border-zinc-200 dark:border-zinc-700 flex items-center justify-center font-bold dark:text-white">-</button>
+                                        <span className="text-xl font-black serif italic dark:text-white">2</span>
+                                        <button className="w-10 h-10 rounded-full border border-zinc-200 dark:border-zinc-700 flex items-center justify-center font-bold dark:text-white">+</button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {step === 3 && (
+                            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                                <h3 className="text-xl font-bold dark:text-white mb-6 serif">{t("booking_step_3")}</h3>
+                                <div className="p-8 border-2 border-dashed border-zinc-100 dark:border-zinc-800 rounded-[2rem] space-y-6">
+                                    <div className="flex justify-between items-center text-sm font-bold dark:text-white">
+                                        <span>2x Weinprobe Ticket</span>
+                                        <span>98.00 €</span>
+                                    </div>
+                                    <div className="flex justify-between items-center text-sm font-bold dark:text-white border-t border-zinc-50 dark:border-zinc-800 pt-6">
+                                        <span>Gesamtbetrag</span>
+                                        <span className="text-2xl font-black text-wine-gold serif italic">98.00 €</span>
+                                    </div>
+                                    <div className="pt-4 flex items-center gap-3 text-zinc-400">
+                                        <CreditCard className="w-5 h-5" />
+                                        <span className="text-[10px] font-bold uppercase tracking-widest">Zahlung vor Ort</span>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        <button
+                            onClick={handleNext}
+                            className="w-full py-5 bg-wine-dark text-white rounded-2xl font-black uppercase tracking-widest hover:bg-wine-gold hover:text-wine-dark transition-all transform hover:scale-[1.02] active:scale-95 shadow-xl shadow-wine-dark/10"
+                        >
+                            {step === 3 ? t("booking_confirm") : "Weiter"}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
