@@ -19,11 +19,13 @@ import { WineDetailPurchase } from '@/app/components/Wine/WineDetailPurchase';
 import { useTranslation } from '@/lib/i18n';
 import { useWishlist } from '@/lib/WishlistContext';
 import { useCart } from '@/lib/CartContext';
+import { useAuth } from '@/lib/AuthContext';
 
 export default function WineDetailPage() {
     const { t } = useTranslation();
     const { toggleWishlist, isInWishlist } = useWishlist();
     const { addToCart } = useCart();
+    const { isLoggedIn, setAuthModalOpen } = useAuth();
     const params = useParams();
     const id = params.id as string;
     const wine = wines.find(w => w.id === id);
@@ -94,8 +96,20 @@ export default function WineDetailPage() {
                         <WineDetailPurchase
                             wine={wine}
                             isFavorite={isFavorite}
-                            onAddToCart={addToCart}
-                            onToggleWishlist={toggleWishlist}
+                            onAddToCart={(id) => {
+                                if (isLoggedIn) {
+                                    addToCart(id);
+                                } else {
+                                    setAuthModalOpen(true);
+                                }
+                            }}
+                            onToggleWishlist={(id) => {
+                                if (isLoggedIn) {
+                                    toggleWishlist(id);
+                                } else {
+                                    setAuthModalOpen(true);
+                                }
+                            }}
                             premiumPriceLabel={t("premium_price")}
                             addToCartLabel={t("add_to_cart")}
                             qualityGuaranteeLabel={t("quality_guarantee")}

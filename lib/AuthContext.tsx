@@ -19,6 +19,8 @@ interface AuthContextType {
     login: (email: string, password: string) => Promise<void>; // Функция входа
     register: (name: string, email: string, password: string) => Promise<void>; // Функция регистрации
     logout: () => void; // Функция выхода
+    isAuthModalOpen: boolean; // Состояние открытости модального окна входа
+    setAuthModalOpen: (isOpen: boolean) => void; // Функция управления модальным окном
 }
 
 // Создание контекста с неопределенным начальным значением
@@ -28,6 +30,8 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     // Состояние текущего авторизованного пользователя
     const [user, setUser] = useState<User | null>(null);
+    // Состояние модального окна авторизации
+    const [isAuthModalOpen, setAuthModalOpen] = useState(false);
 
     // Эффект для восстановления сессии пользователя из localStorage при загрузке приложения
     useEffect(() => {
@@ -90,7 +94,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     return (
         // Передача состояния и функций через провайдер
-        <AuthContext.Provider value={{ user, isLoggedIn: !!user, login, register, logout }}>
+        <AuthContext.Provider value={{
+            user,
+            isLoggedIn: !!user,
+            login,
+            register,
+            logout,
+            isAuthModalOpen,
+            setAuthModalOpen
+        }}>
             {children}
         </AuthContext.Provider>
     );

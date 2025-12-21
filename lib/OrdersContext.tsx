@@ -3,6 +3,7 @@
  * Хранит историю заказов пользователя и позволяет добавлять новые заказы после покупки.
  */
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useAuth } from './AuthContext';
 
 // Интерфейс заказа
 export interface Order {
@@ -22,6 +23,7 @@ export interface Order {
 interface OrdersContextType {
     orders: Order[]; // Список всех заказов
     addOrder: (order: Order) => void; // Метод для создания нового заказа
+    clearOrders: () => void; // Метод для очистки истории заказов
 }
 
 // Создание контекста
@@ -31,14 +33,15 @@ const OrdersContext = createContext<OrdersContextType | undefined>(undefined);
 export const OrdersProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     // Состояние списка заказов
     const [orders, setOrders] = useState<Order[]>([]);
+    const { isLoggedIn } = useAuth();
 
     // Эффект для загрузки истории заказов из localStorage
     useEffect(() => {
         const savedOrders = localStorage.getItem('orders');
         if (savedOrders) {
             setOrders(JSON.parse(savedOrders));
-        } else {
-            // Инициализация фиктивного (mock) заказа для демонстрации
+        } else if (isLoggedIn) {
+            // Инициализация фиктивного (mock) заказа для демонстрации только если вошли
             const initialOrders: Order[] = [
                 {
                     id: 'ORD-2023-001',
@@ -53,7 +56,15 @@ export const OrdersProvider: React.FC<{ children: React.ReactNode }> = ({ childr
             setOrders(initialOrders);
             localStorage.setItem('orders', JSON.stringify(initialOrders));
         }
-    }, []);
+    }, [isLoggedIn]);
+
+    // Очистка заказов при выходе из системы
+    useEffect(() => {
+        if (!isLoggedIn) {
+            setOrders([]);
+            localStorage.removeItem('orders');
+        }
+    }, [isLoggedIn]);
 
     /**
      * Создание нового заказа и сохранение его в историю.
@@ -67,8 +78,16 @@ export const OrdersProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         });
     };
 
+    /**
+     * Очистка всей истории заказов.
+     */
+    const clearOrders = () => {
+        setOrders([]);
+        localStorage.removeItem('orders');
+    };
+
     return (
-        <OrdersContext.Provider value={{ orders, addOrder }}>
+        <OrdersContext.Provider value={{ orders, addOrder, clearOrders }}>
             {children}
         </OrdersContext.Provider>
     );

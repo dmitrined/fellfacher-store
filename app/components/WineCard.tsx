@@ -13,6 +13,7 @@ import { Wine } from '@/lib/data/wines';
 import { useTranslation } from '@/lib/i18n';
 import { useWishlist } from '@/lib/WishlistContext';
 import { useCart } from '@/lib/CartContext';
+import { useAuth } from '@/lib/AuthContext';
 
 interface WineCardProps {
     wine: Wine;
@@ -22,6 +23,7 @@ const WineCard: React.FC<WineCardProps> = ({ wine }) => {
     const { t } = useTranslation();
     const { toggleWishlist, isInWishlist } = useWishlist();
     const { cart, addToCart, isInCart, updateQuantity } = useCart();
+    const { isLoggedIn, setAuthModalOpen } = useAuth();
     const [imageError, setImageError] = useState(false);
     const isFavorite = isInWishlist(wine.id);
     const inCart = isInCart(wine.id);
@@ -34,7 +36,11 @@ const WineCard: React.FC<WineCardProps> = ({ wine }) => {
                     onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        toggleWishlist(wine.id);
+                        if (isLoggedIn) {
+                            toggleWishlist(wine.id);
+                        } else {
+                            setAuthModalOpen(true);
+                        }
                     }}
                     className={`p-3 rounded-2xl transition-all duration-300 backdrop-blur-md ${isFavorite
                         ? 'bg-wine-gold text-white shadow-lg shadow-wine-gold/20 scale-110'
@@ -102,7 +108,11 @@ const WineCard: React.FC<WineCardProps> = ({ wine }) => {
                                         onClick={(e) => {
                                             e.preventDefault();
                                             e.stopPropagation();
-                                            updateQuantity(wine.id, -1);
+                                            if (isLoggedIn) {
+                                                updateQuantity(wine.id, -1);
+                                            } else {
+                                                setAuthModalOpen(true);
+                                            }
                                         }}
                                         className="p-1.5 hover:bg-white dark:hover:bg-zinc-700 rounded-full transition-all text-zinc-500 hover:text-wine-dark dark:hover:text-white"
                                     >
@@ -113,7 +123,11 @@ const WineCard: React.FC<WineCardProps> = ({ wine }) => {
                                         onClick={(e) => {
                                             e.preventDefault();
                                             e.stopPropagation();
-                                            updateQuantity(wine.id, 1);
+                                            if (isLoggedIn) {
+                                                updateQuantity(wine.id, 1);
+                                            } else {
+                                                setAuthModalOpen(true);
+                                            }
                                         }}
                                         className="p-1.5 hover:bg-white dark:hover:bg-zinc-700 rounded-full transition-all text-zinc-500 hover:text-wine-dark dark:hover:text-white"
                                     >
@@ -125,7 +139,11 @@ const WineCard: React.FC<WineCardProps> = ({ wine }) => {
                                 onClick={(e) => {
                                     e.preventDefault();
                                     e.stopPropagation();
-                                    addToCart(wine.id);
+                                    if (isLoggedIn) {
+                                        addToCart(wine.id);
+                                    } else {
+                                        setAuthModalOpen(true);
+                                    }
                                 }}
                                 className={`p-3 rounded-full transition-all duration-300 transform active:scale-95 shadow-lg ${inCart
                                     ? 'bg-zinc-800 text-white shadow-zinc-800/20'

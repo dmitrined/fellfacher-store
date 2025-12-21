@@ -26,12 +26,11 @@ const Header: React.FC = () => {
   const { language, setLanguage, t } = useTranslation();
   const { wishlist } = useWishlist();
   const { getCartCount, cart, removeFromCart, updateQuantity } = useCart();
-  const { isLoggedIn, user } = useAuth();
+  const { isLoggedIn, user, isAuthModalOpen, setAuthModalOpen } = useAuth();
 
   // Состояния для управления открытием различных меню и модалок
   const [mobileOpen, setMobileOpen] = useState(false); // Мобильное меню
   const [searchOpen, setSearchOpen] = useState(false); // Прямой поиск
-  const [authModalOpen, setAuthModalOpen] = useState(false); // Окно логина
   const [moreMenuOpen, setMoreMenuOpen] = useState(false); // Выпадающее меню "Магазин"
   const [cartDropdownOpen, setCartDropdownOpen] = useState(false); // Предпросмотр корзины
   const [searchTerm, setSearchTerm] = useState(""); // Текст поиска
@@ -242,7 +241,7 @@ const Header: React.FC = () => {
       />
 
       {/* Модальное окно входа / регистрации */}
-      <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
+      <AuthModal isOpen={isAuthModalOpen} onClose={() => setAuthModalOpen(false)} />
     </>
   );
 };

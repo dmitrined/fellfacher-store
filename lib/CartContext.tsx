@@ -3,6 +3,7 @@
  * Позволяет добавлять, удалять товары, изменять их количество и сохранять состояние в localStorage.
  */
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useAuth } from './AuthContext';
 
 // Интерфейс элемента корзины
 export interface CartItem {
@@ -28,6 +29,7 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     // Состояние корзины
     const [cart, setCart] = useState<CartItem[]>([]);
+    const { isLoggedIn } = useAuth();
 
     // Эффект для загрузки данных корзины из localStorage при монтировании
     useEffect(() => {
@@ -40,6 +42,14 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
             }
         }
     }, []);
+
+    // Очистка корзины при выходе из системы
+    useEffect(() => {
+        if (!isLoggedIn) {
+            setCart([]);
+            localStorage.removeItem('cart');
+        }
+    }, [isLoggedIn]);
 
     /**
      * Добавление товара в корзину.

@@ -5,12 +5,14 @@
  * Управляет списком ID вин, которые пользователь пометил как понравившиеся.
  */
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useAuth } from './AuthContext';
 
 // Типизация контекста списка желаемого
 interface WishlistContextType {
     wishlist: string[]; // Массив ID вин
     toggleWishlist: (wineId: string) => void; // Добавить или удалить из избранного
     isInWishlist: (wineId: string) => boolean; // Проверка наличия в списке
+    clearWishlist: () => void; // Очистить весь список
 }
 
 // Создание контекста с дефолтным неопределенным значением
@@ -20,6 +22,7 @@ const WishlistContext = createContext<WishlistContextType | undefined>(undefined
 export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     // Состояние списка (массив строк-идентификаторов)
     const [wishlist, setWishlist] = useState<string[]>([]);
+    const { isLoggedIn } = useAuth();
 
     // Эффект для загрузки избранных товаров из localStorage при запуске
     useEffect(() => {
@@ -32,6 +35,14 @@ export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({ chil
             }
         }
     }, []);
+
+    // Очистка избранного при выходе из системы
+    useEffect(() => {
+        if (!isLoggedIn) {
+            setWishlist([]);
+            localStorage.removeItem('wishlist');
+        }
+    }, [isLoggedIn]);
 
     /**
      * Переключение состояния "избранное" для конкретного вина.
@@ -50,12 +61,20 @@ export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     };
 
     /**
+     * Очистка всего списка избранного.
+     */
+    const clearWishlist = () => {
+        setWishlist([]);
+        localStorage.removeItem('wishlist');
+    };
+
+    /**
      * Вспомогательная функция для проверки, помечено ли вино как избранное.
      */
     const isInWishlist = (wineId: string) => wishlist.includes(wineId);
 
     return (
-        <WishlistContext.Provider value={{ wishlist, toggleWishlist, isInWishlist }}>
+        <WishlistContext.Provider value={{ wishlist, toggleWishlist, isInWishlist, clearWishlist }}>
             {children}
         </WishlistContext.Provider>
     );

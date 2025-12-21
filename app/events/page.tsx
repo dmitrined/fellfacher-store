@@ -9,9 +9,13 @@ import React from 'react';
 import { useTranslation } from '@/lib/i18n';
 import { Calendar, MapPin, Users, ArrowRight, Clock, Star } from 'lucide-react';
 import Link from 'next/link';
+import { useAuth } from '@/lib/AuthContext';
+import { useRouter } from 'next/navigation';
 
 export default function EventsPage() {
     const { t } = useTranslation();
+    const { isLoggedIn, setAuthModalOpen } = useAuth();
+    const router = useRouter();
 
     const events = [
         {
@@ -128,13 +132,19 @@ export default function EventsPage() {
                                             {t("fully_booked")}
                                         </button>
                                     ) : (
-                                        <Link
-                                            href={`/events/${event.id}/book`}
+                                        <button
+                                            onClick={() => {
+                                                if (isLoggedIn) {
+                                                    router.push(`/events/${event.id}/book`);
+                                                } else {
+                                                    setAuthModalOpen(true);
+                                                }
+                                            }}
                                             className="group/btn relative w-full inline-flex items-center justify-center py-5 bg-wine-dark hover:bg-wine-gold text-white hover:text-wine-dark rounded-2xl text-sm font-black uppercase tracking-widest transition-all duration-300 overflow-hidden"
                                         >
                                             <span className="relative z-10">{t("events_register")}</span>
                                             <ArrowRight className="w-5 h-5 ml-3 relative z-10 transform group-hover/btn:translate-x-2 transition-transform" />
-                                        </Link>
+                                        </button>
                                     )}
                                 </div>
                             </div>
