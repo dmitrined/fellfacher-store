@@ -232,6 +232,10 @@ const translations: Translations = {
     ready_to_scan: { de: "Bereit zum Scannen", en: "Ready to Scan" },
     loyalty_scan_desc: { de: "Scannen Sie den Code im Laden, um Punkte zu sammeln.", en: "Scan the code in store to collect points." },
     redeem_points: { de: "Einlösen", en: "Redeem" },
+    syncing: { de: "Synchronisierung...", en: "Syncing..." },
+    loading_real_data: { de: "Synchronisierung mit Katalog...", en: "Syncing with catalog..." },
+    api_error_fallback: { de: "Fehler beim Laden der API, verwende Fallback-Daten.", en: "Error loading API, using fallback data." },
+    api_empty_fallback: { de: "API ist leer oder blockiert (Fallback-Daten werden verwendet).", en: "API is empty or blocked (using fallback data)." },
 };
 
 // Типизация контекста локализации

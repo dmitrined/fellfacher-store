@@ -6,17 +6,19 @@
  */
 
 import React, { useState, useMemo, useEffect, Suspense } from 'react';
-import { wines, Wine } from '@/lib/data/wines';
 import WineCard from '@/app/components/WineCard';
 import CatalogSearch from './components/CatalogSearch';
 import CatalogFilters from './components/CatalogFilters';
 import { useTranslation } from '@/lib/i18n';
 import { Search } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
+import { useWines } from '@/lib/WinesContext';
 
 function CatalogContent() {
     const { t } = useTranslation();
+    const { wines: displayWines, isLoading } = useWines();
     const searchParams = useSearchParams();
+
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedType, setSelectedType] = useState<string>('All');
     const [sortBy, setSortBy] = useState<string>('year');
@@ -36,8 +38,9 @@ function CatalogContent() {
         }
     }, [searchParams]);
 
+    // Фильтрация применяется к displayWines (либо реальные из API, либо моковые в случае ошибки)
     const filteredWines = useMemo(() => {
-        return wines
+        return displayWines
             .filter(wine => {
                 const searchLower = searchQuery.toLowerCase();
                 const matchesSearch = wine.name.toLowerCase().includes(searchLower) ||
@@ -53,13 +56,22 @@ function CatalogContent() {
                 if (sortBy === 'year') return b.year - a.year;
                 return 0;
             });
-    }, [searchQuery, selectedType, sortBy]);
+    }, [displayWines, searchQuery, selectedType, sortBy]);
 
-    const wineTypes = ['All', ...new Set(wines.map(w => w.type))];
+    const wineTypes = ['All', ...new Set(displayWines.map(w => w.type))];
 
     return (
         <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 pt-32 pb-20">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+                {/* Индикация статуса загрузки из внешнего API WooCommerce */}
+                {isLoading && (
+                    <div className="mb-4 flex items-center gap-2 text-wine-gold animate-pulse">
+                        <div className="w-2 h-2 bg-wine-gold rounded-full"></div>
+                        <span className="text-xs font-medium uppercase tracking-wider">{t("loading_real_data") || "Synchronisierung mit Katalog..."}</span>
+                    </div>
+                )}
+
                 {/* Header Section */}
                 <div className="mb-12">
                     <h1 className="text-4xl md:text-5xl font-black text-wine-dark dark:text-white mb-4">

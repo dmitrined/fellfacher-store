@@ -6,6 +6,7 @@ import { WishlistProvider } from '@/lib/WishlistContext';
 import { CartProvider } from '@/lib/CartContext';
 import { AuthProvider } from '@/lib/AuthContext';
 import { OrdersProvider } from '@/lib/OrdersContext';
+import { WinesProvider } from '@/lib/WinesContext';
 
 /**
  * Компонент-обертка для всех контекст-провайдеров приложения.
@@ -19,17 +20,20 @@ export function Providers({ children }: { children: React.ReactNode }) {
       <AuthProvider>
         {/* Провайдер управления историей заказов */}
         <OrdersProvider>
-          {/* Провайдер списка избранных товаров (wishlist) */}
-          <WishlistProvider>
-            {/* Провайдер корзины (добавление, удаление, расчет цены) */}
-            <CartProvider>
-              {/* Провайдер библиотеки компонентов HeroUI (бывший NextUI) */}
-              <HeroUIProvider>
-                {/* Рендеринг дочерних элементов приложения */}
-                {children}
-              </HeroUIProvider>
-            </CartProvider>
-          </WishlistProvider>
+          {/* Провайдер списка вин (из API или моки) */}
+          <WinesProvider>
+            {/* Провайдер списка избранных товаров (wishlist) */}
+            <WishlistProvider>
+              {/* Провайдер корзины (добавление, удаление, расчет цены) */}
+              <CartProvider>
+                {/* Провайдер библиотеки компонентов HeroUI (бывший NextUI) */}
+                <HeroUIProvider>
+                  {/* Рендеринг дочерних элементов приложения */}
+                  {children}
+                </HeroUIProvider>
+              </CartProvider>
+            </WishlistProvider>
+          </WinesProvider>
         </OrdersProvider>
       </AuthProvider>
     </LanguageProvider>
