@@ -58,9 +58,9 @@ export default function KellerblickePage() {
                         </p>
                     </div>
 
-                    {/* Правая колонка: Изображение */}
+                    {/* Правая колонка: Изображение с эффектом наведения */}
                     <div className="relative rounded-3xl overflow-hidden shadow-2xl group">
-                        {/* Фоновое изображение винных бочек */}
+                        {/* Фоновое изображение винных бочек. Aspect Ratio 4/3 сохраняет пропорции. */}
                         <div className="aspect-[4/3] bg-gradient-to-br from-wine-dark to-zinc-800 relative">
                             <img
                                 src="https://fellbacher-weine.de/wp-content/uploads/2017/08/Kellerblicke-2-2.jpg"
@@ -77,7 +77,9 @@ export default function KellerblickePage() {
                     </div>
                 </div>
 
-                {/* Секция с ключевой информацией (Цена, Дата, Время) */}
+                {/* Секция с ключевой информацией (Цена, Дата, Время). 
+                    Используется Grid: 1 колонка на мобильных, 3 колонки на десктопе. 
+                */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
 
                     {/* Карточка: Цена */}
@@ -86,7 +88,7 @@ export default function KellerblickePage() {
                             <div className="w-12 h-12 bg-wine-gold/10 rounded-xl flex items-center justify-center">
                                 <Users className="w-6 h-6 text-wine-gold" />
                             </div>
-                            <h3 className="text-lg font-bold text-wine-dark dark:text-white">Preis</h3>
+                            <h3 className="text-lg font-bold text-wine-dark dark:text-white">{t("price_label")}</h3>
                         </div>
                         <p className="text-2xl md:text-3xl font-black text-wine-dark dark:text-white mb-2">
                             {t("kellerblicke_price_per_person")}
@@ -102,7 +104,7 @@ export default function KellerblickePage() {
                             <div className="w-12 h-12 bg-wine-gold/10 rounded-xl flex items-center justify-center">
                                 <Calendar className="w-6 h-6 text-wine-gold" />
                             </div>
-                            <h3 className="text-lg font-bold text-wine-dark dark:text-white">Zeitraum</h3>
+                            <h3 className="text-lg font-bold text-wine-dark dark:text-white">{t("period_label")}</h3>
                         </div>
                         <p className="text-base md:text-lg font-bold text-wine-dark dark:text-white mb-2">
                             {t("kellerblicke_event_period")}
@@ -118,13 +120,13 @@ export default function KellerblickePage() {
                             <div className="w-12 h-12 bg-wine-gold/10 rounded-xl flex items-center justify-center">
                                 <Clock className="w-6 h-6 text-wine-gold" />
                             </div>
-                            <h3 className="text-lg font-bold text-wine-dark dark:text-white">Anmeldung</h3>
+                            <h3 className="text-lg font-bold text-wine-dark dark:text-white">{t("registration_label")}</h3>
                         </div>
                         <p className="text-base md:text-lg font-bold text-wine-dark dark:text-white mb-2">
-                            Bis 13:00 Uhr
+                            {t("registration_time")}
                         </p>
                         <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                            am Veranstaltungstag
+                            {t("registration_day")}
                         </p>
                     </div>
                 </div>
@@ -138,7 +140,7 @@ export default function KellerblickePage() {
                     {/* Список включенных услуг */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-                        {/* Пункт 1: Экскурсия */}
+                        {/* Пункт 1: Экскурсия. Flexbox используется для выравнивания иконки и текста. */}
                         <div className="flex items-start gap-4">
                             <CheckCircle className="w-6 h-6 text-wine-gold flex-shrink-0 mt-1" />
                             <div>
@@ -146,7 +148,7 @@ export default function KellerblickePage() {
                                     {t("kellerblicke_included_tour")}
                                 </h3>
                                 <p className="text-sm text-zinc-600 dark:text-zinc-400">
-                                    Persönliche Führung durch unseren Weinkeller
+                                    {t("kellerblicke_tour_desc")}
                                 </p>
                             </div>
                         </div>
@@ -159,7 +161,7 @@ export default function KellerblickePage() {
                                     {t("kellerblicke_included_tasting")}
                                 </h3>
                                 <p className="text-sm text-zinc-600 dark:text-zinc-400">
-                                    Verkostung von drei ausgewählten Weinen
+                                    {t("kellerblicke_tasting_desc")}
                                 </p>
                             </div>
                         </div>
@@ -172,7 +174,7 @@ export default function KellerblickePage() {
                                     {t("kellerblicke_included_insights")}
                                 </h3>
                                 <p className="text-sm text-zinc-600 dark:text-zinc-400">
-                                    Blick hinter die Kulissen der Weinherstellung
+                                    {t("kellerblicke_insights_desc")}
                                 </p>
                             </div>
                         </div>
@@ -185,7 +187,7 @@ export default function KellerblickePage() {
                                     {t("kellerblicke_included_qa")}
                                 </h3>
                                 <p className="text-sm text-zinc-600 dark:text-zinc-400">
-                                    Zeit für Ihre Fragen an den Kellermeister
+                                    {t("kellerblicke_qa_desc")}
                                 </p>
                             </div>
                         </div>
@@ -202,7 +204,7 @@ export default function KellerblickePage() {
                                 {t("kellerblicke_contact_info")}
                             </h2>
                             <p className="text-lg text-zinc-300 mb-8">
-                                Melden Sie sich telefonisch oder per E-Mail an. Wir freuen uns auf Ihren Besuch!
+                                {t("kellerblicke_contact_text")}
                             </p>
 
                             {/* Контактные данные */}
@@ -226,7 +228,7 @@ export default function KellerblickePage() {
                         <div className="flex flex-col justify-center items-start lg:items-end">
                             <div className="w-full lg:w-auto">
                                 <p className="text-sm text-zinc-400 mb-4 lg:text-right">
-                                    Sichern Sie sich Ihren Platz
+                                    {t("kellerblicke_secure_spot")}
                                 </p>
                                 <Link
                                     href="/events"

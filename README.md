@@ -22,64 +22,43 @@ fellbacher-wines/
 ├── app/                            # Основная логика App Router (Next.js)
 │   ├── catalog/                    # /catalog — Страница каталога
 │   │   ├── [id]/                   # /catalog/[id] — Детальная страница вина
-│   │   │   └── page.tsx
 │   │   ├── components/             # Компоненты специфичные для каталога
-│   │   │   ├── CatalogFilters.tsx  # Фильтрация вин
-│   │   │   └── CatalogSearch.tsx   # Поиск внутри каталога
 │   │   └── page.tsx
 │   ├── dashboard/                  # /dashboard — Личный кабинет
 │   │   └── page.tsx
 │   ├── events/                     # /events — Мероприятия и дегустации
-│   │   ├── [id]/                   # /events/[id] — Детали события
-│   │   │   └── book/               # Бронирование события (функционал)
+│   │   ├── [id]/book/              # /events/[id]/book — Бронирование события
+│   │   ├── afterwork/              # /events/afterwork — Лендинг Afterwork
+│   │   ├── kellerblicke/           # /events/kellerblicke — Лендинг Kellerblicke
+│   │   ├── weinfeste/              # /events/weinfeste — Лендинг Weinfeste
+│   │   ├── weinproben/             # /events/weinproben — Лендинг Weinproben
+│   │   ├── weintreff/              # /events/weintreff — Лендинг Weintreff
+│   │   ├── weinweiter/             # /events/weinweiter — Лендинг Wein & Weiter
+│   │   ├── weinraetseltour/        # /events/weinraetseltour — Лендинг Wein(Rätsel)Tour
+│   │   ├── weintreff/              # /events/weintreff — Лендинг Weintreff
+│   │   ├── events.ts               # Общая логика и данные событий (Single Source of Truth)
 │   │   └── page.tsx
 │   ├── loyalty/                    # /loyalty — Программа лояльности
 │   │   └── page.tsx
-│   ├── components/                 # Глобальные React-компоненты
-│   │   ├── UI/                     # Базовые элементы интерфейса
-│   │   │   ├── Header/             # Составные части шапки
-│   │   │   │   ├── CartDropdown.tsx
-│   │   │   │   ├── HeaderActions.tsx
-│   │   │   │   ├── MobileMenu.tsx
-│   │   │   │   ├── Navigation.tsx
-│   │   │   │   ├── SearchOverlay.tsx
-│   │   │   │   └── TopBar.tsx
-│   │   │   ├── Footer/             # Составные части подвала
-│   │   │   │   ├── ContactInfo.tsx
-│   │   │   │   ├── FooterLinks.tsx
-│   │   │   │   ├── OpeningHours.tsx
-│   │   │   │   └── SocialLinks.tsx
-│   │   │   ├── AuthModal.tsx       # Окно логина
-│   │   │   ├── Logo.tsx            # Логотип
-│   │   │   ├── footer.tsx          # Точка сборки подвала
-│   │   │   └── header.tsx          # Точка сборки шапки
-│   │   ├── Wine/                   # Компоненты детальной страницы вина
-│   │   │   ├── WineDetailExperience.tsx
-│   │   │   ├── WineDetailHeader.tsx
-│   │   │   ├── WineDetailImage.tsx
-│   │   │   ├── WineDetailPurchase.tsx
-│   │   │   └── WineDetailStats.tsx
-│   │   └── WineCard.tsx            # Универсальная карточка вина
+│   │   ├── components/                 # Глобальные React-компоненты
+│   │   ├── UI/                     # Базовые элементы интерфейса (Header, Footer, AuthModal)
+│   │   ├── Wine/                   # Компоненты детальной страницы вина и карточка (WineCard.tsx)
+│   │   └──  (moved to Wine/)       # Старое место WineCard.tsx
 │   ├── globals.css                 # Стили Tailwind
 │   ├── icon-sets.ts                # Управление иконками
 │   ├── layout.tsx                  # Корневой макет
 │   ├── page.tsx                    # Главная страница
 │   └── providers.tsx               # Глобальная обертка провайдеров
 ├── lib/                            # Логика и управление данными
-│   ├── data/
-│   │   └── wines.ts                # Статическая база данных
-│   ├── AuthContext.tsx             # Авторизация и профиль
-│   ├── CartContext.tsx             # Управление корзиной
+│   ├── data/                       # Статические данные (wines.ts)
+│   ├── AuthContext.tsx             # Авторизация
+│   ├── CartContext.tsx             # Корзина
 │   ├── OrdersContext.tsx           # История заказов
 │   ├── WishlistContext.tsx         # Список желаемого
+│   ├── WinesContext.tsx            # Контекст для работы с винами
 │   ├── i18n.tsx                    # Локализация (DE/EN)
 │   └── utils.ts                    # Вспомогательные функции
 ├── public/                         # Статика (изображения, иконки)
-│   ├── file.svg
-│   ├── globe.svg
-│   ├── next.svg
-│   ├── vercel.svg
-│   └── window.svg
 ├── tailwind.config.js              # Настройки стилей
 ├── tsconfig.json                   # Настройки TypeScript
 ├── next.config.ts                  # Конфигурация Next.js

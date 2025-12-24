@@ -1,8 +1,8 @@
+"use client";
 /**
  * Поле поиска для каталога.
  * Позволяет фильтровать вина по вводимому тексту в реальном времени.
  */
-"use client";
 
 import React from 'react';
 import { Search } from 'lucide-react';

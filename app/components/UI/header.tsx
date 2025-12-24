@@ -51,7 +51,8 @@ const Header: React.FC = () => {
   const [contactMenuOpen, setContactMenuOpen] = useState(false);
   const contactMenuRef = useRef<HTMLDivElement>(null);
 
-  // Группы ссылок для навигации
+  // --- Данные навигации ---
+  // Группы ссылок для различных секций меню (Магазин, События, О нас, Контакты)
   const navigationItems = [
     { label: t("nav_loyalty"), path: "/loyalty" },
   ];
@@ -67,12 +68,12 @@ const Header: React.FC = () => {
 
   const eventCategories = [
     { label: t("event_kellerblicke"), path: "/events/kellerblicke" },
-    { label: t("event_weinfeste"), path: "/events?type=Weinfeste" },
-    { label: t("event_weinproben"), path: "/events?type=Weinproben" },
-    { label: t("event_weintreff"), path: "/events?type=Weintreff" },
-    { label: t("event_afterwork"), path: "/events?type=Afterwork" },
-    { label: t("event_wein_weiter"), path: "/events?type=WeinWeiter" },
-    { label: t("event_wein_raetsel_tour"), path: "/events?type=WeinRaetselTour" },
+    { label: t("event_weinfeste"), path: "/events/weinfeste" },
+    { label: t("event_weinproben"), path: "/events/weinproben" },
+    { label: t("event_weintreff"), path: "/events/weintreff" },
+    { label: t("event_afterwork"), path: "/events/afterwork" },
+    { label: t("event_wein_weiter"), path: "/events/weinweiter" },
+    { label: t("event_wein_raetsel_tour"), path: "/events/weinraetseltour" },
   ];
 
   const aboutCategories = [
@@ -92,7 +93,8 @@ const Header: React.FC = () => {
     { label: t("contact_jobs"), path: "/#" },
   ];
 
-  // Эффект для закрытия всех выпадающих меню при клике в любое другое место экрана
+  // Эффект Click Outside: закрывает все открытые меню, если клик произошел вне их области.
+  // Это обеспечивает UX, привычный для пользователей веба (закрытие по клику в пустоту).
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (moreMenuRef.current && !moreMenuRef.current.contains(event.target as Node)) {
@@ -123,6 +125,7 @@ const Header: React.FC = () => {
     };
   }, []);
 
+  // Обработчик отправки поискового запроса
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchTerm.trim()) {
@@ -131,6 +134,8 @@ const Header: React.FC = () => {
     }
   };
 
+  // Вычисление общей стоимости корзины "на лету"
+  // Проходит по всем товарам в корзине, находит их цену в базе вин и суммирует.
   const totalPrice = cart.reduce((total, item) => {
     const wine = wines.find((w) => w.id === item.id);
     return total + (wine ? wine.price * item.quantity : 0);

@@ -10,7 +10,7 @@ import { useOrders } from '@/lib/OrdersContext';
 import { useWishlist } from '@/lib/WishlistContext';
 import { useTranslation } from '@/lib/i18n';
 import { wines, Wine } from '@/lib/data/wines';
-import WineCard from '@/app/components/WineCard';
+import WineCard from '@/app/components/Wine/WineCard';
 import { useCart } from '@/lib/CartContext';
 import {
     Package,

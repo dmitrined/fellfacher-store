@@ -6,7 +6,7 @@
  */
 
 import React, { useState, useMemo, useEffect, Suspense } from 'react';
-import WineCard from '@/app/components/WineCard';
+import WineCard from '@/app/components/Wine/WineCard';
 import CatalogSearch from './components/CatalogSearch';
 import CatalogFilters from './components/CatalogFilters';
 import { useTranslation } from '@/lib/i18n';
