@@ -66,7 +66,7 @@ const Header: React.FC = () => {
   ];
 
   const eventCategories = [
-    { label: t("event_kellerblicke"), path: "/events?type=Kellerblicke" },
+    { label: t("event_kellerblicke"), path: "/events/kellerblicke" },
     { label: t("event_weinfeste"), path: "/events?type=Weinfeste" },
     { label: t("event_weinproben"), path: "/events?type=Weinproben" },
     { label: t("event_weintreff"), path: "/events?type=Weintreff" },

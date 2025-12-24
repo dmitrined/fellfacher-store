@@ -20,7 +20,7 @@ export default function Home() {
       {/* Hero Section */}
       <section className="relative h-screen flex items-center overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-wine-gold/10 via-transparent to-transparent opacity-50" />
-        <div className="absolute top-0 left-0 w-full h-full bg-[url('https://fellbacher-weine.de/wp-content/uploads/2023/10/Hero_Startseite.jpg')] bg-cover bg-center grayscale-[0.2] brightness-[0.4] scale-105" />
+        <div className="absolute top-0 left-0 w-full h-full bg-[url('https://fellbacher-weine.de/wp-content/uploads/2025/11/background-9086186_1920-e1764503149424.jpg')] bg-cover bg-center grayscale-[0.2] brightness-[0.4] scale-105" />
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10">
           <div className="max-w-3xl">
@@ -61,47 +61,6 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Категории вин */}
-        {[
-          { type: 'Rotwein', title: t("type_red") },
-          { type: 'Weißwein', title: t("type_white") },
-          { type: 'Roséwein', title: t("type_rose") },
-          { type: 'Sekt', title: t("type_sparkling") },
-          { type: 'Alkoholfrei', title: t("type_alcohol_free") }
-        ].map((category) => {
-          const categoryWines = displayWines.filter(w => w.type === category.type);
-          if (categoryWines.length === 0) return null;
-
-          return (
-            <div key={category.type} className="mb-16 last:mb-0">
-              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-6">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-xl md:text-2xl font-black text-wine-dark dark:text-white serif italic">
-                    {category.title}
-                  </h3>
-                  <Link
-                    href={`/catalog?type=${category.type}`}
-                    className="text-[10px] font-black uppercase tracking-widest text-zinc-400 hover:text-wine-gold transition-colors flex items-center gap-2 group"
-                  >
-                    {t("view_all")}
-                    <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
-                  </Link>
-                </div>
-              </div>
-
-              <div className="relative">
-                <div className="flex overflow-x-auto gap-6 px-4 sm:px-6 lg:px-[calc((100vw-80rem)/2+2rem)] pb-8 no-scrollbar snap-x snap-mandatory scroll-smooth">
-                  {categoryWines.map((wine) => (
-                    <div key={wine.id} className="flex-shrink-0 w-[280px] md:w-[320px] snap-start">
-                      <WineCard wine={wine} />
-                    </div>
-                  ))}
-                  <div className="flex-shrink-0 w-4 md:w-8" />
-                </div>
-              </div>
-            </div>
-          );
-        })}
       </section>
 
       {/* Остальные секции (Loyalty, Events и т.д.) */}

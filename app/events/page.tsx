@@ -19,6 +19,18 @@ export default function EventsPage() {
 
     const events = [
         {
+            id: 'kellerblicke',
+            title: t("event_kellerblicke"),
+            date: t("kellerblicke_every_saturday"),
+            time: "Nach Vereinbarung",
+            location: "Fellbacher Weingärtner eG",
+            spots: "Verfügbar",
+            price: "12€",
+            category: "Kellerführung",
+            image: "https://fellbacher-weine.de/wp-content/uploads/2017/08/Kellerblicke-2-2.jpg",
+            isKellerblicke: true // Специальный флаг для отдельной страницы
+        },
+        {
             id: '1',
             title: "Vertikale: Lemberger Goldberg",
             date: "24. Februar 2024",
@@ -131,7 +143,17 @@ export default function EventsPage() {
                                         <button disabled className="w-full py-5 bg-zinc-100 dark:bg-zinc-800 text-zinc-400 rounded-2xl text-sm font-black uppercase tracking-widest cursor-not-allowed">
                                             {t("fully_booked")}
                                         </button>
+                                    ) : event.isKellerblicke ? (
+                                        // Для Kellerblicke - переход на отдельную страницу
+                                        <Link
+                                            href="/events/kellerblicke"
+                                            className="group/btn relative w-full inline-flex items-center justify-center py-5 bg-wine-dark hover:bg-wine-gold text-white hover:text-wine-dark rounded-2xl text-sm font-black uppercase tracking-widest transition-all duration-300 overflow-hidden"
+                                        >
+                                            <span className="relative z-10">{t("more_info")}</span>
+                                            <ArrowRight className="w-5 h-5 ml-3 relative z-10 transform group-hover/btn:translate-x-2 transition-transform" />
+                                        </Link>
                                     ) : (
+                                        // Для остальных событий - бронирование
                                         <button
                                             onClick={() => {
                                                 if (isLoggedIn) {

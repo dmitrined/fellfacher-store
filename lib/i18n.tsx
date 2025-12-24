@@ -189,6 +189,23 @@ const translations: Translations = {
     event_wein_weiter: { de: "Wein & Weiter", en: "Wine & More" },
     event_wein_raetsel_tour: { de: "Wein(Rätsel)Tour", en: "Wine Mystery Tour" },
 
+    // Kellerblicke Event Page (Страница события Kellerblicke)
+    kellerblicke_title: { de: "Kellerblicke", en: "Cellar Views" },
+    kellerblicke_subtitle: { de: "Entdecken Sie die Welt der Fellbacher Weine", en: "Discover the World of Fellbacher Wines" },
+    kellerblicke_description: { de: "Schauen Sie hinter die Kulissen der Weinmacher und machen Sie sich ein Bild von der Arbeit unseres Kellermeisters, der mit seinem Team und durch Sorgfalt und Liebe zum Detail ausgezeichnete Weine erzeugt. Jeden Samstag können Weinbegeisterte und die, die es werden möchten, an einer Kellerführung inklusive 3er Weinprobe teilnehmen.", en: "Look behind the scenes of the winemakers and get an impression of the work of our cellar master, who produces excellent wines with his team through care and attention to detail. Every Saturday, wine enthusiasts and those who want to become one can participate in a cellar tour including a 3-wine tasting." },
+    kellerblicke_registration_note: { de: "Anmeldung bis Veranstaltungstag 13 Uhr möglich.", en: "Registration possible until 1 PM on the event day." },
+    kellerblicke_duration: { de: "Dauer ca. 1 Std.", en: "Duration approx. 1 hour" },
+    kellerblicke_price_per_person: { de: "12€ / Person", en: "12€ / Person" },
+    kellerblicke_event_period: { de: "4. April 2026 bis 14. November 2026", en: "April 4, 2026 to November 14, 2026" },
+    kellerblicke_every_saturday: { de: "Jeden Samstag", en: "Every Saturday" },
+    kellerblicke_book_now: { de: "Jetzt buchen", en: "Book Now" },
+    kellerblicke_contact_info: { de: "Kontakt & Anmeldung", en: "Contact & Registration" },
+    kellerblicke_what_included: { de: "Was ist enthalten?", en: "What's Included?" },
+    kellerblicke_included_tour: { de: "Kellerführung mit Kellermeister", en: "Cellar tour with cellar master" },
+    kellerblicke_included_tasting: { de: "3er Weinprobe", en: "3-wine tasting" },
+    kellerblicke_included_insights: { de: "Einblicke in die Weinproduktion", en: "Insights into wine production" },
+    kellerblicke_included_qa: { de: "Fragen & Antworten", en: "Q&A Session" },
+
     // Booking Flow (Бронирование)
     booking_title: { de: "Degustation buchen", en: "Book a Tasting" },
     booking_step_1: { de: "Termin wählen", en: "Select Date" },
