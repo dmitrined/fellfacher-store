@@ -8,18 +8,39 @@
 import React, { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useTranslation } from '@/lib/i18n';
-import { Calendar, Users, ArrowLeft, CheckCircle2, CreditCard } from 'lucide-react';
+import { Calendar, Users, ArrowLeft, CheckCircle2, CreditCard, Minus, Plus } from 'lucide-react';
 import Link from 'next/link';
+import { useBooking } from '@/lib/contexts/BookingContext';
+import { getEvents } from '@/lib/data/events';
 
 export default function BookingPage() {
     const { t } = useTranslation();
+    const params = useParams();
     const [step, setStep] = useState(1);
     const router = useRouter();
+    const { addBooking } = useBooking();
+
+    const [selectedDate, setSelectedDate] = useState("Fr, 24. Feb");
+    const [guestCount, setGuestCount] = useState(2);
+
+    const eventId = params.id as string;
+    const events = getEvents(t);
+    const event = events.find(e => e.id === eventId);
+    const pricePerPerson = event ? parseFloat(event.price.replace(/[^\d.]/g, '')) || 49 : 49;
+    const totalPrice = pricePerPerson * guestCount;
 
     const handleNext = () => {
         if (step < 3) setStep(step + 1);
         else {
-            // Mock success
+            // Save booking to local storage via context
+            addBooking({
+                eventId: eventId,
+                eventTitle: event?.title || "Event",
+                date: selectedDate,
+                time: "18:30 Uhr",
+                guests: guestCount,
+                totalAmount: totalPrice
+            });
             setStep(4);
         }
     };
@@ -75,8 +96,12 @@ export default function BookingPage() {
                                 <h3 className="text-xl font-bold dark:text-white mb-6 serif">{t("booking_step_1")}</h3>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     {["Fr, 24. Feb", "Sa, 25. Feb", "Fr, 02. Mär"].map((date) => (
-                                        <button key={date} className="p-6 border border-zinc-100 dark:border-zinc-800 rounded-2xl text-left hover:border-wine-gold transition-colors group">
-                                            <Calendar className="w-5 h-5 text-wine-gold mb-4" />
+                                        <button
+                                            key={date}
+                                            onClick={() => setSelectedDate(date)}
+                                            className={`p-6 border rounded-2xl text-left transition-colors group ${selectedDate === date ? 'border-wine-gold bg-wine-gold/5' : 'border-zinc-100 dark:border-zinc-800 hover:border-wine-gold'}`}
+                                        >
+                                            <Calendar className={`w-5 h-5 mb-4 ${selectedDate === date ? 'text-wine-gold' : 'text-zinc-400'}`} />
                                             <span className="block font-bold dark:text-white">{date}</span>
                                             <span className="text-xs text-zinc-500">18:30 Uhr</span>
                                         </button>
@@ -94,9 +119,19 @@ export default function BookingPage() {
                                         <span className="font-bold dark:text-white">Gäste</span>
                                     </div>
                                     <div className="flex items-center gap-6">
-                                        <button className="w-10 h-10 rounded-full border border-zinc-200 dark:border-zinc-700 flex items-center justify-center font-bold dark:text-white">-</button>
-                                        <span className="text-xl font-black serif italic dark:text-white">2</span>
-                                        <button className="w-10 h-10 rounded-full border border-zinc-200 dark:border-zinc-700 flex items-center justify-center font-bold dark:text-white">+</button>
+                                        <button
+                                            onClick={() => setGuestCount(Math.max(1, guestCount - 1))}
+                                            className="w-10 h-10 rounded-full border border-zinc-200 dark:border-zinc-700 flex items-center justify-center font-bold dark:text-white hover:bg-wine-gold hover:border-wine-gold transition-colors"
+                                        >
+                                            <Minus size={18} />
+                                        </button>
+                                        <span className="text-xl font-black serif italic dark:text-white">{guestCount}</span>
+                                        <button
+                                            onClick={() => setGuestCount(guestCount + 1)}
+                                            className="w-10 h-10 rounded-full border border-zinc-200 dark:border-zinc-700 flex items-center justify-center font-bold dark:text-white hover:bg-wine-gold hover:border-wine-gold transition-colors"
+                                        >
+                                            <Plus size={18} />
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -107,12 +142,12 @@ export default function BookingPage() {
                                 <h3 className="text-xl font-bold dark:text-white mb-6 serif">{t("booking_step_3")}</h3>
                                 <div className="p-8 border-2 border-dashed border-zinc-100 dark:border-zinc-800 rounded-[2rem] space-y-6">
                                     <div className="flex justify-between items-center text-sm font-bold dark:text-white">
-                                        <span>2x Weinprobe Ticket</span>
-                                        <span>98.00 €</span>
+                                        <span>{guestCount}x {event?.title || "Ticket"}</span>
+                                        <span>{totalPrice.toFixed(2)} €</span>
                                     </div>
                                     <div className="flex justify-between items-center text-sm font-bold dark:text-white border-t border-zinc-50 dark:border-zinc-800 pt-6">
                                         <span>Gesamtbetrag</span>
-                                        <span className="text-2xl font-black text-wine-gold serif italic">98.00 €</span>
+                                        <span className="text-2xl font-black text-wine-gold serif italic">{totalPrice.toFixed(2)} €</span>
                                     </div>
                                     <div className="pt-4 flex items-center gap-3 text-zinc-400">
                                         <CreditCard className="w-5 h-5" />

@@ -8,6 +8,7 @@ import { AuthProvider } from '@/lib/contexts/AuthContext';
 import { OrdersProvider } from '@/lib/contexts/OrdersContext';
 import { WinesProvider } from '@/lib/contexts/WinesContext';
 import { UIProvider } from '@/lib/contexts/UIContext';
+import { BookingProvider } from '@/lib/contexts/BookingContext';
 
 
 /**
@@ -30,11 +31,12 @@ export function Providers({ children }: { children: React.ReactNode }) {
               <CartProvider>
                 {/* Провайдер глобального UI состояния (мобильное меню и др.) */}
                 <UIProvider>
-                  {/* Провайдер библиотеки компонентов HeroUI (бывший NextUI) */}
-                  <HeroUIProvider>
-                    {/* Рендеринг дочерних элементов приложения */}
-                    {children}
-                  </HeroUIProvider>
+                  <BookingProvider>
+                    <HeroUIProvider>
+                      {/* Рендеринг дочерних элементов приложения */}
+                      {children}
+                    </HeroUIProvider>
+                  </BookingProvider>
                 </UIProvider>
               </CartProvider>
             </WishlistProvider>

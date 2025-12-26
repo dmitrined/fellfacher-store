@@ -232,7 +232,7 @@ export default function KellerblickePage() {
                                     {t("kellerblicke_secure_spot")}
                                 </p>
                                 <Link
-                                    href="/events"
+                                    href="/events/kellerblicke/book"
                                     className="inline-flex items-center justify-center w-full lg:w-auto px-8 py-4 bg-wine-gold hover:bg-white text-wine-dark font-bold rounded-full transition-all duration-300 transform hover:scale-105 shadow-xl shadow-wine-gold/20 group text-sm md:text-base"
                                 >
                                     <Wine className="w-5 h-5 mr-2" />
