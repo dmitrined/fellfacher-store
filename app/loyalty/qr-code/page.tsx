@@ -70,12 +70,13 @@ export default function QRCodePage() {
                     <div className="mt-10 p-6 bg-wine-dark text-white rounded-2xl relative overflow-hidden group">
                         <div className="relative z-10">
                             <p className="text-[10px] font-black uppercase tracking-[0.2em] text-wine-gold mb-1">
-                               0000000001
+                                {user.name}
                             </p>
                             <p className="text-lg font-black uppercase tracking-widest">
                                 {user.name}
                             </p>
                         </div>
+
                         <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-wine-gold/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
                     </div>
                 </div>
