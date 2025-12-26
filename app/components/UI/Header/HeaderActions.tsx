@@ -1,8 +1,9 @@
+
+"use client";
 /**
  * Группа управляющих кнопок в шапке (поиск, профиль, избранное, корзина).
  * Снабжены индикаторами (бейждами) количества товаров.
  */
-"use client";
 import React from "react";
 import Link from "next/link";
 import { Search, User as UserIcon, Heart, ShoppingCart } from "../../../icon-sets";

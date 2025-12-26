@@ -172,6 +172,7 @@ const Navigation: React.FC<NavigationProps> = ({
                 isOpen={aboutMenuOpen}
                 setOpen={setAboutMenuOpen}
                 menuRef={aboutMenuRef}
+                path="/aboutUs/whoWeAre"
             />
 
             {/* Contact Dropdown */}

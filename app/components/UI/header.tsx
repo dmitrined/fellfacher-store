@@ -77,10 +77,9 @@ const Header: React.FC = () => {
   ];
 
   const aboutCategories = [
-    { label: t("about_we_about_us"), path: "/#" },
-    { label: t("about_team"), path: "/#" },
-    { label: t("about_impressions"), path: "/#" },
-    { label: t("about_next_generation"), path: "/#" },
+    { label: t("about_we_about_us"), path: "/aboutUs/whoWeAre" },
+    { label: t("about_team"), path: "/aboutUs/ourTeam" },
+    { label: t("about_next_generation"), path: "/aboutUs/nextGeneration" },
     { label: t("about_awards"), path: "/#" },
     { label: t("about_worth_reading"), path: "/#" },
     { label: t("about_partners"), path: "/#" },

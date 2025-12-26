@@ -39,6 +39,7 @@ const translations: Translations = {
     contact_directions: { de: "Anfahrt", en: "Directions" },
     contact_jobs: { de: "Jobs", en: "Jobs" },
     nav_all_wines: { de: "Alle Weine", en: "All Wines" },
+    nav_all_events: { de: "Alle Events", en: "All Events" },
     nav_loyalty: { de: "Loyalität", en: "Loyalty" },
     nav_profile: { de: "Profil", en: "Profile" },
     nav_dashboard: { de: "Dashboard", en: "Dashboard" },
@@ -97,9 +98,30 @@ const translations: Translations = {
     experience_title: { de: "Das Erlebnis", en: "The Experience" },
     experience_desc: { de: "Dieser außergewöhnliche Jahrgang der Fellbacher Weingärtner repräsentiert den Gipfel unserer Handwerkskunst. Erwarten Sie ein ausgewogenes Profil, das das Terroir der Region Goldberg ehrt.", en: "This exceptional vintage from Fellbacher Weingärtner represents the pinnacle of our craftsmanship. Expect a balanced profile that honors the terroir of the Goldberg region." },
     stats_alcohol: { de: "Alkohol", en: "Alcohol" },
-    stats_acidity: { de: "Säure", en: "Acidity" },
-    stats_sugar: { de: "Zucker", en: "Sugar" },
-    premium_price: { de: "Premium Preis", en: "Premium Price" },
+
+    // About Us Page (Wir über uns)
+    about_hero_subtitle: { de: "Unsere Geschichte", en: "Our Story" },
+    about_hero_title: { de: "Gemeinsam für Qualität", en: "United for Quality" },
+    about_hero_desc: { de: "Die Fellbacher Weingärtner eG steht für Tradition, die seit 1858 gepflegt wird. Wir verbinden handwerkliche Perfektion mit moderner Kellertechnik.", en: "Fellbacher Weingärtner eG stands for tradition maintained since 1858. We combine artisanal perfection with modern cellar technology." },
+    about_quote: { de: "Wein ist Poesie in Flaschen.", en: "Wine is bottled poetry." },
+    about_history_title: { de: "Unsere Wurzeln", en: "Our Roots" },
+    about_history_text: { de: "Gegründet im Jahr 1858, sind wir eine der ältesten Genossenschaften der Region. Unsere Mitglieder bewirtschaften mit Leidenschaft die Weinberge am Kappelberg.", en: "Founded in 1858, we are one of the oldest cooperatives in the region. Our members cultivate the vineyards on the Kappelberg with passion." },
+    about_philosophy_title: { de: "Unsere Philosophie", en: "Our Philosophy" },
+    about_philosophy_text: { de: "Qualität entsteht im Weinberg. Durch nachhaltigen Anbau und schonende Verarbeitung schaffen wir Weine mit Charakter und Tiefe.", en: "Quality originates in the vineyard. Through sustainable cultivation and gentle processing, we create wines with character and depth." },
+
+    about_stats_members: { de: "Mitglieder", en: "Members" },
+    about_stats_hectares: { de: "Rebfläche", en: "Vineyards" },
+    about_stats_awards: { de: "Auszeichnungen", en: "Awards" },
+    about_stats_tradition: { de: "Gegründet", en: "Founded" },
+
+    about_values_title: { de: "Was uns antreibt", en: "What Drives Us" },
+    about_values_subtitle: { de: "Drei Säulen unseres Erfolgs", en: "Three pillars of our success" },
+    about_value_1_title: { de: "Gemeinschaft", en: "Community" },
+    about_value_1_desc: { de: "Als Genossenschaft stehen wir füreinander ein. Jeder Winzer ist Teil einer großen Familie.", en: "As a cooperative, we stand up for each other. Every winemaker is part of a big family." },
+    about_value_2_title: { de: "Qualität", en: "Quality" },
+    about_value_2_desc: { de: "Keine Kompromisse. Von der Rebe bis ins Glas streben wir nach Höchstleistung.", en: "No compromises. From the vine to the glass, we strive for excellence." },
+    about_value_3_title: { de: "Nachhaltigkeit", en: "Sustainability" },
+    about_value_3_desc: { de: "Wir pflegen unsere Kulturlandschaft für kommende Generationen.", en: "We cultivate our cultural landscape for future generations." },
     quality_guarantee: { de: "AUTHENTISCHE FELLBACHER QUALITÄT GARANTIERT", en: "AUTHENTIC FELLBACHER QUALITY GUARANTEED" },
 
     // Auth (Авторизация)
@@ -121,6 +143,40 @@ const translations: Translations = {
     strength_strong: { de: "Stark", en: "Strong" },
     social_login_with: { de: "Oder weiter mit", en: "Or continue with" },
     passwords_not_matching: { de: "Passwörter stimmen nicht überein", en: "Passwords do not match" },
+
+    // Our Team Page (Unser Team)
+    team_hero_title: { de: "Unser Team", en: "Our Team" },
+    team_hero_subtitle: { de: "Die Menschen hinter dem Wein", en: "The People Behind the Wine" },
+    team_hero_desc: { de: "Lernen Sie die Experten kennen, die mit Leidenschaft und Hingabe für die Qualität unserer Weine sorgen.", en: "Meet the experts who ensure the quality of our wines with passion and dedication." },
+    team_role_mng: { de: "Geschäftsführung", en: "Management" },
+    team_role_winemaker: { de: "Kellermeister", en: "Winemaker" },
+    team_role_sales: { de: "Vertrieb", en: "Sales" },
+    team_role_marketing: { de: "Marketing", en: "Marketing" },
+    team_contact_phone: { de: "Tel", en: "Phone" },
+    team_contact_email: { de: "E-Mail", en: "Email" },
+    team_photo_coming_soon: { de: "Foto folgt bald", en: "Photo coming soon" },
+
+    // Next Generation Page (Следующее поколение)
+    next_gen_hero_title: { de: "Junge Winzer Weine", en: "Young Winemaker Wines" },
+    next_gen_hero_subtitle: { de: "Die Jungwinzerkooperation “next Generation” der Fellbacher Weingärtner eG", en: "The young winemaker cooperation “next generation” of Fellbacher Weingärtner eG" },
+
+    next_gen_wer_title: { de: "Wer?", en: "Who?" },
+    next_gen_wer_text: {
+        de: "Die Jungwinzerkooperation next generation ist ein Zusammenschluss von jungen Mitgliedern der Fellbacher Weingärtner eG im Haupt- und Nebenerwerb. Schon 2007 gegründet, ist die Gruppe bereits in der dritten Generation unterwegs. Die jungen Wilden können auf einen großen Erfahrungsschatz verschiedener Berufsgruppen und Ausbildungswege, sowie dem Know How der eigenen Familienmitglieder zurückgreifen.",
+        en: "The young winemaker cooperation next generation is an association of young members of the Fellbacher Weingärtner eG in full-time and part-time employment. Founded in 2007, the group is already in its third generation. The young savages can draw on a wealth of experience from various professional groups and training paths, as well as the know-how of their own family members."
+    },
+
+    next_gen_was_title: { de: "Was?", en: "What?" },
+    next_gen_was_text: {
+        de: "Für Mitglieder endet meist die aktive Weinherstellung an der Traubenannahme. Doch das war den Jungwinzern nicht genug. In regelmäßigen Treffen tauscht man sich über aktuelle Arbeiten im Weinberg aus, bringt sich aktiv bei der Weinbereitung nach der Lese mit ein und unterstützt das Team der Fellbacher Weingärtner bei der Vermarktung der Weine. Der ›Riesling next generation trocken‹ ist von Beginn an gesetzt und schließt eine Lücke im Sortiment der Genossenschaft mit einem leichtfüßigen, filigranen Riesling. Der Wein spricht mit seiner Frucht und Finesse besonders auch jüngere Weintrinker an. Um das Gelernte und Gehörte selbst auszuprobieren folgten und folgen auch Projekte wie ein Roséwein, die Herstellung eines Pétillant Naturel und auch ein Sekt nach klassischer Flaschengärung – echte junge Winzer Weine.",
+        en: "For members, active winemaking usually ends at grape reception. But that wasn't enough for the young winemakers. In regular meetings, they exchange views on current work in the vineyard, actively participate in winemaking after the harvest, and support the Fellbacher Weingärtner team in marketing the wines. The 'Riesling next generation dry' has been set from the beginning and closes a gap in the cooperative's range with a light-footed, filigree Riesling. The wine appeals especially to younger wine drinkers with its fruit and finesse. To try out what they have learned and heard themselves, projects such as a rosé wine, the production of a Petillant Naturel, and also a sparkling wine according to classic bottle fermentation followed – real young winemaker wines."
+    },
+
+    next_gen_wo_title: { de: "Wo?", en: "Where?" },
+    next_gen_wo_text: {
+        de: "In Fellbach aufgewachsen und bei quasi jeder Weinlese dabei, war es für die jungen Mitglieder selbstverständlich auch in die Geschäfte der Genossenschaft hinein zu schnuppern und aktiv mitzuwirken. Die Leidenschaft zu Wein, die Verbundenheit zur Fellbacher Heimat und der Wille -Wein auch jüngerem Publikum zugänglich zu machen- zeichnet next generation aus. Damit setzen sie ein starkes Zeichen für moderne Weine aus der Region.",
+        en: "Growing up in Fellbach and present at almost every grape harvest, it was natural for the young members to get a taste of the cooperative's business and actively participate. The passion for wine, the connection to the Fellbach homeland, and the will to make wine accessible to a younger audience characterize next generation. Thus, they set a strong sign for modern wines from the region."
+    },
 
     // Dashboard (Личный кабинет)
     dashboard_title: { de: "Mein Konto", en: "My Account" },

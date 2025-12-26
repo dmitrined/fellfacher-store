@@ -1,8 +1,8 @@
+"use client";
 /**
  * Полноэкранный оверлей для поиска.
  * Появляется при нажатии на иконку поиска в шапке и позволяет вводить поисковый запрос.
  */
-"use client";
 import React from "react";
 import { Search, Close } from "../../../icon-sets";
 
