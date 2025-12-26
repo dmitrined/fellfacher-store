@@ -20,6 +20,7 @@ import React from 'react';
 import Link from 'next/link';
 import { useTranslation } from '@/lib/i18n';
 import { ArrowLeft, Wine, Users, Clock, GlassWater, MessageCircle, MapPin, BadgeCheck, Utensils, Phone, Mail } from 'lucide-react';
+import { CONTACT_PHONE, CONTACT_EMAIL } from "@/lib/constants/contact";
 
 export default function WeinprobenPage() {
     const { t } = useTranslation();
@@ -172,7 +173,7 @@ export default function WeinprobenPage() {
 
                         <div className="flex flex-col md:flex-row items-center justify-center gap-6 mt-8">
                             <Link
-                                href="mailto:info@fellbacher-weine.de"
+                                href={`mailto:${CONTACT_EMAIL}`}
                                 className="inline-flex items-center justify-center px-8 py-4 bg-wine-gold hover:bg-white text-wine-dark font-bold rounded-full transition-all duration-300 transform hover:scale-105 shadow-xl shadow-wine-gold/20"
                             >
                                 <MessageCircle className="w-5 h-5 mr-2" />
@@ -181,9 +182,9 @@ export default function WeinprobenPage() {
 
                             {/* Доп. контакты */}
                             <div className="flex items-center gap-4 mt-4 md:mt-0 text-zinc-300">
-                                <a href="tel:+4971157880330" className="flex items-center gap-2 hover:text-white transition-colors">
+                                <a href={`tel:${CONTACT_PHONE.replace(/\s/g, "")}`} className="flex items-center gap-2 hover:text-white transition-colors">
                                     <Phone className="w-4 h-4" />
-                                    +49 711 57 88 03-0
+                                    {CONTACT_PHONE}
                                 </a>
                             </div>
                         </div>

@@ -5,7 +5,7 @@
  * Содержит формы для входа и создания нового аккаунта, а также проверку сложности пароля.
  */
 import React, { useState, useMemo } from 'react';
-import { useAuth } from '@/lib/AuthContext';
+import { useAuth } from '@/lib/contexts/AuthContext';
 import { useTranslation } from '@/lib/i18n';
 import { X, Mail, Lock, User as UserIcon, ArrowRight, Eye, EyeOff } from 'lucide-react';
 

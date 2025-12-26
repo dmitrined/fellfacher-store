@@ -5,8 +5,8 @@
 "use client";
 import React from "react";
 import Link from "next/link";
-import { Close, ArrowRight, ChevronDown } from "../../../icon-sets";
-import Logo from "../Logo";
+import { Close, ArrowRight, ChevronDown } from "@/app/icon-sets";
+import Logo from "@/components/layout/Logo";
 import { useState } from "react";
 
 interface MobileMenuProps {
@@ -126,15 +126,6 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
                             isOpen={openSection === "events"}
                             onToggle={() => toggleSection("events")}
                         >
-                            <Link
-                                href="/events"
-                                className="text-base font-black text-wine-dark dark:text-white hover:text-wine-gold transition-colors flex items-center justify-between group py-2 border-b border-dashed border-zinc-200 dark:border-zinc-800 mb-2"
-                                onClick={() => setMobileOpen(false)}
-                            >
-                                {t("nav_all_events")}
-                                <ArrowRight className="w-3.5 h-3.5 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-wine-gold" />
-                            </Link>
-
 
                             {eventCategories.map((item) => (
                                 item.path === '#' || item.path === '' ? (

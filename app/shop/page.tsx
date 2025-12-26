@@ -6,13 +6,13 @@
  */
 
 import React, { useState, useMemo, useEffect, Suspense } from 'react';
-import WineCard from '@/app/components/Wine/WineCard';
-import CatalogSearch from './components/CatalogSearch';
-import CatalogFilters from './components/CatalogFilters';
+import WineCard from '@/components/wine/WineCard';
+import CatalogSearch from '@/components/wine/CatalogSearch';
+import CatalogFilters from '@/components/wine/CatalogFilters';
 import { useTranslation } from '@/lib/i18n';
 import { Search } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
-import { useWines } from '@/lib/WinesContext';
+import { useWines } from '@/lib/contexts/WinesContext';
 
 function CatalogContent() {
     const { t } = useTranslation();

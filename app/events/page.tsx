@@ -9,10 +9,10 @@ import React from 'react';
 import { useTranslation } from '@/lib/i18n';
 import { Calendar, MapPin, Users, ArrowRight, Clock, Star } from 'lucide-react';
 import Link from 'next/link';
-import { useAuth } from '@/lib/AuthContext';
+import { useAuth } from '@/lib/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 
-import { getEvents } from './events';
+import { getEvents } from '@/lib/data/events';
 
 export default function EventsPage() {
     const { t } = useTranslation();

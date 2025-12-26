@@ -19,6 +19,7 @@ import React from 'react';
 import Link from 'next/link';
 import { useTranslation } from '@/lib/i18n';
 import { ArrowLeft, Users, Wine, Clock, MapPin, Sparkles, Coffee, Phone, Mail } from 'lucide-react';
+import { CONTACT_PHONE, CONTACT_EMAIL } from "@/lib/constants/contact";
 
 export default function WeintreffPage() {
     const { t } = useTranslation();
@@ -150,14 +151,14 @@ export default function WeintreffPage() {
                         <div className="flex flex-col md:flex-row items-center justify-center gap-8 mt-8">
                             <div className="flex items-center gap-3">
                                 <Phone className="w-5 h-5 text-wine-gold" />
-                                <a href="tel:+4971157880330" className="text-lg hover:text-wine-gold transition-colors">
-                                    +49 711 57 88 03-0
+                                <a href={`tel:${CONTACT_PHONE.replace(/\s/g, "")}`} className="text-lg hover:text-wine-gold transition-colors">
+                                    {CONTACT_PHONE}
                                 </a>
                             </div>
                             <div className="flex items-center gap-3">
                                 <Mail className="w-5 h-5 text-wine-gold" />
-                                <a href="mailto:info@fellbacher-weine.de" className="text-lg hover:text-wine-gold transition-colors">
-                                    info@fellbacher-weine.de
+                                <a href={`mailto:${CONTACT_EMAIL}`} className="text-lg hover:text-wine-gold transition-colors">
+                                    {CONTACT_EMAIL}
                                 </a>
                             </div>
                         </div>

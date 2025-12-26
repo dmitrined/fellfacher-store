@@ -1,21 +1,4 @@
-export interface Event {
-    id: string;
-    title: string;
-    date: string;
-    time: string;
-    location: string;
-    spots: string;
-    price: string;
-    category: string;
-    image: string;
-    isKellerblicke?: boolean;
-    isWeintreff?: boolean;
-    isAfterwork?: boolean;
-    isWeinfeste?: boolean;
-    isWeinproben?: boolean;
-    isWeinWeiter?: boolean;
-    isWeinRaetselTour?: boolean;
-}
+import { Event } from '@/lib/types';
 
 export const getEvents = (t: (key: string) => string): Event[] => [
     {

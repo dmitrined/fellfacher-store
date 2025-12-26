@@ -4,7 +4,7 @@
  */
 "use client";
 import React from "react";
-import { Truck } from "../../../icon-sets";
+import { Truck } from "@/app/icon-sets";
 
 interface TopBarProps {
     t: (key: string) => string;

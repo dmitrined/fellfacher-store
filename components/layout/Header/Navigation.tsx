@@ -5,7 +5,7 @@
 "use client";
 import React from "react";
 import Link from "next/link";
-import { ChevronDown } from "../../../icon-sets";
+import { ChevronDown } from "@/app/icon-sets";
 
 interface NavigationProps {
     t: (key: string) => string;
@@ -152,7 +152,7 @@ const Navigation: React.FC<NavigationProps> = ({
                 isOpen={moreMenuOpen}
                 setOpen={setMoreMenuOpen}
                 menuRef={moreMenuRef}
-                path="/catalog"
+                path="/shop"
             />
 
             {/* Events Dropdown */}

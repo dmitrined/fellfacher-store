@@ -5,11 +5,11 @@
 "use client";
 import React from "react";
 import Link from "next/link";
-import { ShoppingCart, Minus, Plus, Trash, ArrowRight } from "../../../icon-sets";
+import { ShoppingCart, Minus, Plus, Trash, ArrowRight } from "@/app/icon-sets";
 
 interface CartDropdownProps {
     t: (key: string) => string;
-    cart: any[];
+    cart: { id: string; quantity: number }[];
     wines: any[];
     getCartCount: () => number;
     totalPrice: number;
@@ -55,7 +55,7 @@ const CartDropdown: React.FC<CartDropdownProps> = ({
                 ) : (
                     <div className="space-y-4 max-h-[40vh] overflow-y-auto no-scrollbar mb-6">
                         {cart.map((item) => {
-                            const wine = wines.find((w) => w.id === item.id);
+                            const wine = wines.find((w: any) => w.id === item.id);
                             if (!wine) return null;
                             return (
                                 <div key={item.id} className="flex gap-4 group">

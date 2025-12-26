@@ -5,13 +5,14 @@
  * Здесь отображаются последние заказы, список избранных вин и информация о профиле.
  */
 import React, { useState } from 'react';
-import { useAuth } from '@/lib/AuthContext';
-import { useOrders } from '@/lib/OrdersContext';
-import { useWishlist } from '@/lib/WishlistContext';
+import { useAuth } from '@/lib/contexts/AuthContext';
+import { useOrders } from '@/lib/contexts/OrdersContext';
+import { useWishlist } from '@/lib/contexts/WishlistContext';
 import { useTranslation } from '@/lib/i18n';
-import { wines, Wine } from '@/lib/data/wines';
-import WineCard from '@/app/components/Wine/WineCard';
-import { useCart } from '@/lib/CartContext';
+import { wines } from '@/lib/data/wines';
+import { Wine } from '@/lib/types';
+import WineCard from '@/components/wine/WineCard';
+import { useCart } from '@/lib/contexts/CartContext';
 import {
     Package,
     Heart,

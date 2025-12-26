@@ -9,11 +9,11 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { Star, MessageSquare, Heart } from 'lucide-react';
 import { ShoppingCart, Plus, Minus } from '@/app/icon-sets';
-import { Wine } from '@/lib/data/wines';
+import { Wine } from '@/lib/types';
 import { useTranslation } from '@/lib/i18n';
-import { useWishlist } from '@/lib/WishlistContext';
-import { useCart } from '@/lib/CartContext';
-import { useAuth } from '@/lib/AuthContext';
+import { useWishlist } from '@/lib/contexts/WishlistContext';
+import { useCart } from '@/lib/contexts/CartContext';
+import { useAuth } from '@/lib/contexts/AuthContext';
 
 interface WineCardProps {
     wine: Wine;
@@ -51,7 +51,7 @@ const WineCard: React.FC<WineCardProps> = ({ wine }) => {
                 </button>
             </div>
 
-            <Link href={`/catalog/${wine.id}`} className="flex flex-col h-full">
+            <Link href={`/shop/${wine.id}`} className="flex flex-col h-full">
                 {/* Image Section */}
                 <div className="relative h-64 w-full bg-zinc-50 dark:bg-zinc-800 p-4 transition-colors group-hover:bg-white dark:group-hover:bg-zinc-900 flex items-center justify-center">
                     {!imageError ? (

@@ -5,7 +5,7 @@
 "use client";
 import React from "react";
 import Link from "next/link";
-import { Facebook, Twitter, Instagram } from "../../../icon-sets";
+import { Facebook, Twitter, Instagram } from "@/app/icon-sets";
 
 interface SocialLinksProps {
     className?: string;

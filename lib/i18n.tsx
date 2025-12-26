@@ -237,6 +237,7 @@ const translations: Translations = {
     events_register: { de: "Jetzt anmelden", en: "Register Now" },
     events_date: { de: "Datum", en: "Date" },
     events_location: { de: "Ort", en: "Location" },
+    events_all_events: { de: "Alle Events", en: "All Events" },
     event_kellerblicke: { de: "Kellerblicke", en: "Cellar Views" },
     event_weinfeste: { de: "Weinfeste", en: "Wine Festivals" },
     event_weinproben: { de: "Weinproben", en: "Wine Tastings" },

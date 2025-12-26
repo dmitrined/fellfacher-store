@@ -1,20 +1,5 @@
-/**
- * Моковые данные для каталога вин.
- * Содержит информацию о названии, годе, типе, цене и характеристиках каждой позиции.
- */
-export interface Wine {
-    id: string;
-    name: string;
-    year: number;
-    type: 'Rotwein' | 'Weißwein' | 'Roséwein' | 'Sekt' | 'Alkoholfrei';
-    grapeVariety: string;
-    price: number;
-    image: string;
-    description: string;
-    alcohol: string;
-    acidity: string;
-    sugar: string;
-}
+import { Wine } from '@/lib/types';
+
 
 export const wines: Wine[] = [
     {

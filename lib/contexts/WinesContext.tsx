@@ -1,7 +1,8 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { Wine, wines as mockWines } from '@/lib/data/wines';
+import { wines as mockWines } from '@/lib/data/wines';
+import { Wine } from '@/lib/types';
 
 /**
  * Контекст для управления списком вин (из API или моковых данных).

@@ -6,6 +6,8 @@
 import React from "react";
 import Link from "next/link";
 
+import { CONTACT_PHONE, CONTACT_EMAIL, CONTACT_ADDRESS } from "@/lib/constants/contact";
+
 interface ContactInfoProps {
     t: (key: string) => string;
 }
@@ -17,27 +19,28 @@ const ContactInfo: React.FC<ContactInfoProps> = ({ t }) => {
                 {t("footer_contact_title")}
             </h3>
             <div className="space-y-4 text-sm">
-                <p className="text-zinc-400 leading-relaxed">{t("footer_address")}</p>
+                <div className="text-zinc-400 leading-relaxed font-bold">
+                    <p>{CONTACT_ADDRESS.name}</p>
+                    <p>{CONTACT_ADDRESS.street}</p>
+                    <p>{CONTACT_ADDRESS.city}</p>
+                </div>
                 <div className="space-y-1 font-bold">
                     <p className="text-zinc-400">
                         {t("footer_phone_label")}{" "}
                         <a
-                            href={`tel:${t("footer_phone_value")}`}
+                            href={`tel:${CONTACT_PHONE.replace(/\s/g, "")}`}
                             className="text-white hover:text-wine-gold transition-colors"
                         >
-                            {t("footer_phone_value")}
+                            {CONTACT_PHONE}
                         </a>
-                    </p>
-                    <p className="text-zinc-400">
-                        {t("footer_fax_label")} <span className="text-white">{t("footer_fax_value")}</span>
                     </p>
                 </div>
                 <p>
                     <a
-                        href={`mailto:${t("footer_email")}`}
+                        href={`mailto:${CONTACT_EMAIL}`}
                         className="text-white hover:text-wine-gold transition-colors font-bold underline underline-offset-4 decoration-wine-gold/30 hover:decoration-wine-gold"
                     >
-                        {t("footer_email")}
+                        {CONTACT_EMAIL}
                     </a>
                 </p>
                 <Link

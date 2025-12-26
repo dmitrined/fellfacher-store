@@ -6,7 +6,7 @@
  */
 import React from "react";
 import Link from "next/link";
-import { Search, User as UserIcon, Heart, ShoppingCart } from "../../../icon-sets";
+import { Search, User as UserIcon, Heart, ShoppingCart } from "@/app/icon-sets";
 
 interface HeaderActionsProps {
     isLoggedIn: boolean;

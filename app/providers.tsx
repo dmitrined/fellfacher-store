@@ -2,11 +2,11 @@
 
 import { HeroUIProvider } from "@heroui/react";
 import { LanguageProvider } from "@/lib/i18n";
-import { WishlistProvider } from '@/lib/WishlistContext';
-import { CartProvider } from '@/lib/CartContext';
-import { AuthProvider } from '@/lib/AuthContext';
-import { OrdersProvider } from '@/lib/OrdersContext';
-import { WinesProvider } from '@/lib/WinesContext';
+import { WishlistProvider } from '@/lib/contexts/WishlistContext';
+import { CartProvider } from '@/lib/contexts/CartContext';
+import { AuthProvider } from '@/lib/contexts/AuthContext';
+import { OrdersProvider } from '@/lib/contexts/OrdersContext';
+import { WinesProvider } from '@/lib/contexts/WinesContext';
 
 /**
  * Компонент-обертка для всех контекст-провайдеров приложения.

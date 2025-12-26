@@ -11,16 +11,16 @@ import React from 'react';
 import { useParams } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
-import { WineDetailImage } from '@/app/components/Wine/WineDetailImage';
-import { WineDetailHeader } from '@/app/components/Wine/WineDetailHeader';
-import { WineDetailExperience } from '@/app/components/Wine/WineDetailExperience';
-import { WineDetailStats } from '@/app/components/Wine/WineDetailStats';
-import { WineDetailPurchase } from '@/app/components/Wine/WineDetailPurchase';
+import { WineDetailImage } from '@/components/wine/WineDetailImage';
+import { WineDetailHeader } from '@/components/wine/WineDetailHeader';
+import { WineDetailExperience } from '@/components/wine/WineDetailExperience';
+import { WineDetailStats } from '@/components/wine/WineDetailStats';
+import { WineDetailPurchase } from '@/components/wine/WineDetailPurchase';
 import { useTranslation } from '@/lib/i18n';
-import { useWishlist } from '@/lib/WishlistContext';
-import { useCart } from '@/lib/CartContext';
-import { useAuth } from '@/lib/AuthContext';
-import { useWines } from '@/lib/WinesContext';
+import { useWishlist } from '@/lib/contexts/WishlistContext';
+import { useCart } from '@/lib/contexts/CartContext';
+import { useAuth } from '@/lib/contexts/AuthContext';
+import { useWines } from '@/lib/contexts/WinesContext';
 
 export default function WineDetailPage() {
     const { t } = useTranslation();
@@ -30,8 +30,8 @@ export default function WineDetailPage() {
     const { getWineById, isLoading } = useWines(); // Берем вино из глобального контекста
 
     const params = useParams();
-    const id = params.id as string;
-    const wine = getWineById(id);
+    const wineId = params.wineId as string;
+    const wine = getWineById(wineId);
 
     const isFavorite = wine ? isInWishlist(wine.id) : false;
 
@@ -49,7 +49,7 @@ export default function WineDetailPage() {
             <div className="min-h-screen flex items-center justify-center bg-white dark:bg-zinc-950">
                 <div className="text-center">
                     <h2 className="text-2xl font-bold mb-4 dark:text-white">{t("no_wines_found")}</h2>
-                    <Link href="/catalog" className="text-wine-gold font-bold hover:underline">{t("back_to_collection")}</Link>
+                    <Link href="/shop" className="text-wine-gold font-bold hover:underline">{t("back_to_collection")}</Link>
                 </div>
             </div>
         );
@@ -60,7 +60,7 @@ export default function WineDetailPage() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Навигация назад */}
                 <Link
-                    href="/catalog"
+                    href="/shop"
                     className="inline-flex items-center text-zinc-500 hover:text-wine-gold transition-colors mb-8 md:mb-12 group"
                 >
                     <ArrowLeft className="w-5 h-5 mr-4 group-hover:-translate-x-1 transition-transform" />

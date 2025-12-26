@@ -4,7 +4,7 @@
  * Появляется при нажатии на иконку поиска в шапке и позволяет вводить поисковый запрос.
  */
 import React from "react";
-import { Search, Close } from "../../../icon-sets";
+import { Search, Close } from "@/app/icon-sets";
 
 interface SearchOverlayProps {
     t: (key: string) => string;

@@ -2,14 +2,14 @@
 "use client";
 
 import Link from 'next/link';
-import WineCard from './components/Wine/WineCard';
+import WineCard from '@/components/wine/WineCard';
 import { ArrowRight, ShieldCheck, Truck, Award, Calendar, MapPin, Users, Clock, Star } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n';
-import { useWines } from '@/lib/WinesContext';
-import { useAuth } from '@/lib/AuthContext';
+import { useWines } from '@/lib/contexts/WinesContext';
+import { useAuth } from '@/lib/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 
-import { getEvents } from './events/events';
+import { getEvents } from '@/lib/data/events';
 
 /**
  * Главная страница приложения.
@@ -43,7 +43,7 @@ export default function Home() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Link
-                href="/catalog"
+                href="/shop"
                 className="inline-flex items-center justify-center px-8 py-4 bg-wine-gold hover:bg-white text-wine-dark font-bold rounded-full transition-all duration-300 transform hover:scale-105 shadow-xl shadow-wine-gold/20 group text-sm md:text-base"
               >
                 {t("hero_cta")}

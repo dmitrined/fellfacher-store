@@ -5,7 +5,7 @@
  */
 import React from 'react';
 import { Heart, ShieldCheck } from 'lucide-react';
-import { Wine } from '@/lib/data/wines';
+import { Wine } from '@/lib/types';
 
 // Интерфейс для блока покупки
 interface WineDetailPurchaseProps {

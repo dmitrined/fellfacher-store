@@ -7,12 +7,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "@/lib/i18n";
-import { useWishlist } from "@/lib/WishlistContext";
-import { useCart } from "@/lib/CartContext";
-import { useAuth } from "@/lib/AuthContext";
+import { useWishlist } from "@/lib/contexts/WishlistContext";
+import { useCart } from "@/lib/contexts/CartContext";
+import { useAuth } from "@/lib/contexts/AuthContext";
 import { wines } from "@/lib/data/wines";
-import AuthModal from "./AuthModal";
-import { Menu } from "../../icon-sets";
+import AuthModal from "../login/AuthModal";
+import { Menu } from "@/app/icon-sets";
 import TopBar from "./Header/TopBar";
 import Navigation from "./Header/Navigation";
 import HeaderActions from "./Header/HeaderActions";
@@ -58,15 +58,16 @@ const Header: React.FC = () => {
   ];
 
   const shopCategories = [
-    { label: t("nav_all_wines"), path: "/catalog" },
-    { label: t("nav_red_wines"), path: "/catalog?type=Rotwein" },
-    { label: t("nav_white_wines"), path: "/catalog?type=Weißwein" },
-    { label: t("wine_type_rose"), path: "/catalog?type=Roséwein" },
-    { label: t("wine_type_sparkling"), path: "/catalog?type=Sekt" },
-    { label: t("wine_type_alcohol_free"), path: "/catalog?type=Alkoholfrei" },
+    { label: t("nav_all_wines"), path: "/shop" },
+    { label: t("nav_red_wines"), path: "/shop?type=Rotwein" },
+    { label: t("nav_white_wines"), path: "/shop?type=Weißwein" },
+    { label: t("wine_type_rose"), path: "/shop?type=Roséwein" },
+    { label: t("wine_type_sparkling"), path: "/shop?type=Sekt" },
+    { label: t("wine_type_alcohol_free"), path: "/shop?type=Alkoholfrei" },
   ];
 
   const eventCategories = [
+    { label: t("events_all_events"), path: "/events" },
     { label: t("event_kellerblicke"), path: "/events/kellerblicke" },
     { label: t("event_weinfeste"), path: "/events/weinfeste" },
     { label: t("event_weinproben"), path: "/events/weinproben" },
@@ -80,10 +81,6 @@ const Header: React.FC = () => {
     { label: t("about_we_about_us"), path: "/aboutUs/whoWeAre" },
     { label: t("about_team"), path: "/aboutUs/ourTeam" },
     { label: t("about_next_generation"), path: "/aboutUs/nextGeneration" },
-    { label: t("about_awards"), path: "/#" },
-    { label: t("about_worth_reading"), path: "/#" },
-    { label: t("about_partners"), path: "/#" },
-    { label: t("about_business_vfb"), path: "/#" },
   ];
 
   const contactCategories = [
@@ -128,15 +125,15 @@ const Header: React.FC = () => {
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchTerm.trim()) {
-      router.push(`/catalog?search=${encodeURIComponent(searchTerm)}`);
+      router.push(`/shop?search=${encodeURIComponent(searchTerm)}`);
       setSearchOpen(false);
     }
   };
 
   // Вычисление общей стоимости корзины "на лету"
   // Проходит по всем товарам в корзине, находит их цену в базе вин и суммирует.
-  const totalPrice = cart.reduce((total, item) => {
-    const wine = wines.find((w) => w.id === item.id);
+  const totalPrice = cart.reduce((total: number, item: { id: string; quantity: number }) => {
+    const wine = wines.find((w: any) => w.id === item.id);
     return total + (wine ? wine.price * item.quantity : 0);
   }, 0);
 

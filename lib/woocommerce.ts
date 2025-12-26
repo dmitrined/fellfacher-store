@@ -3,19 +3,8 @@
  * Все запросы выполняются на стороне сервера, чтобы скрыть ключи API (Consumer Key/Secret).
  */
 
-export interface Wine {
-    id: string;
-    name: string;
-    year: number;
-    type: 'Rotwein' | 'Weißwein' | 'Roséwein' | 'Sekt' | 'Alkoholfrei';
-    grapeVariety: string;
-    price: number;
-    image: string;
-    description: string;
-    alcohol: string;
-    acidity: string;
-    sugar: string;
-}
+import { Wine } from '@/lib/types';
+
 
 // Переменные окружения берутся из .env.local
 const WC_URL = process.env.NEXT_PUBLIC_WC_URL;
