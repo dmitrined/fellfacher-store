@@ -1,24 +1,15 @@
 /**
  * Мобильное меню навигации.
- * Появляется на смартфонах и планшетах, предоставляя доступ к категориям товаров и разделам сайта.
+ * Появляется при нажатии на "Mehr" в нижней навигации.
  */
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { Close, ArrowRight, ChevronDown } from "@/app/icon-sets";
 import Logo from "@/components/layout/Logo";
-import { useState } from "react";
-
-interface MobileMenuProps {
-    t: (key: string) => string;
-    mobileOpen: boolean;
-    setMobileOpen: (open: boolean) => void;
-    navigationItems: Array<{ label: string; path: string }>;
-    shopCategories: Array<{ label: string; path: string }>;
-    eventCategories: Array<{ label: string; path: string }>;
-    aboutCategories: Array<{ label: string; path: string }>;
-    contactCategories: Array<{ label: string; path: string }>;
-}
+import { useTranslation } from "@/lib/i18n";
+import { useUI } from "@/lib/contexts/UIContext";
+import { getNavigationData } from "@/lib/constants/navigation";
 
 const MobileMenuSection: React.FC<{
     title: string;
@@ -50,19 +41,20 @@ const MobileMenuSection: React.FC<{
     );
 };
 
-const MobileMenu: React.FC<MobileMenuProps> = ({
-    t,
-    mobileOpen,
-    setMobileOpen,
-    navigationItems,
-    shopCategories,
-    eventCategories,
-    aboutCategories,
-    contactCategories,
-}) => {
+const MobileMenu: React.FC = () => {
+    const { t, language, setLanguage } = useTranslation();
+    const { isMobileMenuOpen, setMobileMenuOpen } = useUI();
     const [openSection, setOpenSection] = useState<string | null>(null);
 
-    if (!mobileOpen) return null;
+    const {
+        navigationItems,
+        shopCategories,
+        eventCategories,
+        aboutCategories,
+        contactCategories
+    } = getNavigationData(t);
+
+    if (!isMobileMenuOpen) return null;
 
     const toggleSection = (section: string) => {
         setOpenSection(openSection === section ? null : section);
@@ -72,13 +64,14 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
         <div className="fixed inset-0 lg:hidden z-[100]">
             <div
                 className="absolute inset-0 bg-zinc-950/80 backdrop-blur-sm animate-in fade-in duration-500"
-                onClick={() => setMobileOpen(false)}
+                onClick={() => setMobileMenuOpen(false)}
             />
             <div className="absolute left-0 top-0 h-full w-[85%] max-w-sm bg-white dark:bg-zinc-950 p-8 shadow-[20px_0_50px_rgba(0,0,0,0.3)] animate-in slide-in-from-left duration-500 flex flex-col overflow-y-auto">
                 <div className="flex items-center justify-between mb-8 border-b border-zinc-100 dark:border-zinc-900 pb-6 flex-shrink-0">
-                    <Logo onClick={() => setMobileOpen(false)} />
+                    <Logo onClick={() => setMobileMenuOpen(false)} />
+
                     <button
-                        onClick={() => setMobileOpen(false)}
+                        onClick={() => setMobileMenuOpen(false)}
                         className="p-2 hover:bg-zinc-100 dark:hover:bg-zinc-900 rounded-full transition-colors"
                         aria-label="Close menu"
                     >
@@ -87,14 +80,13 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
                 </div>
 
                 <nav className="flex flex-col flex-1">
-                    {/* Main Navigation Items */}
                     <div className="flex flex-col gap-4 mb-6">
                         {navigationItems.map((item, idx) => (
                             <Link
                                 key={item.label}
                                 href={item.path}
                                 className="text-2xl font-black serif dark:text-white hover:text-wine-gold transition-all duration-300"
-                                onClick={() => setMobileOpen(false)}
+                                onClick={() => setMobileMenuOpen(false)}
                                 style={{ animationDelay: `${idx * 100}ms` }}
                             >
                                 {item.label}
@@ -113,7 +105,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
                                     key={item.label}
                                     href={item.path}
                                     className="text-base font-medium text-zinc-600 dark:text-zinc-400 hover:text-wine-gold transition-colors flex items-center justify-between group py-1"
-                                    onClick={() => setMobileOpen(false)}
+                                    onClick={() => setMobileMenuOpen(false)}
                                 >
                                     {item.label}
                                     <ArrowRight className="w-3.5 h-3.5 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-wine-gold" />
@@ -126,26 +118,16 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
                             isOpen={openSection === "events"}
                             onToggle={() => toggleSection("events")}
                         >
-
                             {eventCategories.map((item) => (
-                                item.path === '#' || item.path === '' ? (
-                                    <div
-                                        key={item.label}
-                                        className="text-base font-medium text-zinc-400 dark:text-zinc-600 cursor-not-allowed flex items-center justify-between py-1"
-                                    >
-                                        {item.label}
-                                    </div>
-                                ) : (
-                                    <Link
-                                        key={item.label}
-                                        href={item.path}
-                                        className="text-base font-medium text-zinc-600 dark:text-zinc-400 hover:text-wine-gold transition-colors flex items-center justify-between group py-1"
-                                        onClick={() => setMobileOpen(false)}
-                                    >
-                                        {item.label}
-                                        <ArrowRight className="w-3.5 h-3.5 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-wine-gold" />
-                                    </Link>
-                                )
+                                <Link
+                                    key={item.label}
+                                    href={item.path}
+                                    className="text-base font-medium text-zinc-600 dark:text-zinc-400 hover:text-wine-gold transition-colors flex items-center justify-between group py-1"
+                                    onClick={() => setMobileMenuOpen(false)}
+                                >
+                                    {item.label}
+                                    <ArrowRight className="w-3.5 h-3.5 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-wine-gold" />
+                                </Link>
                             ))}
                         </MobileMenuSection>
 
@@ -155,24 +137,15 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
                             onToggle={() => toggleSection("about")}
                         >
                             {aboutCategories.map((item) => (
-                                item.path === '#' || item.path === '' ? (
-                                    <div
-                                        key={item.label}
-                                        className="text-base font-medium text-zinc-400 dark:text-zinc-600 cursor-not-allowed flex items-center justify-between py-1"
-                                    >
-                                        {item.label}
-                                    </div>
-                                ) : (
-                                    <Link
-                                        key={item.label}
-                                        href={item.path}
-                                        className="text-base font-medium text-zinc-600 dark:text-zinc-400 hover:text-wine-gold transition-colors flex items-center justify-between group py-1"
-                                        onClick={() => setMobileOpen(false)}
-                                    >
-                                        {item.label}
-                                        <ArrowRight className="w-3.5 h-3.5 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-wine-gold" />
-                                    </Link>
-                                )
+                                <Link
+                                    key={item.label}
+                                    href={item.path}
+                                    className="text-base font-medium text-zinc-600 dark:text-zinc-400 hover:text-wine-gold transition-colors flex items-center justify-between group py-1"
+                                    onClick={() => setMobileMenuOpen(false)}
+                                >
+                                    {item.label}
+                                    <ArrowRight className="w-3.5 h-3.5 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-wine-gold" />
+                                </Link>
                             ))}
                         </MobileMenuSection>
 
@@ -182,30 +155,45 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
                             onToggle={() => toggleSection("contact")}
                         >
                             {contactCategories.map((item) => (
-                                item.path === '#' || item.path === '' ? (
-                                    <div
-                                        key={item.label}
-                                        className="text-base font-medium text-zinc-400 dark:text-zinc-600 cursor-not-allowed flex items-center justify-between py-1"
-                                    >
-                                        {item.label}
-                                    </div>
-                                ) : (
-                                    <Link
-                                        key={item.label}
-                                        href={item.path}
-                                        className="text-base font-medium text-zinc-600 dark:text-zinc-400 hover:text-wine-gold transition-colors flex items-center justify-between group py-1"
-                                        onClick={() => setMobileOpen(false)}
-                                    >
-                                        {item.label}
-                                        <ArrowRight className="w-3.5 h-3.5 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-wine-gold" />
-                                    </Link>
-                                )
+                                <Link
+                                    key={item.label}
+                                    href={item.path}
+                                    className="text-base font-medium text-zinc-600 dark:text-zinc-400 hover:text-wine-gold transition-colors flex items-center justify-between group py-1"
+                                    onClick={() => setMobileMenuOpen(false)}
+                                >
+                                    {item.label}
+                                    <ArrowRight className="w-3.5 h-3.5 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-wine-gold" />
+                                </Link>
                             ))}
                         </MobileMenuSection>
                     </div>
+
+                    <div className="mt-12 pt-8 border-t border-zinc-100 dark:border-zinc-900 flex-shrink-0">
+                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 mb-4 px-1">
+                            {t("select_language")}
+                        </p>
+                        <div className="flex gap-4">
+                            <button
+                                onClick={() => setLanguage("de")}
+                                className={`px-5 py-3 rounded-2xl text-xs font-black tracking-widest transition-all ${language === "de"
+                                    ? "bg-wine-gold text-white shadow-lg shadow-wine-gold/20"
+                                    : "bg-zinc-100 dark:bg-zinc-900 text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100"
+                                    }`}
+                            >
+                                DEUTSCH
+                            </button>
+                            <button
+                                onClick={() => setLanguage("en")}
+                                className={`px-5 py-3 rounded-2xl text-xs font-black tracking-widest transition-all ${language === "en"
+                                    ? "bg-wine-gold text-white shadow-lg shadow-wine-gold/20"
+                                    : "bg-zinc-100 dark:bg-zinc-900 text-zinc-500 hover:text-wine-dark dark:hover:text-zinc-100"
+                                    }`}
+                            >
+                                ENGLISH
+                            </button>
+                        </div>
+                    </div>
                 </nav>
-
-
             </div>
         </div>
     );

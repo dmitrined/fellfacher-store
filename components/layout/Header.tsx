@@ -1,9 +1,11 @@
+/**
+ * Назначение файла: Главный компонент шапки сайта (Header).
+ * Зависимости: Next.js, HeroUI, Lucide React, i18n Context, Auth/Cart/Wishlist Contexts.
+ * Особенности: Client Component, Sticky, Responsive (Desktop-first navigation inside, simplified for mobile).
+ */
+
 "use client";
 
-/**
- * Главный компонент шапки сайта.
- * Содержит логотип, основную навигацию, поиск, корзину и управление пользовательской сессией.
- */
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "@/lib/i18n";
@@ -12,14 +14,15 @@ import { useCart } from "@/lib/contexts/CartContext";
 import { useAuth } from "@/lib/contexts/AuthContext";
 import { wines } from "@/lib/data/wines";
 import AuthModal from "../login/AuthModal";
-import { Menu } from "@/app/icon-sets";
 import TopBar from "./Header/TopBar";
 import Navigation from "./Header/Navigation";
 import HeaderActions from "./Header/HeaderActions";
 import CartDropdown from "./Header/CartDropdown";
 import SearchOverlay from "./Header/SearchOverlay";
-import MobileMenu from "./Header/MobileMenu";
 import Logo from "./Logo";
+
+
+
 
 const Header: React.FC = () => {
   // Хуки для перевода, состояния списков и данных пользователя
@@ -29,8 +32,8 @@ const Header: React.FC = () => {
   const { isLoggedIn, user, isAuthModalOpen, setAuthModalOpen } = useAuth();
 
   // Состояния для управления открытием различных меню и модалок
-  const [mobileOpen, setMobileOpen] = useState(false); // Мобильное меню
   const [searchOpen, setSearchOpen] = useState(false); // Прямой поиск
+
   const [moreMenuOpen, setMoreMenuOpen] = useState(false); // Выпадающее меню "Магазин"
   const [cartDropdownOpen, setCartDropdownOpen] = useState(false); // Предпросмотр корзины
   const [searchTerm, setSearchTerm] = useState(""); // Текст поиска
@@ -139,23 +142,19 @@ const Header: React.FC = () => {
 
   return (
     <>
-      {/* Верхняя тонкая полоса с выбором языка и промо-текстом */}
-      <TopBar t={t} language={language} setLanguage={setLanguage} />
+      {/* Верхняя тонкая полоса с выбором языка и промо-текстом (скрыта на мобильных) */}
+      <div className="hidden md:block">
+        <TopBar t={t} language={language} setLanguage={setLanguage} />
+      </div>
+
 
       <header className="sticky top-0 z-50 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-xl border-b border-zinc-200 dark:border-zinc-800 px-4 md:px-10">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-between py-4 md:py-6">
             <div className="flex items-center gap-8">
-              {/* Кнопка гамбургер для мобильных устройств */}
-              <button
-                className="lg:hidden p-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-full transition-colors"
-                onClick={() => setMobileOpen(!mobileOpen)}
-              >
-                <Menu className="w-6 h-6 dark:text-zinc-300" />
-              </button>
-
               {/* Логотип компании */}
               <Logo />
+
 
               {/* Основная навигация (Десктоп) */}
               <Navigation
@@ -229,17 +228,9 @@ const Header: React.FC = () => {
         )}
       </header>
 
-      {/* Мобильное меню (гамбургер) */}
-      <MobileMenu
-        t={t}
-        mobileOpen={mobileOpen}
-        setMobileOpen={setMobileOpen}
-        navigationItems={navigationItems}
-        shopCategories={shopCategories}
-        eventCategories={eventCategories}
-        aboutCategories={aboutCategories}
-        contactCategories={contactCategories}
-      />
+
+
+
 
       {/* Модальное окно входа / регистрации */}
       <AuthModal isOpen={isAuthModalOpen} onClose={() => setAuthModalOpen(false)} />

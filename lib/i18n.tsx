@@ -1,8 +1,10 @@
 "use client";
 /**
- * Система международной локализации (i18n).
- * Содержит словари переводов для немецкого и английского языков и функцию для их получения.
+ * Назначение файла: Система международной локализации (i18n).
+ * Зависимости: React Context.
+ * Особенности: Client Component, поддержка DE/EN, сохранение в localStorage.
  */
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 // Доступные языки в приложении
@@ -52,6 +54,17 @@ const translations: Translations = {
     shipping_info: { de: "Versandinformationen", en: "Shipping Information" },
     gift_cards: { de: "Geschenkkarten", en: "Gift Cards" },
     find_us: { de: "Finde uns", en: "Find Us" },
+    bottom_nav_home: { de: "Home", en: "Home" },
+    bottom_nav_shop: { de: "Shop", en: "Shop" },
+    bottom_nav_events: { de: "Events", en: "Events" },
+    bottom_nav_cart: { de: "Warenkorb", en: "Cart" },
+    bottom_nav_profile: { de: "Konto", en: "Account" },
+    select_language: { de: "Sprache wählen", en: "Select Language" },
+    bottom_nav_more: { de: "Mehr", en: "More" },
+    bottom_nav_mycode: { de: "MyCode", en: "MyCode" },
+
+
+
 
     // Home Page (Главная страница)
     hero_title_1: { de: "Tradition", en: "Tradition" },

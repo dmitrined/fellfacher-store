@@ -1,16 +1,21 @@
-import type { Metadata } from "next";
+/**
+ * Назначение файла: Корневой макет приложения (Root Layout).
+ * Зависимости: Next.js, HeroUI, Lucide React, Framer Motion, Context Providers.
+ * Особенности: Server Component, PWA Ready, Mobile-first metadata.
+ */
+
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import BottomNav from "@/components/layout/BottomNav";
+import MobileMenu from "@/components/layout/Header/MobileMenu";
 
-/**
- * Корневой макет приложения.
- * Здесь определяются шрифты, метаданные и общая структура страницы (шапка, подвал, провайдеры).
- */
 
 // Настройка современного шрифта без засечек Geist
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -29,10 +34,28 @@ const playfair = Playfair_Display({
   weight: ["400", "700", "900"],
 });
 
-// Глобальные метаданные для SEO и заголовка вкладки браузера
+// Настройки вьюпорта для мобильных устройств (PWA)
+export const viewport: Viewport = {
+  themeColor: "#000000",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+};
+
+// Глобальные метаданные для SEO и PWA
 export const metadata: Metadata = {
   title: "Fellbacher Weine | Premium Wine Catalog",
   description: "Discover the finest wines from Fellbacher Weingärtner eG. Browse, rate, and find your perfect pair.",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Fellbacher",
+  },
+  formatDetection: {
+    telephone: false,
+  },
 };
 
 export default function RootLayout({
@@ -52,12 +75,21 @@ export default function RootLayout({
           <Header />
           {/* Основной контент страницы */}
           <main>
+
             {children}
           </main>
           {/* Глобальный футер с контактной информацией */}
           <Footer />
+
+          {/* Глобальное мобильное меню */}
+          <MobileMenu />
+
+          {/* Нижняя навигация для мобильных устройств */}
+          <BottomNav />
         </Providers>
       </body>
     </html>
+
+
   );
 }

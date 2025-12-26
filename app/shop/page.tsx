@@ -1,9 +1,11 @@
+/**
+ * Назначение файла: Страница каталога вин (Shop).
+ * Зависимости: HeroUI, Lucide React, i18n Context, Wines Context.
+ * Особенности: Client Component, Фильтрация, Поиск, Скелетоны при загрузке.
+ */
+
 "use client";
 
-/**
- * Страница каталога вин.
- * Позволяет фильтровать вина по типу, искать по названию и сортировать результаты по цене или году.
- */
 
 import React, { useState, useMemo, useEffect, Suspense } from 'react';
 import WineCard from '@/components/wine/WineCard';
@@ -13,6 +15,8 @@ import { useTranslation } from '@/lib/i18n';
 import { Search } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 import { useWines } from '@/lib/contexts/WinesContext';
+import WineCardSkeleton from '@/components/ui/Skeletons/WineCardSkeleton';
+
 
 function CatalogContent() {
     const { t } = useTranslation();
@@ -103,13 +107,20 @@ function CatalogContent() {
                 </div>
 
                 {/* Grid */}
-                {filteredWines.length > 0 ? (
+                {isLoading && filteredWines.length === 0 ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                        {[...Array(8)].map((_, i) => (
+                            <WineCardSkeleton key={i} />
+                        ))}
+                    </div>
+                ) : filteredWines.length > 0 ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
                         {filteredWines.map((wine) => (
                             <WineCard key={wine.id} wine={wine} />
                         ))}
                     </div>
                 ) : (
+
                     <div className="flex flex-col items-center justify-center py-32 text-center">
                         <div className="bg-zinc-100 dark:bg-zinc-900 p-6 rounded-full mb-6">
                             <Search className="w-12 h-12 text-zinc-300 dark:text-zinc-700" />

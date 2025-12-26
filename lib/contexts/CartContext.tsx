@@ -43,13 +43,18 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
     }, []);
 
-    // Очистка корзины при выходе из системы
+    // Реф для отслеживания предыдущего состояния входа, чтобы отличить логаут от начальной загрузки
+    const prevIsLoggedIn = React.useRef(isLoggedIn);
+
+    // Очистка корзины ТОЛЬКО при выходе из системы (переход из true в false)
     useEffect(() => {
-        if (!isLoggedIn) {
+        if (prevIsLoggedIn.current && !isLoggedIn) {
             setCart([]);
             localStorage.removeItem('cart');
         }
+        prevIsLoggedIn.current = isLoggedIn;
     }, [isLoggedIn]);
+
 
     /**
      * Добавление товара в корзину.

@@ -1,11 +1,11 @@
+/**
+ * Назначение файла: Детальная страница вина (Wine Detail).
+ * Зависимости: HeroUI, Lucide React, i18n Context, Wines Context.
+ * Особенности: Client Component, Динамическая маршрутизация ([wineId]), Скелетоны.
+ */
+
 "use client";
 
-/**
- * Детальная страница вина.
- * Получает ID вина из параметров URL, находит соответствующее вино в WinesContext
- * (которое может быть как реальным из API, так и моковым)
- * и отображает его характеристики.
- */
 
 import React from 'react';
 import { useParams } from 'next/navigation';
@@ -21,6 +21,8 @@ import { useWishlist } from '@/lib/contexts/WishlistContext';
 import { useCart } from '@/lib/contexts/CartContext';
 import { useAuth } from '@/lib/contexts/AuthContext';
 import { useWines } from '@/lib/contexts/WinesContext';
+import WineDetailSkeleton from '@/components/ui/Skeletons/WineDetailSkeleton';
+
 
 export default function WineDetailPage() {
     const { t } = useTranslation();
@@ -35,14 +37,11 @@ export default function WineDetailPage() {
 
     const isFavorite = wine ? isInWishlist(wine.id) : false;
 
-    // Если данные еще грузятся, показываем скелетон или спиннер
+    // Если данные еще грузятся, показываем скелетон
     if (isLoading && !wine) {
-        return (
-            <div className="min-h-screen pt-32 flex justify-center bg-white dark:bg-zinc-950">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-wine-dark"></div>
-            </div>
-        );
+        return <WineDetailSkeleton />;
     }
+
 
     if (!wine) {
         return (
