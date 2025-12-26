@@ -70,7 +70,7 @@ export default function QRCodePage() {
                     <div className="mt-10 p-6 bg-wine-dark text-white rounded-2xl relative overflow-hidden group">
                         <div className="relative z-10">
                             <p className="text-[10px] font-black uppercase tracking-[0.2em] text-wine-gold mb-1">
-                                {user.name}
+                               NR ... {user.name} 
                             </p>
                             <p className="text-lg font-black uppercase tracking-widest">
                                 {user.name}

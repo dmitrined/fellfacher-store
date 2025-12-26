@@ -68,15 +68,16 @@ const HeaderActions: React.FC<HeaderActionsProps> = ({
                 <button
                     ref={cartButtonRef}
                     onClick={() => setCartDropdownOpen(!cartDropdownOpen)}
-                    className="p-2 md:p-3 bg-wine-dark text-white rounded-full transition-all hover:scale-105 active:scale-95 shadow-lg shadow-zinc-950/20 relative"
+                    className="p-2 md:p-3 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-full transition-all text-zinc-600 dark:text-zinc-400 hover:text-wine-gold relative"
                 >
                     <ShoppingCart className="w-5 h-5 md:w-6 md:h-6" />
                     {cartCount > 0 && (
-                        <span className="absolute -top-1 -right-1 bg-wine-gold text-[10px] font-black w-4 h-4 flex items-center justify-center rounded-full border-2 border-white dark:border-zinc-950 animate-in zoom-in">
+                        <span className="absolute top-1 right-1 bg-wine-gold text-white text-[10px] font-black w-4 h-4 flex items-center justify-center rounded-full border-2 border-white dark:border-zinc-950 animate-in zoom-in">
                             {cartCount}
                         </span>
                     )}
                 </button>
+
             </div>
 
 
