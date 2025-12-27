@@ -2,13 +2,9 @@
 
 import { HeroUIProvider } from "@heroui/react";
 import { LanguageProvider } from "@/lib/i18n";
-import { WishlistProvider } from '@/lib/contexts/WishlistContext';
-import { CartProvider } from '@/lib/contexts/CartContext';
 import { AuthProvider } from '@/lib/contexts/AuthContext';
 import { OrdersProvider } from '@/lib/contexts/OrdersContext';
 import { WinesProvider } from '@/lib/contexts/WinesContext';
-import { UIProvider } from '@/lib/contexts/UIContext';
-import { BookingProvider } from '@/lib/contexts/BookingContext';
 
 
 /**
@@ -22,24 +18,14 @@ export function Providers({ children }: { children: React.ReactNode }) {
       {/* Провайдер аутентификации (данные пользователя и сессия) */}
       <AuthProvider>
         {/* Провайдер управления историей заказов */}
+        {/* Провайдер управления историей заказов (остался на Context API) */}
         <OrdersProvider>
           {/* Провайдер списка вин (из API или моки) */}
           <WinesProvider>
-            {/* Провайдер списка избранных товаров (wishlist) */}
-            <WishlistProvider>
-              {/* Провайдер корзины (добавление, удаление, расчет цены) */}
-              <CartProvider>
-                {/* Провайдер глобального UI состояния (мобильное меню и др.) */}
-                <UIProvider>
-                  <BookingProvider>
-                    <HeroUIProvider>
-                      {/* Рендеринг дочерних элементов приложения */}
-                      {children}
-                    </HeroUIProvider>
-                  </BookingProvider>
-                </UIProvider>
-              </CartProvider>
-            </WishlistProvider>
+            <HeroUIProvider>
+              {/* Рендеринг дочерних элементов приложения */}
+              {children}
+            </HeroUIProvider>
           </WinesProvider>
         </OrdersProvider>
       </AuthProvider>

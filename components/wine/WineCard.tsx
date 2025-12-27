@@ -11,8 +11,8 @@ import { Star, MessageSquare, Heart } from 'lucide-react';
 import { ShoppingCart, Plus, Minus } from '@/app/icon-sets';
 import { Wine } from '@/lib/types';
 import { useTranslation } from '@/lib/i18n';
-import { useWishlist } from '@/lib/contexts/WishlistContext';
-import { useCart } from '@/lib/contexts/CartContext';
+import { useWishlistStore } from '@/lib/store/useWishlistStore';
+import { useCartStore } from '@/lib/store/useCartStore';
 import { useAuth } from '@/lib/contexts/AuthContext';
 
 interface WineCardProps {
@@ -21,10 +21,21 @@ interface WineCardProps {
 
 const WineCard: React.FC<WineCardProps> = ({ wine }) => {
     const { t } = useTranslation();
-    const { toggleWishlist, isInWishlist } = useWishlist();
-    const { cart, addToCart, isInCart, updateQuantity } = useCart();
+
+    // Migrated from WishlistContext
+    const toggleWishlist = useWishlistStore(state => state.toggleWishlist);
+    const isInWishlist = useWishlistStore(state => state.isInWishlist);
+
+    // Migrated from CartContext
+    // Note: selecting specific actions to avoid unnecessary re-renders
+    const cart = useCartStore(state => state.cart);
+    const addToCart = useCartStore(state => state.addToCart);
+    const isInCart = useCartStore(state => state.isInCart);
+    const updateQuantity = useCartStore(state => state.updateQuantity);
+
     const { isLoggedIn, setAuthModalOpen } = useAuth();
     const [imageError, setImageError] = useState(false);
+
     const isFavorite = isInWishlist(wine.id);
     const inCart = isInCart(wine.id);
     const cartItem = cart.find(item => item.id === wine.id);

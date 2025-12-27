@@ -1,9 +1,10 @@
 /**
- * Компонент для отображения контактной информации в подвале сайта.
- * Показывает адрес, телефон, факс и электронную почту.
+ * Назначение: Компонент для отображения контактной информации в подвале сайта.
+ * Зависимости: React (FC, useState), Link (next/link).
+ * Особенности: Отображение адреса, телефона, электронной почты и ссылки на инструкции.
  */
 "use client";
-import React from "react";
+import React from "react";  
 import Link from "next/link";
 
 import { CONTACT_PHONE, CONTACT_EMAIL, CONTACT_ADDRESS } from "@/lib/constants/contact";

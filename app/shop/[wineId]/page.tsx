@@ -17,8 +17,8 @@ import { WineDetailExperience } from '@/components/wine/WineDetailExperience';
 import { WineDetailStats } from '@/components/wine/WineDetailStats';
 import { WineDetailPurchase } from '@/components/wine/WineDetailPurchase';
 import { useTranslation } from '@/lib/i18n';
-import { useWishlist } from '@/lib/contexts/WishlistContext';
-import { useCart } from '@/lib/contexts/CartContext';
+import { useWishlistStore } from '@/lib/store/useWishlistStore';
+import { useCartStore } from '@/lib/store/useCartStore';
 import { useAuth } from '@/lib/contexts/AuthContext';
 import { useWines } from '@/lib/contexts/WinesContext';
 import WineDetailSkeleton from '@/components/ui/Skeletons/WineDetailSkeleton';
@@ -26,8 +26,14 @@ import WineDetailSkeleton from '@/components/ui/Skeletons/WineDetailSkeleton';
 
 export default function WineDetailPage() {
     const { t } = useTranslation();
-    const { toggleWishlist, isInWishlist } = useWishlist();
-    const { addToCart } = useCart();
+
+    // Migrated from WishlistContext
+    const toggleWishlist = useWishlistStore(state => state.toggleWishlist);
+    const isInWishlist = useWishlistStore(state => state.isInWishlist);
+
+    // Migrated from CartContext
+    const addToCart = useCartStore(state => state.addToCart);
+
     const { isLoggedIn, setAuthModalOpen } = useAuth();
     const { getWineById, isLoading } = useWines(); // Берем вино из глобального контекста
 

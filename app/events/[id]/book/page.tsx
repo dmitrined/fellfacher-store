@@ -10,7 +10,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useTranslation } from '@/lib/i18n';
 import { Calendar, Users, ArrowLeft, CheckCircle2, CreditCard, Minus, Plus } from 'lucide-react';
 import Link from 'next/link';
-import { useBooking } from '@/lib/contexts/BookingContext';
+import { useBookingStore } from '@/lib/store/useBookingStore';
 import { getEvents } from '@/lib/data/events';
 
 export default function BookingPage() {
@@ -18,7 +18,7 @@ export default function BookingPage() {
     const params = useParams();
     const [step, setStep] = useState(1);
     const router = useRouter();
-    const { addBooking } = useBooking();
+    const addBooking = useBookingStore(state => state.addBooking);
 
     const [selectedDate, setSelectedDate] = useState("Fr, 24. Feb");
     const [guestCount, setGuestCount] = useState(2);
@@ -53,16 +53,16 @@ export default function BookingPage() {
                         <CheckCircle2 className="w-20 h-20 text-green-500" />
                     </div>
                     <div>
-                        <h1 className="text-3xl font-black serif dark:text-white mb-4 italic">Vielen Dank!</h1>
+                        <h1 className="text-3xl font-black serif dark:text-white mb-4 italic">{t("booking_success_title")}</h1>
                         <p className="text-zinc-500 dark:text-zinc-400">
-                            Ihre Buchung wurde erfolgreich entgegengenommen. Sie erhalten in Kürze eine Bestätigung per E-Mail.
+                            {t("booking_success_desc")}
                         </p>
                     </div>
                     <Link
                         href="/events"
                         className="inline-block w-full py-5 bg-wine-dark text-white rounded-2xl font-black uppercase tracking-widest hover:bg-wine-gold hover:text-wine-dark transition-all"
                     >
-                        Zurück zu den Events
+                        {t("booking_back_to_events")}
                     </Link>
                 </div>
             </div>
@@ -74,7 +74,7 @@ export default function BookingPage() {
             <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
                 <Link href="/events" className="inline-flex items-center text-zinc-400 hover:text-wine-gold mb-12 transition-colors group">
                     <ArrowLeft className="w-5 h-5 mr-3 group-hover:-translate-x-1 transition-transform" />
-                    <span className="text-[10px] font-black uppercase tracking-widest">Abbrechen</span>
+                    <span className="text-[10px] font-black uppercase tracking-widest">{t("booking_cancel")}</span>
                 </Link>
 
                 <div className="bg-white dark:bg-zinc-900 rounded-[3rem] p-10 md:p-16 border border-zinc-100 dark:border-zinc-800 shadow-2xl">
@@ -116,7 +116,7 @@ export default function BookingPage() {
                                 <div className="flex items-center justify-between p-6 bg-zinc-50 dark:bg-zinc-800 rounded-2xl">
                                     <div className="flex items-center gap-4">
                                         <Users className="w-6 h-6 text-wine-gold" />
-                                        <span className="font-bold dark:text-white">Gäste</span>
+                                        <span className="font-bold dark:text-white">{t("booking_guests")}</span>
                                     </div>
                                     <div className="flex items-center gap-6">
                                         <button
@@ -142,16 +142,16 @@ export default function BookingPage() {
                                 <h3 className="text-xl font-bold dark:text-white mb-6 serif">{t("booking_step_3")}</h3>
                                 <div className="p-8 border-2 border-dashed border-zinc-100 dark:border-zinc-800 rounded-[2rem] space-y-6">
                                     <div className="flex justify-between items-center text-sm font-bold dark:text-white">
-                                        <span>{guestCount}x {event?.title || "Ticket"}</span>
+                                        <span>{guestCount}x {event?.title || t("booking_ticket")}</span>
                                         <span>{totalPrice.toFixed(2)} €</span>
                                     </div>
                                     <div className="flex justify-between items-center text-sm font-bold dark:text-white border-t border-zinc-50 dark:border-zinc-800 pt-6">
-                                        <span>Gesamtbetrag</span>
+                                        <span>{t("booking_total_amount")}</span>
                                         <span className="text-2xl font-black text-wine-gold serif italic">{totalPrice.toFixed(2)} €</span>
                                     </div>
                                     <div className="pt-4 flex items-center gap-3 text-zinc-400">
                                         <CreditCard className="w-5 h-5" />
-                                        <span className="text-[10px] font-bold uppercase tracking-widest">Zahlung vor Ort</span>
+                                        <span className="text-[10px] font-bold uppercase tracking-widest">{t("booking_payment_on_site")}</span>
                                     </div>
                                 </div>
                             </div>
@@ -161,7 +161,7 @@ export default function BookingPage() {
                             onClick={handleNext}
                             className="w-full py-5 bg-wine-dark text-white rounded-2xl font-black uppercase tracking-widest hover:bg-wine-gold hover:text-wine-dark transition-all transform hover:scale-[1.02] active:scale-95 shadow-xl shadow-wine-dark/10"
                         >
-                            {step === 3 ? t("booking_confirm") : "Weiter"}
+                            {step === 3 ? t("booking_confirm") : t("booking_next")}
                         </button>
                     </div>
                 </div>

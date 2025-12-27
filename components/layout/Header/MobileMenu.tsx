@@ -8,7 +8,7 @@ import Link from "next/link";
 import { Close, ArrowRight, ChevronDown } from "@/app/icon-sets";
 import Logo from "@/components/layout/Logo";
 import { useTranslation } from "@/lib/i18n";
-import { useUI } from "@/lib/contexts/UIContext";
+import { useUIStore } from "@/lib/store/useUIStore";
 import { getNavigationData } from "@/lib/constants/navigation";
 
 const MobileMenuSection: React.FC<{
@@ -43,7 +43,10 @@ const MobileMenuSection: React.FC<{
 
 const MobileMenu: React.FC = () => {
     const { t, language, setLanguage } = useTranslation();
-    const { isMobileMenuOpen, setMobileMenuOpen } = useUI();
+    // Migrated to Zustand with selectors
+    const isMobileMenuOpen = useUIStore((state) => state.isMobileMenuOpen);
+    const setMobileMenuOpen = useUIStore((state) => state.setMobileMenuOpen);
+
     const [openSection, setOpenSection] = useState<string | null>(null);
 
     const {

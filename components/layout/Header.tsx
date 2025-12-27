@@ -9,8 +9,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "@/lib/i18n";
-import { useWishlist } from "@/lib/contexts/WishlistContext";
-import { useCart } from "@/lib/contexts/CartContext";
+import { useWishlistStore } from "@/lib/store/useWishlistStore";
+import { useCartStore } from "@/lib/store/useCartStore";
 import { useAuth } from "@/lib/contexts/AuthContext";
 import { wines } from "@/lib/data/wines";
 import AuthModal from "../login/AuthModal";
@@ -27,8 +27,15 @@ import Logo from "./Logo";
 const Header: React.FC = () => {
   // Хуки для перевода, состояния списков и данных пользователя
   const { language, setLanguage, t } = useTranslation();
-  const { wishlist } = useWishlist();
-  const { getCartCount, cart, removeFromCart, updateQuantity } = useCart();
+
+  // Zustand Stores
+  const wishlist = useWishlistStore(state => state.wishlist);
+
+  const getCartCount = useCartStore(state => state.getCartCount);
+  const cart = useCartStore(state => state.cart);
+  const removeFromCart = useCartStore(state => state.removeFromCart);
+  const updateQuantity = useCartStore(state => state.updateQuantity);
+
   const { isLoggedIn, user, isAuthModalOpen, setAuthModalOpen } = useAuth();
 
   // Состояния для управления открытием различных меню и модалок

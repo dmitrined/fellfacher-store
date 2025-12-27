@@ -7,12 +7,12 @@
 import React, { useState } from 'react';
 import { useAuth } from '@/lib/contexts/AuthContext';
 import { useOrders } from '@/lib/contexts/OrdersContext';
-import { useWishlist } from '@/lib/contexts/WishlistContext';
+import { useWishlistStore } from '@/lib/store/useWishlistStore';
 import { useTranslation } from '@/lib/i18n';
 import { wines } from '@/lib/data/wines';
 import { Wine } from '@/lib/types';
 import WineCard from '@/components/wine/WineCard';
-import { useCart } from '@/lib/contexts/CartContext';
+import { useCartStore } from '@/lib/store/useCartStore';
 import {
     Package,
     Heart,
@@ -32,9 +32,12 @@ function DashboardContent() {
     const tabParam = searchParams.get('tab');
     const { user, logout, isLoggedIn } = useAuth();
     const { orders } = useOrders();
-    const { wishlist } = useWishlist();
+    const wishlist = useWishlistStore(state => state.wishlist);
     const wishlistedWines = wines.filter(wine => wishlist.includes(wine.id));
-    const { cart, updateQuantity, removeFromCart } = useCart();
+
+    const cart = useCartStore(state => state.cart);
+    const updateQuantity = useCartStore(state => state.updateQuantity);
+    const removeFromCart = useCartStore(state => state.removeFromCart);
     const cartWines = cart.map(item => {
         const wine = wines.find(w => w.id === item.id);
         return wine ? { ...wine, quantity: item.quantity } : null;

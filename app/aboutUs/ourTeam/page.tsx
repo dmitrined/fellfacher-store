@@ -21,10 +21,10 @@ import { Mail, Phone, User } from 'lucide-react';
 interface TeamMember {
     id: string;
     name: string;
-    descriptionKey: string; 
+    descriptionKey: string;
     phone?: string;
     email?: string;
-    image?: string; 
+    image?: string;
 }
 
 export default function OurTeamPage() {
@@ -115,11 +115,11 @@ export default function OurTeamPage() {
                     {teamMembers.map((member, idx) => (
                         <motion.div
                             key={member.id}
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
+                            initial={{ opacity: 0 }}
+                            whileInView={{ opacity: 1 }}
                             viewport={{ once: true }}
                             transition={{ delay: idx * 0.1, duration: 0.5 }}
-                            className="group bg-zinc-50 dark:bg-zinc-900 rounded-3xl overflow-hidden border border-zinc-100 dark:border-zinc-800 hover:shadow-xl transition-all duration-300"
+                            className="group bg-zinc-50 dark:bg-zinc-900 rounded-3xl overflow-hidden border border-zinc-100 dark:border-zinc-800 md:hover:shadow-xl transition-all duration-300"
                         >
                             {/* Фотография (или заглушка) */}
                             <div className="aspect-[4/5] relative bg-zinc-200 dark:bg-zinc-800 overflow-hidden">
@@ -127,7 +127,7 @@ export default function OurTeamPage() {
                                     <img
                                         src={member.image}
                                         alt={member.name}
-                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                        className="w-full h-full object-cover md:group-hover:scale-105 transition-transform duration-500"
                                     />
                                 ) : (
                                     <div className="absolute inset-0 flex flex-col items-center justify-center text-zinc-400 dark:text-zinc-500">
@@ -153,7 +153,7 @@ export default function OurTeamPage() {
                                 <div className="space-y-3">
                                     {member.phone && (
                                         <div className="flex items-center gap-3 text-zinc-600 dark:text-zinc-400 text-sm group/link">
-                                            <div className="w-8 h-8 rounded-full bg-white dark:bg-zinc-800 flex items-center justify-center text-zinc-400 group-hover/link:text-wine-gold group-hover/link:bg-wine-gold/10 transition-colors">
+                                            <div className="w-8 h-8 rounded-full bg-white dark:bg-zinc-800 flex items-center justify-center text-zinc-400 md:group-hover/link:text-wine-gold md:group-hover/link:bg-wine-gold/10 transition-colors">
                                                 <Phone className="w-4 h-4" />
                                             </div>
                                             <span>{member.phone}</span>
@@ -161,10 +161,10 @@ export default function OurTeamPage() {
                                     )}
                                     {member.email && (
                                         <div className="flex items-center gap-3 text-zinc-600 dark:text-zinc-400 text-sm group/link">
-                                            <div className="w-8 h-8 rounded-full bg-white dark:bg-zinc-800 flex items-center justify-center text-zinc-400 group-hover/link:text-wine-gold group-hover/link:bg-wine-gold/10 transition-colors">
+                                            <div className="w-8 h-8 rounded-full bg-white dark:bg-zinc-800 flex items-center justify-center text-zinc-400 md:group-hover/link:text-wine-gold md:group-hover/link:bg-wine-gold/10 transition-colors">
                                                 <Mail className="w-4 h-4" />
                                             </div>
-                                            <a href={`mailto:${member.email}`} className="hover:text-wine-dark dark:hover:text-white transition-colors truncate">
+                                            <a href={`mailto:${member.email}`} className="md:hover:text-wine-dark md:dark:hover:text-white transition-colors truncate">
                                                 {member.email}
                                             </a>
                                         </div>

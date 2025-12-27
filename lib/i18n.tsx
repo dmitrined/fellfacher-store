@@ -421,6 +421,15 @@ const translations: Translations = {
     booking_step_2: { de: "Personenanzahl", en: "Number of People" },
     booking_step_3: { de: "Bestätigung", en: "Confirmation" },
     booking_confirm: { de: "Buchung abschließen", en: "Complete Booking" },
+    booking_success_title: { de: "Vielen Dank!", en: "Thank You!" },
+    booking_success_desc: { de: "Ihre Buchung wurde erfolgreich entgegengenommen. Sie erhalten in Kürze eine Bestätigung per E-Mail.", en: "Your booking has been successfully received. You will receive a confirmation email shortly." },
+    booking_back_to_events: { de: "Zurück zu den Events", en: "Back to Events" },
+    booking_cancel: { de: "Abbrechen", en: "Cancel" },
+    booking_next: { de: "Weiter", en: "Next" },
+    booking_guests: { de: "Gäste", en: "Guests" },
+    booking_total_amount: { de: "Gesamtbetrag", en: "Total Amount" },
+    booking_payment_on_site: { de: "Zahlung vor Ort", en: "Payment on site" },
+    booking_ticket: { de: "Ticket", en: "Ticket" },
 
     // Wine Types & UI (Типы вин и интерфейс)
     wine_type_rose: { de: "Roséweine", en: "Rosé Wines" },

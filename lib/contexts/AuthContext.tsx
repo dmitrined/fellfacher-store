@@ -3,6 +3,7 @@
  * Управляет состоянием пользователя, входом, регистрацией и выходом из системы.
  */
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useCartStore } from '@/lib/store/useCartStore';
 
 // Интерфейс данных пользователя
 export interface User {
@@ -83,6 +84,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         localStorage.setItem('user', JSON.stringify(userData));
     };
 
+    // ... (existing imports)
+
     /**
      * Функция выхода из системы.
      * Очищает состояние и удаляет данные из localStorage.
@@ -90,6 +93,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const logout = () => {
         setUser(null);
         localStorage.removeItem('user');
+
+        // Очищаем корзину через Zustand store
+        useCartStore.getState().clearCart();
     };
 
     return (

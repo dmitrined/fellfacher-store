@@ -12,12 +12,12 @@ import { usePathname } from "next/navigation";
 import { useTranslation } from "@/lib/i18n";
 import { Home, Wine, Calendar, QrCode, MoreHorizontal } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useUI } from "@/lib/contexts/UIContext";
+import { useUIStore } from "@/lib/store/useUIStore";
 
 const BottomNav = () => {
     const pathname = usePathname();
     const { t } = useTranslation();
-    const { toggleMobileMenu } = useUI();
+    const toggleMobileMenu = useUIStore((state) => state.toggleMobileMenu);
 
     // Определение пунктов навигации (расширенный список для мобильных)
     const navItems = [
