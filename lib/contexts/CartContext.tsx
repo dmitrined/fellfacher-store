@@ -1,6 +1,10 @@
 /**
- * Контекст корзины покупок.
- * Позволяет добавлять, удалять товары, изменять их количество и сохранять состояние в localStorage.
+ * Назначение: Контекст корзины покупок (Shopping Cart Context).
+ * Зависимости: React (createContext, useState, useEffect), AuthContext.
+ * Особенности:
+ * - Сохранение состояния в localStorage.
+ * - Автоматическая очистка при выходе из системы.
+ * - Поддержка изменения количества (+/-).
  */
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';

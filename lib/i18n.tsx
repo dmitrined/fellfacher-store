@@ -462,6 +462,28 @@ const translations: Translations = {
     loading_real_data: { de: "Synchronisierung mit Katalog...", en: "Syncing with catalog..." },
     api_error_fallback: { de: "Fehler beim Laden der API, verwende Fallback-Daten.", en: "Error loading API, using fallback data." },
     api_empty_fallback: { de: "API ist leer oder blockiert (Fallback-Daten werden verwendet).", en: "API is empty or blocked (using fallback data)." },
+
+    // AI Sommelier
+    ai_title: { de: "AI Sommelier", en: "AI Sommelier" },
+    ai_subtitle: { de: "Ihr persönlicher Weinberater", en: "Your personal wine consultant" },
+    ai_step_mood: { de: "Wie ist die Stimmung?", en: "What's the vibe?" },
+    ai_step_food: { de: "Was gibt es zu essen?", en: "What's on the menu?" },
+    ai_mood_romantic: { de: "Romantisch", en: "Romantic" },
+    ai_mood_party: { de: "Party", en: "Party" },
+    ai_mood_relax: { de: "Entspannung", en: "Relaxing" },
+    ai_mood_gift: { de: "Geschenk", en: "Gift" },
+    ai_mood_dinner: { de: "Abendessen", en: "Dinner" },
+    ai_food_placeholder: { de: "z.B. Steak, Pasta, Käse...", en: "e.g. Steak, Pasta, Cheese..." },
+    ai_food_meat: { de: "Fleisch", en: "Meat" },
+    ai_food_fish: { de: "Fisch", en: "Fish" },
+    ai_food_cheese: { de: "Käse", en: "Cheese" },
+    ai_food_pasta: { de: "Pasta", en: "Pasta" },
+    ai_food_dessert: { de: "Dessert", en: "Dessert" },
+    ai_btn_find: { de: "Perfekten Wein finden", en: "Find Perfect Wine" },
+    ai_btn_back: { de: "Zurück", en: "Back" },
+    ai_thinking: { de: "Einen Moment, ich suche den perfekten Wein...", en: "One moment, finding the perfect wine..." },
+    ai_result_intro: { de: "Exzellente Wahl! Zu diesem Anlass empfehle ich:", en: "Excellent choice! For this occasion I recommend:" },
+    ai_restart: { de: "Neue Suche", en: "New Search" },
 };
 
 // Типизация контекста локализации

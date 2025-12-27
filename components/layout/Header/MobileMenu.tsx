@@ -168,7 +168,30 @@ const MobileMenu: React.FC = () => {
                         </MobileMenuSection>
                     </div>
 
-                    <div className="mt-12 pt-8 border-t border-zinc-100 dark:border-zinc-900 flex-shrink-0">
+
+                    <div className="mt-8 flex-shrink-0">
+                        <Link
+                            href="/ai-sommelier"
+                            className="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-wine-gold to-yellow-600 text-white shadow-lg shadow-wine-gold/20 flex items-center justify-between group overflow-hidden relative"
+                            onClick={() => setMobileMenuOpen(false)}
+                        >
+                            <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out" />
+                            <div className="flex items-center gap-3 relative z-10">
+                                <span className="text-xl">✨</span>
+                                <div className="flex flex-col">
+                                    <span className="text-sm font-black uppercase tracking-widest leading-none mb-1">
+                                        {t('ai_title')}
+                                    </span>
+                                    <span className="text-[10px] font-medium opacity-90 leading-none">
+                                        {t('ai_subtitle')}
+                                    </span>
+                                </div>
+                            </div>
+                            <ArrowRight className="w-5 h-5 relative z-10 group-hover:translate-x-1 transition-transform" />
+                        </Link>
+                    </div>
+
+                    <div className="mt-8 pt-8 border-t border-zinc-100 dark:border-zinc-900 flex-shrink-0">
                         <p className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 mb-4 px-1">
                             {t("select_language")}
                         </p>
@@ -180,7 +203,7 @@ const MobileMenu: React.FC = () => {
                                     : "bg-zinc-100 dark:bg-zinc-900 text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100"
                                     }`}
                             >
-                                DEUTSCH
+                                DE
                             </button>
                             <button
                                 onClick={() => setLanguage("en")}
@@ -189,7 +212,7 @@ const MobileMenu: React.FC = () => {
                                     : "bg-zinc-100 dark:bg-zinc-900 text-zinc-500 hover:text-wine-dark dark:hover:text-zinc-100"
                                     }`}
                             >
-                                ENGLISH
+                                EN
                             </button>
                         </div>
                     </div>
