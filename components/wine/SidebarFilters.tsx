@@ -1,0 +1,265 @@
+/**
+ * Назначение: Боковая панель фильтров (Sidebar).
+ * Зависимости: i18n, next/navigation, Zustand, framer-motion, FilterSection.
+ * Описание: Компонент динамически строит список фильтров на основе переданных продуктов.
+ * На мобильных устройствах отображается как Drawer.
+ */
+
+"use client";
+
+import React, { useMemo, useState } from 'react';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
+import { useTranslation } from '@/lib/i18n';
+import { UnifiedProduct } from '@/lib/utils/map-product';
+import { useUIStore } from '@/lib/store/useUIStore';
+import { X, Grid3x3, Grape, ChevronLeft, ChevronRight, Search } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { FilterSection } from './FilterSection';
+
+interface SidebarFiltersProps {
+    products: UnifiedProduct[];
+}
+
+export function SidebarFilters({ products }: SidebarFiltersProps) {
+    const { t } = useTranslation();
+    const router = useRouter();
+    const pathname = usePathname();
+    const searchParams = useSearchParams();
+
+    // UI Store for Mobile Drawer
+    const isFilterOpen = useUIStore((state) => state.isFilterOpen);
+    const setFilterOpen = useUIStore((state) => state.setFilterOpen);
+
+    // Sidebar collapse state
+    const [isCollapsed, setIsCollapsed] = useState(false);
+    const [grapeSearch, setGrapeSearch] = useState('');
+
+    // --- 1. Extract Dynamic Options ---
+    const options = useMemo(() => {
+        // Define categories matching Header shopCategories
+        const categories = [
+            { name: t('nav_red_wines'), slug: 'rot', type: 'category' },
+            { name: t('nav_white_wines'), slug: 'weiss', type: 'category' },
+            { name: t('wine_type_rose'), slug: 'rose', type: 'category' },
+            { name: t('nav_shop_federle'), slug: 'federle', type: 'category' },
+            { name: t('nav_shop_vfb'), slug: 'vfb', type: 'tag' }, // VfB uses tag instead of category
+            { name: t('nav_shop_packages'), slug: 'weinpakete', type: 'category' },
+            { name: t('wine_type_sparkling'), slug: 'prickelndes', type: 'category' },
+            { name: t('nav_shop_alles_gewoehnlich'), slug: 'magnum-sondereditionen', type: 'category' },
+            { name: t('nav_shop_vouchers'), slug: 'gutscheine', type: 'category' },
+            { name: t('nav_shop_presents'), slug: 'geschenke', type: 'category' },
+        ];
+
+        // Collect Rebsorte (Grape Varieties) - Only for wines
+        const grapes = Array.from(new Set(
+            products
+                .filter(p => (p as any).grapeVariety)
+                .map(p => (p as any).grapeVariety)
+        )).filter(Boolean).sort();
+
+        return { categories, grapes };
+    }, [products, t]);
+
+    // --- 2. URL Handlers ---
+    const currentCategory = searchParams.get('category');
+    const currentTag = searchParams.get('tag');
+    const currentGrape = searchParams.get('grape');
+
+    const toggleParam = (key: string, value: string) => {
+        const params = new URLSearchParams(searchParams.toString());
+
+        // Single select logic for simplicity as requested "Click activates specific category"
+        // If clicked same, remove it? usually yes.
+        if (params.get(key) === value) {
+            params.delete(key);
+        } else {
+            // When selecting a category or tag, clear the other one
+            if (key === 'category') {
+                params.delete('tag');
+            } else if (key === 'tag') {
+                params.delete('category');
+            }
+            params.set(key, value);
+        }
+
+        // Reset page if needed?
+        // params.set('page', '1'); 
+
+        router.push(`${pathname}?${params.toString()}`, { scroll: false });
+    };
+
+    const clearAll = () => {
+        router.push(pathname, { scroll: false });
+        setFilterOpen(false);
+    };
+
+    // Filter grape varieties by search
+    const filteredGrapes = useMemo(() => {
+        if (!grapeSearch) return options.grapes;
+        return options.grapes.filter((grape: string) =>
+            grape.toLowerCase().includes(grapeSearch.toLowerCase())
+        );
+    }, [options.grapes, grapeSearch]);
+
+    // --- 3. Render Content ---
+    const FilterContent = () => (
+        <div className="space-y-2">
+            {/* Header / Reset */}
+            <div className="flex items-center justify-between mb-4 pb-4 border-b border-zinc-200 dark:border-zinc-800">
+                <h3 className="text-xl font-bold text-wine-dark dark:text-white">
+                    {t('filters_title')}
+                </h3>
+                <button
+                    onClick={clearAll}
+                    className="text-xs text-zinc-500 hover:text-wine-gold uppercase font-medium tracking-wider transition-colors"
+                >
+                    {t('filter_clear_all')}
+                </button>
+            </div>
+
+            {/* Categories */}
+            <FilterSection
+                title={t('filter_category')}
+                icon={<Grid3x3 className="w-4 h-4" />}
+                count={options.categories.length}
+                defaultExpanded={true}
+            >
+                <div className="space-y-2">
+                    {options.categories.map(cat => {
+                        const isActive = cat.type === 'tag'
+                            ? currentTag === cat.slug
+                            : currentCategory === cat.slug;
+                        const paramKey = cat.type === 'tag' ? 'tag' : 'category';
+
+                        return (
+                            <label key={cat.slug} className="flex items-center gap-2 cursor-pointer group">
+                                <input
+                                    type="checkbox"
+                                    checked={isActive}
+                                    onChange={() => toggleParam(paramKey, cat.slug)}
+                                    className="peer sr-only"
+                                />
+                                <div className="w-4 h-4 rounded border border-zinc-300 dark:border-zinc-700 peer-checked:bg-wine-gold peer-checked:border-wine-gold flex items-center justify-center transition-all">
+                                    <div className="w-2 h-2 bg-white rounded-full opacity-0 peer-checked:opacity-100" />
+                                </div>
+                                <span className={`text-sm group-hover:text-wine-gold transition-colors ${isActive ? 'font-medium text-wine-dark dark:text-white' : 'text-zinc-600 dark:text-zinc-400'}`}>
+                                    {cat.name}
+                                </span>
+                            </label>
+                        );
+                    })}
+                </div>
+            </FilterSection>
+
+            {/* Grapes (Only show if there are options) */}
+            {options.grapes.length > 0 && (
+                <FilterSection
+                    title={t('filter_grape')}
+                    icon={<Grape className="w-4 h-4" />}
+                    count={options.grapes.length}
+                    defaultExpanded={options.grapes.length <= 10}
+                >
+                    {/* Search input if many grapes */}
+                    {options.grapes.length > 10 && (
+                        <div className="mb-3">
+                            <div className="relative">
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-zinc-400" />
+                                <input
+                                    type="text"
+                                    value={grapeSearch}
+                                    onChange={(e) => setGrapeSearch(e.target.value)}
+                                    placeholder={t('search_input_placeholder')}
+                                    className="w-full pl-9 pr-3 py-2 text-xs rounded-lg bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 focus:outline-none focus:ring-2 focus:ring-wine-gold/50"
+                                />
+                            </div>
+                        </div>
+                    )}
+                    <div className="space-y-2 max-h-60 overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-200 dark:scrollbar-thumb-zinc-800">
+                        {filteredGrapes.map((grape: any) => (
+                            <label key={grape} className="flex items-center gap-2 cursor-pointer group">
+                                <input
+                                    type="checkbox"
+                                    checked={currentGrape === grape}
+                                    onChange={() => toggleParam('grape', grape)}
+                                    className="peer sr-only"
+                                />
+                                <div className="w-4 h-4 rounded border border-zinc-300 dark:border-zinc-700 peer-checked:bg-wine-gold peer-checked:border-wine-gold flex items-center justify-center transition-all">
+                                    <div className="w-2 h-2 bg-white rounded-full opacity-0 peer-checked:opacity-100" />
+                                </div>
+                                <span className={`text-sm group-hover:text-wine-gold transition-colors ${currentGrape === grape ? 'font-medium text-wine-dark dark:text-white' : 'text-zinc-600 dark:text-zinc-400'}`}>
+                                    {grape}
+                                </span>
+                            </label>
+                        ))}
+                    </div>
+                </FilterSection>
+            )}
+        </div>
+    );
+
+    return (
+        <>
+            {/* Desktop Sidebar */}
+            <motion.div
+                className="hidden lg:block flex-shrink-0 relative"
+                animate={{ width: isCollapsed ? '60px' : '280px' }}
+                transition={{ duration: 0.3, ease: 'easeInOut' }}
+            >
+                {/* Collapse Toggle Button */}
+                <button
+                    onClick={() => setIsCollapsed(!isCollapsed)}
+                    className="absolute -right-3 top-8 z-10 p-1.5 rounded-full bg-white dark:bg-zinc-900 border-2 border-zinc-200 dark:border-zinc-800 shadow-lg hover:border-wine-gold transition-colors"
+                >
+                    {isCollapsed ? (
+                        <ChevronRight className="w-4 h-4 text-wine-gold" />
+                    ) : (
+                        <ChevronLeft className="w-4 h-4 text-wine-gold" />
+                    )}
+                </button>
+
+                <div className="sticky top-32 overflow-hidden">
+                    {!isCollapsed && <FilterContent />}
+                    {isCollapsed && (
+                        <div className="flex flex-col items-center gap-4 pt-4">
+                            <div className="p-2 rounded-lg bg-wine-gold/10">
+                                <Grid3x3 className="w-5 h-5 text-wine-gold" />
+                            </div>
+                            <div className="writing-mode-vertical text-xs font-bold text-zinc-400 uppercase tracking-wider">
+                                {t('filters_title')}
+                            </div>
+                        </div>
+                    )}
+                </div>
+            </motion.div>
+
+            {/* Mobile Drawer */}
+            <AnimatePresence>
+                {isFilterOpen && (
+                    <>
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={() => setFilterOpen(false)}
+                            className="fixed inset-0 bg-black/50 z-40 lg:hidden backdrop-blur-sm"
+                        />
+                        <motion.div
+                            initial={{ x: '100%' }}
+                            animate={{ x: 0 }}
+                            exit={{ x: '100%' }}
+                            transition={{ type: "spring", damping: 25, stiffness: 200 }}
+                            className="fixed inset-y-0 right-0 w-[80%] max-w-sm bg-white dark:bg-zinc-950 z-50 shadow-2xl p-6 overflow-y-auto"
+                        >
+                            <div className="flex justify-end mb-6">
+                                <button onClick={() => setFilterOpen(false)} className="p-2 hover:bg-zinc-100 dark:hover:bg-zinc-900 rounded-full">
+                                    <X className="w-6 h-6 text-zinc-500" />
+                                </button>
+                            </div>
+                            <FilterContent />
+                        </motion.div>
+                    </>
+                )}
+            </AnimatePresence>
+        </>
+    );
+}

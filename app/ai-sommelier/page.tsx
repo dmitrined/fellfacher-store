@@ -20,8 +20,8 @@ import { useTranslation } from '@/lib/i18n';
 import { MoodSelector } from '@/components/ai/MoodSelector';
 import { FoodInput } from '@/components/ai/FoodInput';
 import { SommelierChat } from '@/components/ai/SommelierChat';
-import { wines } from '@/lib/data/wines';
-import { Wine } from '@/lib/types/wine';
+import { useWinesStore } from '@/lib/store/useWinesStore';
+import { Wine } from '@/lib/types';
 
 // Интерфейс для управления состоянием формы
 interface SommelierStep {
@@ -35,6 +35,14 @@ interface SommelierStep {
 export default function AISommelierPage() {
     const { t } = useTranslation();
     const router = useRouter();
+    const { wines, fetchProducts } = useWinesStore();
+
+    // Загрузка продуктов если они еще не загружены
+    React.useEffect(() => {
+        if (wines.length === 0) {
+            fetchProducts();
+        }
+    }, [fetchProducts, wines.length]);
 
     const [state, setState] = useState<SommelierStep>({
         current: 'mood',
@@ -74,15 +82,24 @@ export default function AISommelierPage() {
     };
 
     const handleAskAI = async () => {
-        // Заглушка функции handleAskAI
         setState(prev => ({ ...prev, current: 'result', isLoading: true }));
+
+        // Подготовка контекста для ИИ (список доступных вин)
+        // В будущем этот текст будет отправляться в GPT
+        const winesContextString = wines.map(w =>
+            `- ${w.name} (${w.year}, ${w.type}): ${w.description.substring(0, 100)}...`
+        ).join('\n');
+
+        console.log("AI Context Prepared:", winesContextString);
 
         // TODO: Интегрировать POST запрос к /api/recommend после получения API ключей.
 
         // Симуляция задержки и ответа
         setTimeout(() => {
-            // Простая логика выбора вин для демонстрации (случайные из списка)
-            const randomWines = [...wines].sort(() => 0.5 - Math.random()).slice(0, 2);
+            // Используем реальные вина для рекомендаций
+            // Если вин нет (ошибка загрузки), вернем пустой массив или заглушку
+            const sourceWines = wines.length > 0 ? wines : [];
+            const randomWines = [...sourceWines].sort(() => 0.5 - Math.random()).slice(0, 2);
 
             setState(prev => ({
                 ...prev,

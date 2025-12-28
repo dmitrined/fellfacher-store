@@ -20,7 +20,7 @@ import { useTranslation } from '@/lib/i18n';
 import { useWishlistStore } from '@/lib/store/useWishlistStore';
 import { useCartStore } from '@/lib/store/useCartStore';
 import { useAuth } from '@/lib/contexts/AuthContext';
-import { useWines } from '@/lib/contexts/WinesContext';
+import { useWinesStore } from '@/lib/store/useWinesStore';
 import WineDetailSkeleton from '@/components/ui/Skeletons/WineDetailSkeleton';
 
 
@@ -35,11 +35,18 @@ export default function WineDetailPage() {
     const addToCart = useCartStore(state => state.addToCart);
 
     const { isLoggedIn, setAuthModalOpen } = useAuth();
-    const { getWineById, isLoading } = useWines(); // Берем вино из глобального контекста
+    const { getWineById, isLoading, fetchProducts, wines } = useWinesStore();
 
     const params = useParams();
     const wineId = params.wineId as string;
     const wine = getWineById(wineId);
+
+    // Загрузка продуктов если они еще не загружены (например при прямом переходе по ссылке)
+    React.useEffect(() => {
+        if (wines.length === 0) {
+            fetchProducts();
+        }
+    }, [fetchProducts, wines.length]);
 
     const isFavorite = wine ? isInWishlist(wine.id) : false;
 
@@ -86,6 +93,10 @@ export default function WineDetailPage() {
                             type={wine.type}
                             name={wine.name}
                             grapeVariety={wine.grapeVariety}
+                            sku={wine.sku}
+                            categories={wine.categories}
+                            tags={wine.tags}
+                            t={t}
                         />
 
                         <WineDetailExperience
@@ -94,9 +105,8 @@ export default function WineDetailPage() {
                         />
 
                         <WineDetailStats
-                            alcoholLabel={wine.alcohol || t("stats_alcohol")}
-                            acidityLabel={wine.acidity || t("stats_acidity")}
-                            sugarLabel={wine.sugar || t("stats_sugar")}
+                            wine={wine}
+                            t={t}
                         />
 
                         <WineDetailPurchase
@@ -119,6 +129,7 @@ export default function WineDetailPage() {
                             premiumPriceLabel={t("premium_price")}
                             addToCartLabel={t("add_to_cart")}
                             qualityGuaranteeLabel={t("quality_guarantee")}
+                            t={t}
                         />
                     </div>
                 </div>

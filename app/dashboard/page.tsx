@@ -9,9 +9,9 @@ import { useAuth } from '@/lib/contexts/AuthContext';
 import { useOrders } from '@/lib/contexts/OrdersContext';
 import { useWishlistStore } from '@/lib/store/useWishlistStore';
 import { useTranslation } from '@/lib/i18n';
-import { wines } from '@/lib/data/wines';
 import { Wine } from '@/lib/types';
 import WineCard from '@/components/wine/WineCard';
+import { useWinesStore } from '@/lib/store/useWinesStore';
 import { useCartStore } from '@/lib/store/useCartStore';
 import {
     Package,
@@ -32,6 +32,7 @@ function DashboardContent() {
     const tabParam = searchParams.get('tab');
     const { user, logout, isLoggedIn } = useAuth();
     const { orders } = useOrders();
+    const { wines, fetchProducts, isLoading: isWinesLoading } = useWinesStore();
     const wishlist = useWishlistStore(state => state.wishlist);
     const wishlistedWines = wines.filter(wine => wishlist.includes(wine.id));
 
@@ -44,6 +45,13 @@ function DashboardContent() {
     }).filter(item => item !== null) as (Wine & { quantity: number })[];
 
     const [activeTab, setActiveTab] = useState<'profile' | 'wishlist' | 'cart' | 'orders'>('profile');
+
+    // Fetch products if not already loaded
+    React.useEffect(() => {
+        if (wines.length === 0 && !isWinesLoading) {
+            fetchProducts();
+        }
+    }, [wines.length, fetchProducts, isWinesLoading]);
 
     // Handle deep linking via search params
     React.useEffect(() => {

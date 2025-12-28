@@ -4,7 +4,6 @@ import { HeroUIProvider } from "@heroui/react";
 import { LanguageProvider } from "@/lib/i18n";
 import { AuthProvider } from '@/lib/contexts/AuthContext';
 import { OrdersProvider } from '@/lib/contexts/OrdersContext';
-import { WinesProvider } from '@/lib/contexts/WinesContext';
 
 
 /**
@@ -18,15 +17,11 @@ export function Providers({ children }: { children: React.ReactNode }) {
       {/* Провайдер аутентификации (данные пользователя и сессия) */}
       <AuthProvider>
         {/* Провайдер управления историей заказов */}
-        {/* Провайдер управления историей заказов (остался на Context API) */}
         <OrdersProvider>
-          {/* Провайдер списка вин (из API или моки) */}
-          <WinesProvider>
-            <HeroUIProvider>
-              {/* Рендеринг дочерних элементов приложения */}
-              {children}
-            </HeroUIProvider>
-          </WinesProvider>
+          <HeroUIProvider>
+            {/* Рендеринг дочерних элементов приложения */}
+            {children}
+          </HeroUIProvider>
         </OrdersProvider>
       </AuthProvider>
     </LanguageProvider>

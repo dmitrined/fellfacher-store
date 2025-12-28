@@ -21,8 +21,8 @@
 - **HeroUI (NextUI)**: Библиотека высококачественных компонентов.
 
 ### State Management & Logic
-- **Zustand**: Глобальное управление состоянием (Cart, Wishlist, Booking, UI) с персистентностью (`persist` middleware).
-- **Context API (Legacy/Specific)**: Используется только для `AuthContext` и `WinesContext`.
+- **Zustand**: Глобальное управление состоянием (Cart, Wishlist, Booking, UI, Wines) с персистентностью (`persist` middleware).
+- **Context API (Legacy/Specific)**: Используется только для `AuthContext` и `OrdersContext`.
 - **i18n (Custom Logic)**: Строгая система интернационализации (DE/EN) без хардкода.
 - **WooCommerce API**: Интеграция с бэкендом.
 
@@ -65,7 +65,7 @@ fellbacher-wines/
 │   │   └── [wineId]/page.tsx           # Детальная карточка вина
 │   ├── globals.css                     # Глобальные стили (Tailwind 4)
 │   ├── layout.tsx                      # Корневой шаблон (Header, Footer, BottomNav, PWA meta)
-│   └── providers.tsx                   # Глобальная обертка провайдеров (Auth, Wines, HeroUI)
+│   └── providers.tsx                   # Глобальная обертка провайдеров (Auth, HeroUI)
 │
 ├── components/                         # Повторно используемые UI-компоненты
 │   ├── ai/                             # [NEW] Компоненты ИИ-Сомелье
@@ -104,13 +104,13 @@ fellbacher-wines/
 ├── lib/                                # Бизнес-логика
 │   ├── contexts/                       # Legacy & Auth Contexts
 │   │   ├── AuthContext.tsx             # Управление пользователем и сессией
-│   │   ├── WinesContext.tsx            # Данные вин с API/fallback
 │   │   ├── OrdersContext.tsx           # История заказов
 │   ├── store/                          # [NEW] Zustand Stores (Global State)
 │   │   ├── useCartStore.ts             # Корзина (localStorage persist)
 │   │   ├── useWishlistStore.ts         # Избранное (localStorage persist)
 │   │   ├── useUIStore.ts               # UI State (меню, модалки)
-│   │   └── useBookingStore.ts          # Бронирование событий (localStorage persist)
+│   │   ├── useBookingStore.ts          # Бронирование событий (localStorage persist)
+│   │   └── useWinesStore.ts            # [NEW] Данные вин и продуктов (Zustand)
 │   ├── constants/                      # Конфигурации
 │   │   ├── navigation.ts               # Структура навигационного меню
 │   │   └── contact.ts                  # Контактные данные
@@ -166,7 +166,7 @@ fellbacher-wines/
 | Система | Статус | Комментарий |
 |---------|--------|-------------|
 | **Auth** | ✅ Ready | Вход, регистрация, защита роутов |
-| **Wines** | ✅ Ready | Вывод из Mock/API, фильтрация |
+| **Wines** | ✅ Live API | Вывод из WooCommerce, фильтрация |
 | **Shop** | ✅ Ready | Корзина, Wishlist, Расчет |
 | **Events** | ✅ Ready | Бронирование, i18n |
 | **PWA** | ✅ Ready | Manifest, Icons |
@@ -178,9 +178,14 @@ fellbacher-wines/
 ## � Последние Обновления (Audit Log)
 
 ### Phase 10: Zustand Migration
-- ✅ **Performance**: Рефакторинг состояния (Cart, Wishlist, Booking, UI) на Zustand для исключения лишних ререндеров.
+- ✅ **Performance**: Рефакторинг состояния (Cart, Wishlist, Booking, UI, Wines) на Zustand для исключения лишних ререндеров.
 - ✅ **Persistence**: Настройка `persist` middleware для сохранения корзины и избранного в LocalStorage.
-- ✅ **Architecture**: Создание папки `lib/store/` и очистка `app/providers.tsx`.
+- ✅ **Architecture**: Создание папки `lib/store/`, перенос логики вин и очистка `app/providers.tsx`.
+
+### Phase 11: Successful WooCommerce REST API Integration
+- ✅ **API**: Подключение к живому WooCommerce API (Health Check endpoint).
+- ✅ **Data**: Маппинг реальных данных продуктов (атрибуты, цены, изображения).
+- ✅ **AI**: Подготовка контекста реальных вин для AI Sommelier.
 
 ### Phase 9: AI Sommelier & Architecture Audit
 - ✅ **Рефакторинг**: Проведена проверка `CartContext` и структуры проекта.

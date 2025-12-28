@@ -21,11 +21,6 @@ export const WineDetailImage: React.FC<WineDetailImageProps> = ({ image, name, y
                 alt={name}
                 className="h-full w-full object-contain transform group-hover:scale-105 transition-transform duration-700"
             />
-            <div className="absolute top-6 left-6 md:top-8 md:left-8">
-                <span className="bg-wine-dark text-white px-3 py-1.5 md:px-4 md:py-2 rounded-lg font-black text-xl md:text-2xl serif">
-                    {year}
-                </span>
-            </div>
         </div>
     );
 };

@@ -12,7 +12,7 @@ import { useTranslation } from "@/lib/i18n";
 import { useWishlistStore } from "@/lib/store/useWishlistStore";
 import { useCartStore } from "@/lib/store/useCartStore";
 import { useAuth } from "@/lib/contexts/AuthContext";
-import { wines } from "@/lib/data/wines";
+import { useWinesStore } from "@/lib/store/useWinesStore";
 import AuthModal from "../login/AuthModal";
 import TopBar from "./Header/TopBar";
 import Navigation from "./Header/Navigation";
@@ -37,6 +37,14 @@ const Header: React.FC = () => {
   const updateQuantity = useCartStore(state => state.updateQuantity);
 
   const { isLoggedIn, user, isAuthModalOpen, setAuthModalOpen } = useAuth();
+  const { products, fetchProducts } = useWinesStore();
+
+  // Загрузка продуктов если они еще не загружены (для расчета цен в корзине и т.д.)
+  useEffect(() => {
+    if (products.length === 0) {
+      fetchProducts();
+    }
+  }, [fetchProducts, products.length]);
 
   // Состояния для управления открытием различных меню и модалок
   const [searchOpen, setSearchOpen] = useState(false); // Прямой поиск
@@ -68,12 +76,16 @@ const Header: React.FC = () => {
   ];
 
   const shopCategories = [
-    { label: t("nav_all_wines"), path: "/shop" },
-    { label: t("nav_red_wines"), path: "/shop?type=Rotwein" },
-    { label: t("nav_white_wines"), path: "/shop?type=Weißwein" },
-    { label: t("wine_type_rose"), path: "/shop?type=Roséwein" },
-    { label: t("wine_type_sparkling"), path: "/shop?type=Sekt" },
-    { label: t("wine_type_alcohol_free"), path: "/shop?type=Alkoholfrei" },
+    { label: t("nav_red_wines"), path: "/shop?category=rot" },
+    { label: t("nav_white_wines"), path: "/shop?category=weiss" },
+    { label: t("wine_type_rose"), path: "/shop?category=rose" },
+    { label: t("nav_shop_federle"), path: "/shop?category=federle" },
+    { label: t("nav_shop_vfb"), path: "/shop?tag=vfb" },
+    { label: t("nav_shop_packages"), path: "/shop?category=weinpakete" },
+    { label: t("wine_type_sparkling"), path: "/shop?category=prickelndes" },
+    { label: t("nav_shop_alles_gewoehnlich"), path: "/shop?category=magnum-sondereditionen" },
+    { label: t("nav_shop_vouchers"), path: "/shop?category=gutscheine" },
+    { label: t("nav_shop_presents"), path: "/shop?category=geschenke" },
   ];
 
   const eventCategories = [
@@ -143,8 +155,9 @@ const Header: React.FC = () => {
   // Вычисление общей стоимости корзины "на лету"
   // Проходит по всем товарам в корзине, находит их цену в базе вин и суммирует.
   const totalPrice = cart.reduce((total: number, item: { id: string; quantity: number }) => {
-    const wine = wines.find((w: any) => w.id === item.id);
-    return total + (wine ? wine.price * item.quantity : 0);
+    const product = products.find((p: any) => p.id === item.id);
+    const price = product ? (typeof product.price === 'number' ? product.price : parseFloat(product.price || '0')) : 0;
+    return total + (price * item.quantity);
   }, 0);
 
   return (
@@ -210,7 +223,7 @@ const Header: React.FC = () => {
                 <CartDropdown
                   t={t}
                   cart={cart}
-                  wines={wines}
+                  wines={products}
                   getCartCount={getCartCount}
                   totalPrice={totalPrice}
                   updateQuantity={updateQuantity}

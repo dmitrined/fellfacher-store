@@ -5,22 +5,30 @@ import Link from 'next/link';
 import WineCard from '@/components/wine/WineCard';
 import { ArrowRight, ShieldCheck, Truck, Award, Calendar, MapPin, Users, Clock, Star } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n';
-import { useWines } from '@/lib/contexts/WinesContext';
+import { useWinesStore } from '@/lib/store/useWinesStore';
 import { useAuth } from '@/lib/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
+import React, { useEffect } from 'react';
 
 import { getEvents } from '@/lib/data/events';
 
 /**
  * Главная страница приложения.
  * Содержит Hero-секцию, подборки вин по категориям, информацию о программе лояльности и событиях.
- * Данные о винах подгружаются из WinesContext (умная загрузка: API + моки).
+ * Данные о винах подгружаются из useWinesStore (умная загрузка: API + моки).
  */
 export default function Home() {
   const { t } = useTranslation();
-  const { wines: displayWines, isLoading } = useWines();
+  const { wines: displayWines, isLoading, fetchProducts } = useWinesStore();
   const { isLoggedIn, setAuthModalOpen } = useAuth();
   const router = useRouter();
+
+  // Загрузка данных при монтировании
+  useEffect(() => {
+    if (displayWines.length === 0) {
+      fetchProducts();
+    }
+  }, [fetchProducts, displayWines.length]);
 
   const events = getEvents(t);
 

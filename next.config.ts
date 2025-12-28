@@ -15,7 +15,16 @@ const withPWA = withPWAInit({
 });
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'fellbacher-weine.de',
+        port: '',
+        pathname: '/wp-content/uploads/**',
+      },
+    ],
+  },
   turbopack: {},
 };
 

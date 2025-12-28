@@ -5,183 +5,234 @@ export const wines: Wine[] = [
     {
         id: '1',
         name: 'Lämmler Merlot P',
+        slug: 'laemmler-merlot-p',
         year: 2022,
         type: 'Rotwein',
         grapeVariety: 'Merlot',
         price: 15.90,
+        regular_price: 15.90,
+        stock_status: 'instock',
         image: 'https://fellbacher-weine.de/wp-content/uploads/2015/12/105_Merlot_Laemmler_trocken_P.png',
+        images: [{ src: 'https://fellbacher-weine.de/wp-content/uploads/2015/12/105_Merlot_Laemmler_trocken_P.png' }],
         description: 'Wunderbar aromatisch! Duft nach Zwetschgen, dunklen Kirschen und reifen Brombeeren, untermalt von etwas Vanille und feinen Röstaromen, dazu körperreich und perfekt ausbalancierte Tannine.',
+        short_description: 'Wunderbar aromatisch mit Duft nach Zwetschgen.',
         alcohol: '13.5%',
         acidity: '4.9 g/l',
-        sugar: '1.5 g/l'
-    },
-    {
-        id: '1.1',
-        name: 'Lämmler Merlot P',
-        year: 2022,
-        type: 'Rotwein',
-        grapeVariety: 'Merlot',
-        price: 15.90,
-        image: 'https://fellbacher-weine.de/wp-content/uploads/2015/12/105_Merlot_Laemmler_trocken_P.png',
-        description: 'Wunderbar aromatisch! Duft nach Zwetschgen, dunklen Kirschen und reifen Brombeeren, untermalt von etwas Vanille und feinen Röstaromen, dazu körperreich und perfekt ausbalancierte Tannine.',
-        alcohol: '13.5%',
-        acidity: '4.9 g/l',
-        sugar: '1.5 g/l'
-    },
-    {
-        id: '1.2',
-        name: 'Lämmler Merlot P',
-        year: 2022,
-        type: 'Rotwein',
-        grapeVariety: 'Merlot',
-        price: 15.90,
-        image: 'https://fellbacher-weine.de/wp-content/uploads/2015/12/105_Merlot_Laemmler_trocken_P.png',
-        description: 'Wunderbar aromatisch! Duft nach Zwetschgen, dunklen Kirschen und reifen Brombeeren, untermalt von etwas Vanille und feinen Röstaromen, dazu körperreich und perfekt ausbalancierte Tannine.',
-        alcohol: '13.5%',
-        acidity: '4.9 g/l',
-        sugar: '1.5 g/l'
-    },
-    {
-        id: '1.3',
-        name: 'Lämmler Merlot P',
-        year: 2022,
-        type: 'Rotwein',
-        grapeVariety: 'Merlot',
-        price: 15.90,
-        image: 'https://fellbacher-weine.de/wp-content/uploads/2015/12/105_Merlot_Laemmler_trocken_P.png',
-        description: 'Wunderbar aromatisch! Duft nach Zwetschgen, dunklen Kirschen und reifen Brombeeren, untermalt von etwas Vanille und feinen Röstaromen, dazu körperreich und perfekt ausbalancierte Tannine.',
-        alcohol: '13.5%',
-        acidity: '4.9 g/l',
-        sugar: '1.5 g/l'
-    },
-    {
-        id: '1.4',
-        name: 'Lämmler Merlot P',
-        year: 2022,
-        type: 'Rotwein',
-        grapeVariety: 'Merlot',
-        price: 15.90,
-        image: 'https://fellbacher-weine.de/wp-content/uploads/2015/12/105_Merlot_Laemmler_trocken_P.png',
-        description: 'Wunderbar aromatisch! Duft nach Zwetschgen, dunklen Kirschen und reifen Brombeeren, untermalt von etwas Vanille und feinen Röstaromen, dazu körperreich und perfekt ausbalancierte Tannine.',
-        alcohol: '13.5%',
-        acidity: '4.9 g/l',
-        sugar: '1.5 g/l'
+        sugar: '1.5 g/l',
+        categories: [{ id: 10, name: 'Rotwein', slug: 'rotwein' }],
+        attributes: [
+            { name: 'Jahrgang', options: ['2022'] },
+            { name: 'Rebsorte', options: ['Merlot'] },
+            { name: 'Alkohol', options: ['13.5%'] },
+            { name: 'Säure', options: ['4.9 g/l'] },
+            { name: 'Restzucker', options: ['1.5 g/l'] }
+        ]
     },
     {
         id: '2',
         name: 'SAUVIGNON BLANC',
+        slug: 'sauvignon-blanc',
         year: 2023,
         type: 'Weißwein',
         grapeVariety: 'Sauvignon Blanc',
         price: 23.90,
+        regular_price: 23.90,
+        stock_status: 'instock',
         image: 'https://fellbacher-weine.de/wp-content/uploads/2015/12/19-1-1024x1536.jpg',
+        images: [{ src: 'https://fellbacher-weine.de/wp-content/uploads/2015/12/19-1-1024x1536.jpg' }],
         description: 'Frischer Sauvignon Blanc mit Noten von Stachelbeere und exotischen Früchten.',
+        short_description: 'Frischer Sauvignon Blanc.',
         alcohol: '12.5%',
         acidity: '6.8 g/l',
-        sugar: '4.5 g/l'
+        sugar: '4.5 g/l',
+        categories: [{ id: 11, name: 'Weißwein', slug: 'weisswein' }],
+        attributes: [
+            { name: 'Jahrgang', options: ['2023'] },
+            { name: 'Rebsorte', options: ['Sauvignon Blanc'] }
+        ]
     },
     {
         id: '3',
         name: 'Lemberger Lemmler P',
+        slug: 'lemberger-lemmler-p',
         year: 2022,
         type: 'Rotwein',
         grapeVariety: 'Lemberger',
         price: 23.90,
+        regular_price: 23.90,
+        stock_status: 'instock',
         image: 'https://fellbacher-weine.de/wp-content/uploads/2015/12/114_Lemberger_Laemmler_feinherb_P-1024x1536.png',
+        images: [{ src: 'https://fellbacher-weine.de/wp-content/uploads/2015/12/114_Lemberger_Laemmler_feinherb_P-1024x1536.png' }],
         description: 'Typischer Lemberger mit Struktur und feiner Würze.',
+        short_description: 'Typischer Lemberger.',
         alcohol: '13.5%',
         acidity: '5.4 g/l',
-        sugar: '1.8 g/l'
+        sugar: '1.8 g/l',
+        categories: [{ id: 10, name: 'Rotwein', slug: 'rotwein' }],
+        attributes: [
+            { name: 'Jahrgang', options: ['2022'] },
+            { name: 'Rebsorte', options: ['Lemberger'] }
+        ]
     },
     {
         id: '4',
         name: 'Pinot Gris',
+        slug: 'pinot-gris',
         year: 2023,
         type: 'Weißwein',
         grapeVariety: 'Pinot Gris',
         price: 21.90,
+        regular_price: 21.90,
+        stock_status: 'instock',
         image: 'https://fellbacher-weine.de/wp-content/uploads/2015/12/067_Pinot_Gris_trocken_C-1.png',
+        images: [{ src: 'https://fellbacher-weine.de/wp-content/uploads/2015/12/067_Pinot_Gris_trocken_C-1.png' }],
         description: 'Eleganter Weißburgunder mit feiner Frucht und milder Säure.',
+        short_description: 'Eleganter Weißburgunder.',
         alcohol: '13.0%',
         acidity: '6.2 g/l',
-        sugar: '5.2 g/l'
+        sugar: '5.2 g/l',
+        categories: [{ id: 11, name: 'Weißwein', slug: 'weisswein' }],
+        attributes: [
+            { name: 'Jahrgang', options: ['2023'] },
+            { name: 'Rebsorte', options: ['Pinot Gris'] }
+        ]
     },
     {
         id: '5',
         name: 'Goldberg Riesling C',
+        slug: 'goldberg-riesling-c',
         year: 2023,
         type: 'Weißwein',
         grapeVariety: 'Riesling',
         price: 18.90,
+        regular_price: 18.90,
+        stock_status: 'instock',
         image: 'https://fellbacher-weine.de/wp-content/uploads/2015/12/060_Goldberg_Riesling_C_Kabinett-480x698.png',
+        images: [{ src: 'https://fellbacher-weine.de/wp-content/uploads/2015/12/060_Goldberg_Riesling_C_Kabinett-480x698.png' }],
         description: 'Klassischer Riesling mit lebendiger Säure und Pfirsicharomen.',
+        short_description: 'Klassischer Riesling.',
         alcohol: '12.0%',
         acidity: '7.5 g/l',
-        sugar: '6.5 g/l'
+        sugar: '6.5 g/l',
+        categories: [{ id: 11, name: 'Weißwein', slug: 'weisswein' }],
+        attributes: [
+            { name: 'Jahrgang', options: ['2023'] },
+            { name: 'Rebsorte', options: ['Riesling'] }
+        ]
     },
     {
         id: '6',
         name: 'Rosé trocken P',
+        slug: 'rose-trocken-p',
         year: 2023,
         type: 'Roséwein',
         grapeVariety: 'Cuvée',
         price: 12.90,
+        regular_price: 12.90,
+        stock_status: 'instock',
         image: 'https://fellbacher-weine.de/wp-content/uploads/2015/12/052_Rose_trocken_P-1024x1536.png',
+        images: [{ src: 'https://fellbacher-weine.de/wp-content/uploads/2015/12/052_Rose_trocken_P-1024x1536.png' }],
         description: 'Ein frischer und fruchtiger Rosé für warme Sommertage.',
+        short_description: 'Frischer und fruchtiger Rosé.',
         alcohol: '12.0%',
         acidity: '6.0 g/l',
-        sugar: '5.0 g/l'
+        sugar: '5.0 g/l',
+        categories: [{ id: 12, name: 'Roséwein', slug: 'rosewein' }],
+        attributes: [
+            { name: 'Jahrgang', options: ['2023'] },
+            { name: 'Rebsorte', options: ['Cuvée'] }
+        ]
     },
     {
         id: '7',
         name: 'Sekt Cuvée Brut',
+        slug: 'sekt-cuvee-brut',
         year: 2021,
         type: 'Sekt',
         grapeVariety: 'Chardonnay & Pinot Noir',
         price: 19.90,
+        regular_price: 19.90,
+        stock_status: 'instock',
         image: 'https://fellbacher-weine.de/wp-content/uploads/2015/12/323_Sekt_Laemmler_Riesling_brut_P-1024x1536.png',
+        images: [{ src: 'https://fellbacher-weine.de/wp-content/uploads/2015/12/323_Sekt_Laemmler_Riesling_brut_P-1024x1536.png' }],
         description: 'Feinperlig und elegant mit Brioche-Noten.',
+        short_description: 'Feinperlig und elegant.',
         alcohol: '12.5%',
         acidity: '7.0 g/l',
-        sugar: '8.0 g/l'
+        sugar: '8.0 g/l',
+        categories: [{ id: 13, name: 'Sekt', slug: 'sekt' }],
+        attributes: [
+            { name: 'Jahrgang', options: ['2021'] },
+            { name: 'Rebsorte', options: ['Chardonnay', 'Pinot Noir'] }
+        ]
     },
     {
         id: '8',
         name: 'Alkoholfrei Weiß',
+        slug: 'alkoholfrei-weiss',
         year: 2023,
         type: 'Alkoholfrei',
         grapeVariety: 'Müller-Thurgau',
         price: 9.90,
+        regular_price: 9.90,
+        stock_status: 'instock',
         image: 'https://fellbacher-weine.de/wp-content/uploads/2015/12/82_Alkoholfrei_Weiss_t-1024x1536.jpg',
+        images: [{ src: 'https://fellbacher-weine.de/wp-content/uploads/2015/12/82_Alkoholfrei_Weiss_t-1024x1536.jpg' }],
         description: 'Voller Geschmack ganz ohne Alkohol.',
+        short_description: 'Voller Geschmack.',
         alcohol: '0.0%',
         acidity: '6.5 g/l',
-        sugar: '45.0 g/l'
+        sugar: '45.0 g/l',
+        categories: [{ id: 14, name: 'Alkoholfrei', slug: 'alkoholfrei' }],
+        attributes: [
+            { name: 'Jahrgang', options: ['2023'] },
+            { name: 'Rebsorte', options: ['Müller-Thurgau'] }
+        ]
     },
     {
         id: '9',
         name: 'Trollinger mit Lemberger',
+        slug: 'trollinger-lemberger',
         year: 2022,
         type: 'Rotwein',
         grapeVariety: 'Trollinger, Lemberger',
         price: 8.90,
+        regular_price: 8.90,
+        stock_status: 'instock',
         image: 'https://fellbacher-weine.de/wp-content/uploads/2015/12/042_Trollinger_Lemberger_feinherb_C-1024x1536.png',
+        images: [{ src: 'https://fellbacher-weine.de/wp-content/uploads/2015/12/042_Trollinger_Lemberger_feinherb_C-1024x1536.png' }],
         description: 'Der Klassiker aus Württemberg - süffig und ehrlich.',
+        short_description: 'Der Klassiker aus Württemberg.',
         alcohol: '12.0%',
         acidity: '5.0 g/l',
-        sugar: '4.0 g/l'
+        sugar: '4.0 g/l',
+        categories: [{ id: 10, name: 'Rotwein', slug: 'rotwein' }],
+        attributes: [
+            { name: 'Jahrgang', options: ['2022'] },
+            { name: 'Rebsorte', options: ['Trollinger', 'Lemberger'] }
+        ]
     },
     {
         id: '10',
         name: 'Grauburgunder S',
+        slug: 'grauburgunder-s',
         year: 2023,
         type: 'Weißwein',
         grapeVariety: 'Grauburgunder',
         price: 14.90,
+        regular_price: 14.90,
+        stock_status: 'instock',
         image: 'https://fellbacher-weine.de/wp-content/uploads/2015/12/067_Pinot_Gris_trocken_C-1.png',
+        images: [{ src: 'https://fellbacher-weine.de/wp-content/uploads/2015/12/067_Pinot_Gris_trocken_C-1.png' }],
         description: 'Kräftiger Grauburgunder mit Schmelz.',
+        short_description: 'Kräftiger Grauburgunder.',
         alcohol: '13.5%',
         acidity: '5.8 g/l',
-        sugar: '3.0 g/l'
+        sugar: '3.0 g/l',
+        categories: [{ id: 11, name: 'Weißwein', slug: 'weisswein' }],
+        attributes: [
+            { name: 'Jahrgang', options: ['2023'] },
+            { name: 'Rebsorte', options: ['Grauburgunder'] }
+        ]
     }
 ];

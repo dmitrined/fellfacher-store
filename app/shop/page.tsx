@@ -1,83 +1,140 @@
 /**
- * Назначение файла: Страница каталога вин (Shop).
- * Зависимости: HeroUI, Lucide React, i18n Context, Wines Context.
- * Особенности: Client Component, Фильтрация, Поиск, Скелетоны при загрузке.
+ * Назначение: Страница каталога вин (Shop).
+ * Зависимости: HeroUI, Lucide React, i18n Context, Wines Context, FilterBar.
+ * Особенности:
+ * - Client Component (useSearchParams).
+ * - "Умный поиск" (Fuzzy search).
+ * - Динамическая фильтрация через URL.
  */
 
 "use client";
 
-
-import React, { useState, useMemo, useEffect, Suspense } from 'react';
-import WineCard from '@/components/wine/WineCard';
-import CatalogSearch from '@/components/wine/CatalogSearch';
-import CatalogFilters from '@/components/wine/CatalogFilters';
+import React, { useMemo, Suspense } from 'react';
+import { useSearchParams, useRouter, usePathname } from 'next/navigation';
+import { Search, SlidersHorizontal } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n';
-import { Search } from 'lucide-react';
-import { useSearchParams } from 'next/navigation';
-import { useWines } from '@/lib/contexts/WinesContext';
-import WineCardSkeleton from '@/components/ui/Skeletons/WineCardSkeleton';
+import { useWinesStore } from '@/lib/store/useWinesStore';
+import { useUIStore } from '@/lib/store/useUIStore';
 
+import ProductCard from '@/components/wine/ProductCard';
+import WineCardSkeleton from '@/components/ui/Skeletons/WineCardSkeleton';
+import { SidebarFilters } from '@/components/wine/SidebarFilters';
+import { ActiveFilters } from '@/components/wine/ActiveFilters';
 
 function CatalogContent() {
     const { t } = useTranslation();
-    const { wines: displayWines, isLoading } = useWines();
+    const router = useRouter();
+    const pathname = usePathname();
+
+    // Zustand Store
+    const { wines: allProducts, isLoading, fetchProducts } = useWinesStore();
+
+    // Загрузка данных при монтировании, если они еще не загружены
+    React.useEffect(() => {
+        if (allProducts.length === 0) {
+            fetchProducts();
+        }
+    }, [fetchProducts, allProducts.length]);
+
     const searchParams = useSearchParams();
+    const toggleFilter = useUIStore((state) => state.toggleFilter);
 
-    const [searchQuery, setSearchQuery] = useState('');
-    const [selectedType, setSelectedType] = useState<string>('All');
-    const [sortBy, setSortBy] = useState<string>('year');
+    // --- 1. Parse URL Params ---
+    const searchQuery = searchParams.get('search') || '';
+    const category = searchParams.get('category');
+    const tag = searchParams.get('tag');
+    const grape = searchParams.get('grape');
+    const type = searchParams.get('type');
+    const sortBy = searchParams.get('sort') || 'newest';
 
-    useEffect(() => {
-        const typeParam = searchParams.get('type');
-        const searchParam = searchParams.get('search');
+    const updateParams = (newParams: URLSearchParams) => {
+        router.push(`${pathname}?${newParams.toString()}`, { scroll: false });
+    };
 
-        if (typeParam) {
-            setSelectedType(typeParam);
-        } else {
-            setSelectedType('All');
+    // --- 2. Filter & Sort Logic (Unified) ---
+    const filteredProducts = useMemo(() => {
+        let result = [...allProducts];
+
+        // 2.1 Search (Name, Description, Grape)
+        if (searchQuery) {
+            const query = searchQuery.toLowerCase();
+            result = result.filter(p =>
+                (p as any).name?.toLowerCase().includes(query) ||
+                (p as any).title?.toLowerCase().includes(query) ||
+                (p as any).description?.toLowerCase().includes(query) ||
+                ((p as any).grapeVariety && (p as any).grapeVariety.toLowerCase().includes(query))
+            );
         }
 
-        if (searchParam) {
-            setSearchQuery(decodeURIComponent(searchParam));
-        }
-    }, [searchParams]);
-
-    // Фильтрация применяется к displayWines (либо реальные из API, либо моковые в случае ошибки)
-    const filteredWines = useMemo(() => {
-        return displayWines
-            .filter(wine => {
-                const searchLower = searchQuery.toLowerCase();
-                const matchesSearch = wine.name.toLowerCase().includes(searchLower) ||
-                    wine.grapeVariety.toLowerCase().includes(searchLower) ||
-                    wine.type.toLowerCase().includes(searchLower) ||
-                    (wine.description && wine.description.toLowerCase().includes(searchLower));
-                const matchesType = selectedType === 'All' || wine.type === selectedType;
-                return matchesSearch && matchesType;
-            })
-            .sort((a, b) => {
-                if (sortBy === 'price-asc') return a.price - b.price;
-                if (sortBy === 'price-desc') return b.price - a.price;
-                if (sortBy === 'year') return b.year - a.year;
-                return 0;
+        // 2.2 Category
+        if (category) {
+            result = result.filter(p => {
+                // Unified check: Check if any category slug matches
+                if ((p as any).categories) {
+                    return (p as any).categories.some((c: any) => c.slug === category);
+                }
+                // Fallback for flat category
+                if ((p as any).category) {
+                    return (p as any).category.toLowerCase().replace(/\s+/g, '-') === category;
+                }
+                return false;
             });
-    }, [displayWines, searchQuery, selectedType, sortBy]);
+        }
 
-    const wineTypes = ['All', ...new Set(displayWines.map(w => w.type))];
+        // 2.3 Tag
+        if (tag) {
+            result = result.filter(p => {
+                if ((p as any).tags && Array.isArray((p as any).tags)) {
+                    return (p as any).tags.some((t: any) => t.slug === tag);
+                }
+                return false;
+            });
+        }
+
+        // 2.4 Type (Mapped type from determineType)
+        if (type) {
+            result = result.filter(p => (p as any).type === type);
+        }
+
+        // 2.5 Grape (Only for Wines)
+        if (grape) {
+            result = result.filter(p => (p as any).grapeVariety === grape);
+        }
+
+        // 2.5 Sort
+        result.sort((a, b) => {
+            // Get price helper
+            const getPrice = (item: any) => typeof item.price === 'number' ? item.price : parseFloat(item.price || '0');
+            // Get date helper (for newest) - Year or Date
+            const getDate = (item: any) => item.year || (item.date ? new Date(item.date).getFullYear() : 0);
+
+            switch (sortBy) {
+                case 'price_asc': return getPrice(a) - getPrice(b);
+                case 'price_desc': return getPrice(b) - getPrice(a);
+                case 'newest': return getDate(b) - getDate(a);
+                default: return 0;
+            }
+        });
+
+        return result;
+    }, [allProducts, searchQuery, category, type, grape, sortBy]);
+
+    // --- 3. Active Filters Data ---
+    const activeFiltersData = useMemo(() => {
+        const list = [];
+        if (category) list.push({ key: 'category', label: t('filter_category'), value: category, displayValue: category });
+        if (tag) list.push({ key: 'tag', label: t('filter_tag'), value: tag, displayValue: tag });
+        if (type) list.push({ key: 'type', label: t('product_type'), value: type, displayValue: type });
+        if (grape) list.push({ key: 'grape', label: t('filter_grape'), value: grape, displayValue: grape });
+        return list;
+    }, [category, tag, type, grape, t]);
 
     return (
         <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 pt-32 pb-20">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-                {/* Индикация статуса загрузки из внешнего API WooCommerce */}
-                {isLoading && (
-                    <div className="mb-4 flex items-center gap-2 text-wine-gold animate-pulse">
-                        <div className="w-2 h-2 bg-wine-gold rounded-full"></div>
-                        <span className="text-xs font-medium uppercase tracking-wider">{t("loading_real_data") || "Synchronisierung mit Katalog..."}</span>
-                    </div>
-                )}
-
-                {/* Header Section */}
-                <div className="mb-12">
+                {/* Header */}
+                <div className="mb-8 md:mb-12">
                     <h1 className="text-4xl md:text-5xl font-black text-wine-dark dark:text-white mb-4">
                         {t("catalog_title")}
                     </h1>
@@ -86,55 +143,103 @@ function CatalogContent() {
                     </p>
                 </div>
 
-                {/* Controls Bar */}
-                <div className="flex flex-col md:flex-row gap-4 md:gap-6 mb-12 items-center justify-between sticky top-[64px] md:top-24 z-30 bg-zinc-50/90 dark:bg-zinc-950/90 backdrop-blur-md py-4 md:py-6 -mx-4 px-4 rounded-b-xl border-b border-zinc-200/50 dark:border-zinc-800/50 transition-all">
-                    <CatalogSearch searchQuery={searchQuery} setSearchQuery={setSearchQuery} t={t} />
-                    <CatalogFilters
-                        selectedType={selectedType}
-                        setSelectedType={setSelectedType}
-                        sortBy={sortBy}
-                        setSortBy={setSortBy}
-                        wineTypes={wineTypes}
-                        t={t}
-                    />
-                </div>
+                <div className="flex flex-col lg:flex-row gap-8">
 
-                {/* Results Info */}
-                <div className="mb-8 flex items-center justify-between">
-                    <p className="text-zinc-500 dark:text-zinc-400 text-sm">
-                        {t("showing_wines", { count: filteredWines.length })}
-                    </p>
-                </div>
+                    {/* Sidebar Filters (Dynamic) */}
+                    <SidebarFilters products={allProducts} />
 
-                {/* Grid */}
-                {isLoading && filteredWines.length === 0 ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                        {[...Array(8)].map((_, i) => (
-                            <WineCardSkeleton key={i} />
-                        ))}
-                    </div>
-                ) : filteredWines.length > 0 ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                        {filteredWines.map((wine) => (
-                            <WineCard key={wine.id} wine={wine} />
-                        ))}
-                    </div>
-                ) : (
+                    {/* Main Content */}
+                    <div className="flex-1">
 
-                    <div className="flex flex-col items-center justify-center py-32 text-center">
-                        <div className="bg-zinc-100 dark:bg-zinc-900 p-6 rounded-full mb-6">
-                            <Search className="w-12 h-12 text-zinc-300 dark:text-zinc-700" />
+                        {/* Mobile Filter Toggle & Sort & Search Bar */}
+                        <div className="sticky top-20 z-20 bg-zinc-50/90 dark:bg-zinc-950/90 backdrop-blur-md py-4 mb-6 flex flex-col sm:flex-row gap-4 justify-between items-center border-b border-zinc-200 dark:border-zinc-800">
+                            {/* Mobile Toggle */}
+                            <button
+                                onClick={() => toggleFilter()}
+                                className="lg:hidden flex items-center gap-2 px-4 py-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-full font-medium shadow-sm w-full sm:w-auto justify-center"
+                            >
+                                <SlidersHorizontal className="w-4 h-4" />
+                                {t('filters_title')}
+                                {(activeFiltersData.length > 0) && (
+                                    <span className="bg-wine-gold text-white text-[10px] px-1.5 py-0.5 rounded-full">
+                                        {activeFiltersData.length}
+                                    </span>
+                                )}
+                            </button>
+
+                            {/* Search Input */}
+                            <div className="relative w-full sm:max-w-xs">
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
+                                <input
+                                    type="text"
+                                    defaultValue={searchQuery}
+                                    placeholder={t('search_input_placeholder')}
+                                    className="w-full pl-10 pr-4 py-2 rounded-full bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 focus:outline-none focus:ring-2 focus:ring-wine-gold/50 text-sm"
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+                                            const val = e.currentTarget.value;
+                                            const params = new URLSearchParams(searchParams.toString());
+                                            if (val) params.set('search', val);
+                                            else params.delete('search');
+                                            updateParams(params);
+                                        }
+                                    }}
+                                />
+                            </div>
+
+                            {/* Sort Dropdown */}
+                            <select
+                                value={sortBy}
+                                onChange={(e) => {
+                                    const params = new URLSearchParams(searchParams.toString());
+                                    params.set('sort', e.target.value);
+                                    updateParams(params);
+                                }}
+                                className="w-full sm:w-auto px-4 py-2 rounded-full bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-wine-gold/50 cursor-pointer"
+                            >
+                                <option value="newest">{t('sort_newest')}</option>
+                                <option value="price_asc">{t('sort_price_asc')}</option>
+                                <option value="price_desc">{t('sort_price_desc')}</option>
+                            </select>
                         </div>
-                        <h3 className="text-xl font-bold text-wine-dark dark:text-white mb-2">{t("no_wines_found")}</h3>
-                        <p className="text-zinc-500 dark:text-zinc-400">{t("adjust_filters")}</p>
-                        <button
-                            onClick={() => { setSearchQuery(''); setSelectedType('All'); }}
-                            className="mt-6 text-wine-gold font-bold hover:underline"
-                        >
-                            {t("clear_filters")}
-                        </button>
+
+                        {/* Active Filters */}
+                        <ActiveFilters
+                            filters={activeFiltersData}
+                            onRemove={(key, value) => {
+                                const params = new URLSearchParams(searchParams.toString());
+                                params.delete(key);
+                                updateParams(params);
+                            }}
+                            onClear={() => {
+                                router.push(pathname, { scroll: false });
+                            }}
+                        />
+
+                        {/* Grid */}
+                        {isLoading && filteredProducts.length === 0 ? (
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
+                                {[...Array(6)].map((_, i) => (
+                                    <WineCardSkeleton key={i} />
+                                ))}
+                            </div>
+                        ) : filteredProducts.length > 0 ? (
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
+                                {filteredProducts.map((product) => (
+                                    <ProductCard key={product.id} product={product} />
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="flex flex-col items-center justify-center py-20 bg-white dark:bg-zinc-900 rounded-3xl border border-dashed border-zinc-200 dark:border-zinc-800">
+                                <Search className="w-12 h-12 text-zinc-300 mb-4" />
+                                <h3 className="text-xl font-bold text-wine-dark dark:text-white mb-2">
+                                    {t("no_wines_found")}
+                                </h3>
+                                <p className="text-zinc-500">{t("adjust_filters")}</p>
+                            </div>
+                        )}
                     </div>
-                )}
+                </div>
             </div>
         </div>
     );
@@ -147,3 +252,4 @@ export default function CatalogPage() {
         </Suspense>
     );
 }
+
