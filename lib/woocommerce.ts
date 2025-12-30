@@ -4,7 +4,7 @@
  * Особенности: Использование серверного fetch, пагинация для полной выгрузки каталога, ревалидация кэша.
  */
 
-import { Wine } from '@/lib/types';
+import { Wine } from '@/lib/types/wine';
 import { UnifiedProduct, mapProduct } from '@/lib/utils/map-product';
 import { WooCommerceProduct } from '@/lib/types/woocommerce';
 

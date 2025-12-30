@@ -21,7 +21,7 @@ import { MoodSelector } from '@/components/ai/MoodSelector';
 import { FoodInput } from '@/components/ai/FoodInput';
 import { SommelierChat } from '@/components/ai/SommelierChat';
 import { useWinesStore } from '@/lib/store/useWinesStore';
-import { Wine } from '@/lib/types';
+import { Wine } from '@/lib/types/wine';
 
 // Интерфейс для управления состоянием формы
 interface SommelierStep {
@@ -86,9 +86,14 @@ export default function AISommelierPage() {
 
         // Подготовка контекста для ИИ (список доступных вин)
         // В будущем этот текст будет отправляться в GPT
-        const winesContextString = wines.map(w =>
-            `- ${w.name} (${w.year}, ${w.type}): ${w.description.substring(0, 100)}...`
-        ).join('\n');
+        const winesContextString = wines.map(w => {
+            // Безопасное получение полей, так как UnifiedProduct может быть вином или мероприятием
+            const name = 'name' in w ? (w as any).name : ('title' in w ? (w as any).title : 'Товар');
+            const year = 'year' in w ? (w as any).year : '';
+            const type = 'type' in w ? (w as any).type : '';
+            const description = 'description' in w ? (w as any).description : '';
+            return `- ${name} (${year}, ${type}): ${description.substring(0, 100)}...`;
+        }).join('\n');
 
         console.log("AI Context Prepared:", winesContextString);
 
@@ -98,7 +103,9 @@ export default function AISommelierPage() {
         setTimeout(() => {
             // Используем реальные вина для рекомендаций
             // Если вин нет (ошибка загрузки), вернем пустой массив или заглушку
-            const sourceWines = wines.length > 0 ? wines : [];
+            
+            // Фильтруем только вина (исключаем мероприятия), чтобы соответствовать типу Wine[]
+            const sourceWines = wines.filter((w): w is Wine => 'grapeVariety' in w && w.description !== undefined);
             const randomWines = [...sourceWines].sort(() => 0.5 - Math.random()).slice(0, 2);
 
             setState(prev => ({
