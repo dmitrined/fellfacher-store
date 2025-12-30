@@ -1,79 +1,93 @@
 /**
- * Назначение: Магазин состояний (Zustand) для управления списком вин и продуктов.
- * Зависимости: WooCommerce API (через /api/products)
- * Функции: Загрузка данных, фильтрация, поиск по ID.
+ * Назначение файла: Хранилище (Store) для управления каталогом вин и мероприятий.
+ * Зависимости: Zustand, UnifiedProduct.
+ * Особенности: Синхронизация данных через API-прокси, фильтрация по ID, управление состоянием загрузки.
  */
 
 import { create } from 'zustand';
-import { Wine } from '@/lib/types';
 import { UnifiedProduct } from '@/lib/utils/map-product';
-import { wines as mockWines } from '@/lib/data/wines';
+import { Wine } from '@/lib/types/wine';
 
+// Интерфейс состояния хранилища
 interface WinesState {
-    wines: Wine[];
-    products: UnifiedProduct[];
-    isLoading: boolean;
-    error: string | null;
+    wines: UnifiedProduct[]; // Список всех продуктов
+    isLoading: boolean; // Флаг загрузки
+    error: string | null; // Сообщение об ошибке
+    lastFetched: number | null; // Штамп времени последнего обновления
 
-    // Действия
-    fetchProducts: () => Promise<void>;
+    // Методы
+    fetchProducts: (force?: boolean) => Promise<void>;
     getWineById: (id: string) => Wine | undefined;
-    getProductById: (id: string) => UnifiedProduct | undefined;
+    getEventById: (id: string) => any; // TODO: заменить any на Event после уточнения типов
+    setWines: (wines: UnifiedProduct[]) => void;
 }
 
+/**
+ * Хук-хранилище для доступа к данным каталога по всему приложению.
+ */
 export const useWinesStore = create<WinesState>((set, get) => ({
     wines: [],
-    products: [],
     isLoading: false,
     error: null,
+    lastFetched: null,
 
     /**
-     * Загрузка списка продуктов с сервера.
-     * При ошибке или пустом ответе используются моковые данные.
+     * Загрузка продуктов из API.
+     * @param force - если true, игнорирует кэш и выполняет запрос заново.
      */
-    fetchProducts: async () => {
+    fetchProducts: async (force = false) => {
+        const { lastFetched, isLoading, wines } = get();
+
+        // Избегаем повторных запросов, если данные уже загружены менее 5 минут назад
+        const CACHE_TIME = 5 * 60 * 1000; // 5 минут
+        if (!force && lastFetched && (Date.now() - lastFetched < CACHE_TIME) && wines.length > 0) {
+            return;
+        }
+
+        if (isLoading) return;
+
         set({ isLoading: true, error: null });
         try {
             const response = await fetch('/api/products');
-            if (response.ok) {
-                const data = await response.json();
-                if (Array.isArray(data) && data.length > 0) {
-                    const wines = data.filter((p: UnifiedProduct): p is Wine => (p as any).grapeVariety !== undefined);
-                    console.log(`Successfully loaded ${data.length} products from API.`);
-                    set({ products: data, wines, isLoading: false });
-                } else {
-                    console.warn('API returned empty list or unexpected data format, falling back to mock wines.');
-                    const mockUnified = mockWines as unknown as UnifiedProduct[];
-                    set({ products: mockUnified, wines: mockWines, isLoading: false });
-                }
-            } else {
-                const errorBody = await response.text().catch(() => 'No body');
-                console.error(`API Error: ${response.status} ${response.statusText}, Body: ${errorBody}`);
-                throw new Error(`Server returned error: ${response.status}`);
+            const products = await response.json();
+
+            if (products.error) {
+                throw new Error(products.error);
             }
-        } catch (err) {
-            console.error('Error loading products from API:', err);
-            const mockUnified = mockWines as unknown as UnifiedProduct[];
+
             set({
-                error: 'Failed to load real products.',
-                products: mockUnified,
-                wines: mockWines,
-                isLoading: false
+                wines: products,
+                isLoading: false,
+                lastFetched: Date.now(),
+                error: products.length === 0 ? 'Продукты не найдены' : null
+            });
+        } catch (error) {
+            console.error('Ошибка в сторе при загрузке:', error);
+            set({
+                isLoading: false,
+                error: 'Не удалось загрузить данные'
             });
         }
     },
 
     /**
-     * Поиск вина по ID или СЛАГУ.
+     * Поиск вина по ID.
      */
     getWineById: (id: string) => {
-        return get().wines.find(w => w.id === id || w.slug === id);
+        const product = get().wines.find(w => w.id === id || ('slug' in w && w.slug === id));
+        return product && 'slug' in product ? (product as Wine) : undefined;
     },
 
     /**
-     * Поиск любого продукта по ID или СЛАГУ.
+     * Поиск мероприятия по ID.
      */
-    getProductById: (id: string) => {
-        return get().products.find(p => p.id === id || (p as any).slug === id);
+    getEventById: (id: string) => {
+        const product = get().wines.find(w => w.id === id);
+        return product && !('slug' in product) ? product : undefined;
     },
+
+    /**
+     * Принудительная установка списка продуктов.
+     */
+    setWines: (wines) => set({ wines, lastFetched: Date.now() }),
 }));

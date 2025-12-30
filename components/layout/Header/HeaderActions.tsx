@@ -1,11 +1,12 @@
+/**
+ * Назначение файла: Группа управляющих кнопок в шапке (поиск, профиль, избранное, корзина).
+ * Содержит: Иконки действий с индикаторами количества (бейждами).
+ * Особенности: Адаптивные размеры иконок, поддержка темной темы.
+ */
 
 "use client";
-/**
- * Группа управляющих кнопок в шапке (поиск, профиль, избранное, корзина).
- * Снабжены индикаторами (бейждами) количества товаров.
- */
+
 import React from "react";
-import Link from "next/link";
 import { Search, User as UserIcon, Heart, ShoppingCart } from "@/app/icon-sets";
 
 interface HeaderActionsProps {
@@ -21,6 +22,9 @@ interface HeaderActionsProps {
     cartButtonRef: React.RefObject<HTMLButtonElement | null>;
 }
 
+/**
+ * Блок кнопок действий в хедере.
+ */
 const HeaderActions: React.FC<HeaderActionsProps> = ({
     isLoggedIn,
     wishlistCount,
@@ -35,6 +39,7 @@ const HeaderActions: React.FC<HeaderActionsProps> = ({
 }) => {
     return (
         <div className="flex items-center gap-2 md:gap-4">
+            {/* Поиск */}
             <button
                 className="p-2 md:p-3 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-full transition-all text-zinc-600 dark:text-zinc-400 hover:text-wine-gold"
                 onClick={() => setSearchOpen(!searchOpen)}
@@ -42,6 +47,7 @@ const HeaderActions: React.FC<HeaderActionsProps> = ({
                 <Search className="w-5 h-5 md:w-6 md:h-6" />
             </button>
 
+            {/* Профиль */}
             <button
                 className="p-2 md:p-3 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-full transition-all text-zinc-600 dark:text-zinc-400 hover:text-wine-gold relative"
                 onClick={onUserClick}
@@ -52,6 +58,7 @@ const HeaderActions: React.FC<HeaderActionsProps> = ({
                 )}
             </button>
 
+            {/* Избранное */}
             <button
                 onClick={onWishlistClick}
                 className="p-2 md:p-3 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-full transition-all text-zinc-600 dark:text-zinc-400 hover:text-wine-gold relative"
@@ -64,6 +71,7 @@ const HeaderActions: React.FC<HeaderActionsProps> = ({
                 )}
             </button>
 
+            {/* Корзина */}
             <div className="relative">
                 <button
                     ref={cartButtonRef}
@@ -77,10 +85,7 @@ const HeaderActions: React.FC<HeaderActionsProps> = ({
                         </span>
                     )}
                 </button>
-
             </div>
-
-
         </div>
     );
 };

@@ -1,13 +1,26 @@
 /**
  * Назначение файла: Главный компонент шапки сайта (Header).
- * Зависимости: Next.js, HeroUI, Lucide React, i18n Context, Auth/Cart/Wishlist Contexts.
- * Особенности: Client Component, Sticky, Responsive (Desktop-first navigation inside, simplified for mobile).
+ * Зависимости: HeroUI, Lucide Icons, useTranslation, useCartStore, useUIStore.
+ * Особенности: Прозрачный фон при скролле, выпадающие меню, интеграция с корзиной и поиском.
  */
 
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { useRouter, usePathname } from "next/navigation";
+import {
+  Search,
+  ShoppingBag,
+  User,
+  Menu,
+  X,
+  ChevronDown,
+  Heart,
+  Phone,
+  MapPin,
+  Clock
+} from "lucide-react";
 import { useTranslation } from "@/lib/i18n";
 import { useWishlistStore } from "@/lib/store/useWishlistStore";
 import { useCartStore } from "@/lib/store/useCartStore";
@@ -31,20 +44,20 @@ const Header: React.FC = () => {
   // Zustand Stores
   const wishlist = useWishlistStore(state => state.wishlist);
 
-  const getCartCount = useCartStore(state => state.getCartCount);
-  const cart = useCartStore(state => state.cart);
+  const getItemCount = useCartStore(state => state.getItemCount);
+  const items = useCartStore(state => state.items);
   const removeFromCart = useCartStore(state => state.removeFromCart);
   const updateQuantity = useCartStore(state => state.updateQuantity);
 
   const { isLoggedIn, user, isAuthModalOpen, setAuthModalOpen } = useAuth();
-  const { products, fetchProducts } = useWinesStore();
+  const { wines, fetchProducts } = useWinesStore();
 
   // Загрузка продуктов если они еще не загружены (для расчета цен в корзине и т.д.)
   useEffect(() => {
-    if (products.length === 0) {
+    if (wines.length === 0) {
       fetchProducts();
     }
-  }, [fetchProducts, products.length]);
+  }, [fetchProducts, wines.length]);
 
   // Состояния для управления открытием различных меню и модалок
   const [searchOpen, setSearchOpen] = useState(false); // Прямой поиск
@@ -153,12 +166,7 @@ const Header: React.FC = () => {
   };
 
   // Вычисление общей стоимости корзины "на лету"
-  // Проходит по всем товарам в корзине, находит их цену в базе вин и суммирует.
-  const totalPrice = cart.reduce((total: number, item: { id: string; quantity: number }) => {
-    const product = products.find((p: any) => p.id === item.id);
-    const price = product ? (typeof product.price === 'number' ? product.price : parseFloat(product.price || '0')) : 0;
-    return total + (price * item.quantity);
-  }, 0);
+  const totalPrice = useCartStore(state => state.getTotalPrice());
 
   return (
     <>
@@ -204,7 +212,7 @@ const Header: React.FC = () => {
               <HeaderActions
                 isLoggedIn={isLoggedIn}
                 wishlistCount={wishlist.length}
-                cartCount={getCartCount()}
+                cartCount={getItemCount()}
                 searchOpen={searchOpen}
                 setSearchOpen={setSearchOpen}
                 cartDropdownOpen={cartDropdownOpen}
@@ -222,9 +230,9 @@ const Header: React.FC = () => {
               {cartDropdownOpen && (
                 <CartDropdown
                   t={t}
-                  cart={cart}
-                  wines={products}
-                  getCartCount={getCartCount}
+                  items={items}
+                  wines={wines}
+                  getItemCount={getItemCount}
                   totalPrice={totalPrice}
                   updateQuantity={updateQuantity}
                   removeFromCart={removeFromCart}

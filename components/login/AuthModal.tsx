@@ -1,9 +1,11 @@
+/**
+ * Назначение файла: Модальное окно авторизации и регистрации (Auth Modal).
+ * Зависимости: i18n, AuthContext, Lucide React.
+ * Особенности: Переключение между Входом и Регистрацией, проверка сложности пароля, социальные кнопки.
+ */
+
 "use client";
 
-/**
- * Модальное окно авторизации и регистрации.
- * Содержит формы для входа и создания нового аккаунта, а также проверку сложности пароля.
- */
 import React, { useState, useMemo } from 'react';
 import { useAuth } from '@/lib/contexts/AuthContext';
 import { useTranslation } from '@/lib/i18n';
@@ -14,9 +16,14 @@ interface AuthModalProps {
     onClose: () => void;
 }
 
+/**
+ * Основной компонент аутентификации пользователя.
+ */
 export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
     const { t } = useTranslation();
     const { login, register } = useAuth();
+
+    // Состояние формы
     const [isLogin, setIsLogin] = useState(true);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -26,8 +33,9 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
-
-
+    /**
+     * Оценка сложности пароля (от 0 до 3).
+     */
     const passwordStrength = useMemo(() => {
         if (!password) return 0;
         let strength = 0;
@@ -37,11 +45,12 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
         if (/[0-9]/.test(password)) strength++;
         if (/[^A-Za-z0-9]/.test(password)) strength++;
 
-        if (strength <= 2) return 1; // Weak
-        if (strength <= 4) return 2; // Medium
-        return 3; // Strong
+        if (strength <= 2) return 1; // Слабый
+        if (strength <= 4) return 2; // Средний
+        return 3; // Сильный
     }, [password]);
 
+    // Цвет индикатора сложности
     const strengthColor = () => {
         switch (passwordStrength) {
             case 1: return 'bg-red-500';
@@ -51,6 +60,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
         }
     };
 
+    // Текстовая метка сложности
     const strengthLabel = () => {
         switch (passwordStrength) {
             case 1: return t("strength_weak");
@@ -60,6 +70,9 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
         }
     };
 
+    /**
+     * Обработка отправки формы.
+     */
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
@@ -89,8 +102,12 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            {/* Overlay */}
             <div className="absolute inset-0 bg-zinc-950/80 backdrop-blur-sm animate-in fade-in duration-300" onClick={onClose} />
+
+            {/* Modal Content */}
             <div className="relative bg-white dark:bg-zinc-900 w-full max-w-md rounded-[2.5rem] shadow-2xl overflow-hidden animate-in zoom-in slide-in-from-bottom-8 duration-500">
+                {/* Close Button */}
                 <button
                     onClick={onClose}
                     className="absolute top-6 right-6 p-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-full transition-colors z-10"
@@ -99,6 +116,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                 </button>
 
                 <div className="p-8 md:p-12">
+                    {/* Header */}
                     <div className="mb-8">
                         <h2 className="text-3xl font-black serif dark:text-white mb-2 pr-12">
                             {isLogin ? t("login_title") : t("register_title")}
@@ -108,6 +126,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                         </p>
                     </div>
 
+                    {/* Form */}
                     <form onSubmit={handleSubmit} className="space-y-4">
                         {!isLogin && (
                             <div className="relative">
@@ -152,6 +171,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                             </button>
                         </div>
 
+                        {/* Индикатор сложности пароля при регистрации */}
                         {!isLogin && password && (
                             <div className="px-2">
                                 <div className="flex justify-between items-center mb-1">
@@ -202,6 +222,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                         </button>
                     </form>
 
+                    {/* Social Login */}
                     <div className="mt-8">
                         <div className="relative flex items-center justify-center mb-8">
                             <div className="absolute inset-0 flex items-center">
@@ -234,6 +255,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                         </div>
                     </div>
 
+                    {/* Footer Toggle */}
                     <div className="mt-8 text-center">
                         <button
                             onClick={() => {

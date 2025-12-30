@@ -1,37 +1,44 @@
+/**
+ * Назначение файла: Описание интерфейса Вина (Wine).
+ * Зависимости: Нет.
+ * Особенности: Используется для унификации данных из WooCommerce по всему приложению.
+ */
+
 export interface Wine {
-    id: string; // Keeping as string for internal consistency across the app (routing, store)
+    id: string; // Внутренний ID (строка для консистентности)
     name: string;
-    slug: string; // WooCommerce slug
+    slug: string; // URL-путь из WooCommerce
     price: number;
     regular_price: number;
     description: string;
     short_description: string;
     stock_status: 'instock' | 'outofstock';
 
-    // Arrays from WooCommerce
+    // Массивы данных из WooCommerce
     images: { src: string; alt?: string }[];
     categories: { id: number; name: string; slug: string }[];
     tags?: { id: number; name: string; slug: string }[];
     attributes: { name: string; options: string[] }[];
-    // Additional fields for detailed display
+
+    // Дополнительные поля для детального отображения
     sku?: string;
-    weight?: string; // Used for price per liter calculation
+    weight?: string; // Используется для расчета цены за литр
     stock_quantity?: number | null;
     tax_status?: string;
     tax_class?: string;
 
-    // Legacy/Convenience fields (Computed/Mapped)
-    image: string; // Main image (images[0])
-    year: number; // Extracted from attributes
-    type: 'Rotwein' | 'Weißwein' | 'Roséwein' | 'Sekt' | 'Alkoholfrei' | 'Paket' | 'Sonstiges'; // Derived from categories
-    grapeVariety: string; // Extracted from attributes
-    alcohol?: string; // Extracted from attributes
-    acidity?: string; // Extracted from attributes
-    sugar?: string; // Extracted from attributes
-    location?: string; // e.g. "Fellbacher Lämmler"
-    quality_level?: string; // e.g. "Qualitätswein"
-    flavor?: string; // e.g. "trocken"
-    soil?: string; // e.g. "Keuper"
-    producer?: string; // e.g. "Fellbacher Weingärtner eG"
-    temp?: string; // e.g. "8-10 °C"
+    // Вычисляемые/Маппированные поля
+    image: string; // Основное изображение
+    year: number; // Год урожая
+    type: 'Rotwein' | 'Weißwein' | 'Roséwein' | 'Sekt' | 'Alkoholfrei' | 'Paket' | 'Sonstiges'; // Тип вина
+    grapeVariety: string; // Сорт винограда
+    alcohol?: string;
+    acidity?: string;
+    sugar?: string;
+    location?: string; // Место произрастания
+    quality_level?: string; // Уровень качества
+    flavor?: string; // Вкус (трокен и т.д.)
+    soil?: string; // Почва
+    producer?: string; // Производитель
+    temp?: string; // Температура подачи
 }

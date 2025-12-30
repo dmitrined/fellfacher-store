@@ -1,33 +1,47 @@
 /**
- * Назначение: Глобальное состояние интерфейса (UI State).
+ * Назначение файла: Хранилище (Store) для управления состоянием интерфейса (UI).
  * Зависимости: Zustand.
- * Особенности:
- * - Управляет видимостью мобильного меню, модальных окон и других UI-элементов.
- * - Не требует персистентности (сбрасывается при перезагрузке).
+ * Особенности: Управление видимостью меню, фильтров и модальных окон. Состояние не сохраняется после перезагрузки.
  */
 
 import { create } from 'zustand';
 
-// Интерфейс состояния UI
+// Интерфейс состояния пользовательского интерфейса
 interface UIState {
-    isMobileMenuOpen: boolean; // Открыто ли мобильное меню
-    setMobileMenuOpen: (isOpen: boolean) => void; // Установить состояние меню
-    toggleMobileMenu: () => void; // Переключить состояние меню
+    isMobileMenuOpen: boolean; // Состояние мобильного меню (открыто/закрыто)
+    isFilterOpen: boolean; // Состояние боковой панели фильтров
 
-    isFilterOpen: boolean; // Открыта ли панель фильтров (Mobile)
+    // Методы управления
+    setMobileMenuOpen: (isOpen: boolean) => void;
+    toggleMobileMenu: () => void;
     setFilterOpen: (isOpen: boolean) => void;
     toggleFilter: () => void;
 }
 
+/**
+ * Хук-хранилище для управления глобальными элементами UI.
+ */
 export const useUIStore = create<UIState>((set) => ({
     isMobileMenuOpen: false,
     isFilterOpen: false,
 
-    // Установка конкретного значения (открыть/закрыть)
-    setMobileMenuOpen: (isOpen: boolean) => set({ isMobileMenuOpen: isOpen }),
-    setFilterOpen: (isOpen: boolean) => set({ isFilterOpen: isOpen }),
+    /**
+     * Установка состояния мобильного меню.
+     */
+    setMobileMenuOpen: (isOpen) => set({ isMobileMenuOpen: isOpen }),
 
-    // Переключение значения на противоположное
+    /**
+     * Переключение видимости мобильного меню.
+     */
     toggleMobileMenu: () => set((state) => ({ isMobileMenuOpen: !state.isMobileMenuOpen })),
+
+    /**
+     * Установка состояния панели фильтров.
+     */
+    setFilterOpen: (isOpen) => set({ isFilterOpen: isOpen }),
+
+    /**
+     * Переключение видимости панели фильтров.
+     */
     toggleFilter: () => set((state) => ({ isFilterOpen: !state.isFilterOpen })),
 }));

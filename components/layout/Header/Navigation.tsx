@@ -1,8 +1,11 @@
 /**
- * Основное навигационное меню для десктопной версии сайта.
- * Содержит ссылки на категории и выпадающие списки с дополнительными разделами.
+ * Назначение файла: Основное навигационное меню для десктопной версии сайта.
+ * Содержит: Навигационные ссылки и выпадающие списки категорий.
+ * Особенности: Плавные анимации появления, логика закрытия по таймауту при уходе курсора.
  */
+
 "use client";
+
 import React from "react";
 import Link from "next/link";
 import { ChevronDown } from "@/app/icon-sets";
@@ -28,7 +31,9 @@ interface NavigationProps {
     shopCategories: Array<{ label: string; path: string }>;
 }
 
-// Internal helper for Dropdown with Hover Logic
+/**
+ * Вспомогательный компонент для выпадающего пункта меню с логикой наведения.
+ */
 const DropdownNavItem = ({
     label,
     items,
@@ -82,6 +87,7 @@ const DropdownNavItem = ({
                 </button>
             )}
 
+            {/* Выпадающий список */}
             {isOpen && (
                 <div className="absolute top-full left-0 mt-0 w-56 bg-white dark:bg-zinc-900 shadow-2xl rounded-2xl z-50 border border-zinc-200 dark:border-zinc-800 overflow-hidden animate-in fade-in zoom-in duration-200">
                     <div className="p-2">
@@ -111,6 +117,9 @@ const DropdownNavItem = ({
     );
 };
 
+/**
+ * Основная навигация шапки.
+ */
 const Navigation: React.FC<NavigationProps> = ({
     t,
     moreMenuOpen,
@@ -133,7 +142,7 @@ const Navigation: React.FC<NavigationProps> = ({
 }) => {
     return (
         <nav className="hidden lg:flex gap-8 ml-8 items-center">
-            {/* Standard Links (Catalog, Loyalty) */}
+            {/* Обычные ссылки (Лояльность и т.д.) */}
             {navigationItems.map((item) => (
                 <Link
                     key={item.label}
@@ -145,7 +154,7 @@ const Navigation: React.FC<NavigationProps> = ({
                 </Link>
             ))}
 
-            {/* Shop Dropdown */}
+            {/* Магазин (Магазин) */}
             <DropdownNavItem
                 label={t("nav_shop")}
                 items={shopCategories}
@@ -155,7 +164,7 @@ const Navigation: React.FC<NavigationProps> = ({
                 path="/shop"
             />
 
-            {/* Events Dropdown */}
+            {/* Мероприятия */}
             <DropdownNavItem
                 label={t("nav_events")}
                 items={eventCategories}
@@ -165,7 +174,7 @@ const Navigation: React.FC<NavigationProps> = ({
                 path="/events"
             />
 
-            {/* About Us Dropdown */}
+            {/* О нас */}
             <DropdownNavItem
                 label={t("nav_about_us")}
                 items={aboutCategories}
@@ -175,7 +184,7 @@ const Navigation: React.FC<NavigationProps> = ({
                 path="/aboutUs/whoWeAre"
             />
 
-            {/* Contact Dropdown */}
+            {/* Контакты */}
             <DropdownNavItem
                 label={t("nav_contact")}
                 items={contactCategories}

@@ -1,20 +1,21 @@
 /**
- * Утилита для работы с WooCommerce REST API.
- * Все запросы выполняются на стороне сервера, чтобы скрыть ключи API (Consumer Key/Secret).
+ * Назначение файла: Взаимодействие с WooCommerce REST API (Server-side).
+ * Зависимости: UnifiedProduct, mapProduct, WooCommerceProduct.
+ * Особенности: Использование серверного fetch, пагинация для полной выгрузки каталога, ревалидация кэша.
  */
 
-import { Wine } from '@/lib/types'; // Legacy import, kept for compatibility
+import { Wine } from '@/lib/types';
 import { UnifiedProduct, mapProduct } from '@/lib/utils/map-product';
 import { WooCommerceProduct } from '@/lib/types/woocommerce';
 
-// Переменные окружения берутся из .env.local
+// Параметры доступа к API из переменных окружения
 const WC_URL = process.env.WC_STORE_URL || process.env.NEXT_PUBLIC_WC_URL;
-const WC_KEY = process.env.WC_CONSUMER_KEY; // Доступно только на сервере
-const WC_SECRET = process.env.WC_CONSUMER_SECRET; // Доступно только на сервере
+const WC_KEY = process.env.WC_CONSUMER_KEY;
+const WC_SECRET = process.env.WC_CONSUMER_SECRET;
 
 /**
- * Функция загрузки ВСЕХ продуктов (вино + мероприятия)
- * Использует пагинацию для загрузки всех продуктов из WooCommerce
+ * Загрузка всех продуктов (вина и мероприятия) из WordPress/WooCommerce.
+ * Реализует параллельную загрузку всех страниц пагинации для максимальной скорости.
  */
 export async function fetchProducts(): Promise<UnifiedProduct[]> {
     if (!WC_URL || !WC_KEY || !WC_SECRET) {
@@ -22,69 +23,84 @@ export async function fetchProducts(): Promise<UnifiedProduct[]> {
         if (!WC_URL) missing.push('WC_STORE_URL/NEXT_PUBLIC_WC_URL');
         if (!WC_KEY) missing.push('WC_CONSUMER_KEY');
         if (!WC_SECRET) missing.push('WC_CONSUMER_SECRET');
-        console.error(`WooCommerce credentials missing: ${missing.join(', ')}. Check .env.local or Vercel settings.`);
+        console.error(`Отсутствуют ключи доступа WooCommerce: ${missing.join(', ')}`);
         return [];
     }
 
     const auth = Buffer.from(`${WC_KEY}:${WC_SECRET}`).toString('base64');
     const allProducts: WooCommerceProduct[] = [];
-    let page = 1;
-    let hasMore = true;
-    const perPage = 100; // Максимум продуктов на страницу
+    const perPage = 100; // Количество товаров на одну страницу (максимум для API)
 
     try {
-        while (hasMore) {
-            const response = await fetch(
-                `${WC_URL}/wp-json/wc/v3/products?per_page=${perPage}&page=${page}&status=publish`,
-                {
-                    headers: {
-                        'Authorization': `Basic ${auth}`,
-                        'Content-Type': 'application/json'
-                    },
-                    next: { revalidate: 3600 }
-                }
-            );
-
-            if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error(`WooCommerce API Error: ${response.status} ${response.statusText} - ${errorText}`);
+        // Шаг 1: Загрузка первой страницы для получения общего количества страниц
+        const firstPageResponse = await fetch(
+            `${WC_URL}/wp-json/wc/v3/products?per_page=${perPage}&page=1&status=publish`,
+            {
+                headers: {
+                    'Authorization': `Basic ${auth}`,
+                    'Content-Type': 'application/json'
+                },
+                next: { revalidate: 3600 } // Кэширование на 1 час
             }
+        );
 
-            const products: WooCommerceProduct[] = await response.json();
-
-            if (products.length === 0) {
-                hasMore = false;
-            } else {
-                allProducts.push(...products);
-
-                // Проверяем заголовок X-WP-TotalPages для определения общего количества страниц
-                const totalPages = response.headers.get('X-WP-TotalPages');
-                if (totalPages && page >= parseInt(totalPages)) {
-                    hasMore = false;
-                } else if (products.length < perPage) {
-                    // Если получили меньше продуктов чем запрашивали, значит это последняя страница
-                    hasMore = false;
-                } else {
-                    page++;
-                }
-            }
+        if (!firstPageResponse.ok) {
+            const errorText = await firstPageResponse.text();
+            throw new Error(`Ошибка WooCommerce API: ${firstPageResponse.status} - ${errorText}`);
         }
 
-        console.log(`Loaded ${allProducts.length} products from WooCommerce API`);
+        const firstPageProducts: WooCommerceProduct[] = await firstPageResponse.json();
+        allProducts.push(...firstPageProducts);
+
+        const totalPagesHeader = firstPageResponse.headers.get('X-WP-TotalPages');
+        const totalPages = totalPagesHeader ? parseInt(totalPagesHeader) : 1;
+
+        // Шаг 2: Параллельная загрузка остальных страниц, если они есть
+        if (totalPages > 1) {
+            const remainingPagePromises = [];
+            for (let i = 2; i <= totalPages; i++) {
+                remainingPagePromises.push(
+                    fetch(
+                        `${WC_URL}/wp-json/wc/v3/products?per_page=${perPage}&page=${i}&status=publish`,
+                        {
+                            headers: {
+                                'Authorization': `Basic ${auth}`,
+                                'Content-Type': 'application/json'
+                            },
+                            next: { revalidate: 3600 }
+                        }
+                    ).then(async (res) => {
+                        if (!res.ok) {
+                            console.warn(`Не удалось загрузить страницу ${i}: ${res.statusText}`);
+                            return [];
+                        }
+                        return res.json() as Promise<WooCommerceProduct[]>;
+                    })
+                );
+            }
+
+            const remainingPagesResults = await Promise.all(remainingPagePromises);
+            remainingPagesResults.forEach(products => {
+                allProducts.push(...products);
+            });
+        }
+
+        console.log(`Загружено ${allProducts.length} товаров из WooCommerce`);
+        // Преобразование сырых данных в унифицированный формат приложения
         return allProducts.map(mapProduct);
     } catch (error) {
-        console.error('Failed to load products from API:', error);
+        console.error('Критическая ошибка при загрузке товаров:', error);
         return [];
     }
 }
 
 /**
- * Legacy wrapper: Returns only Wines from the unified fetch
+ * Обертка для получения только вин (исключая мероприятия).
+ * Используется для обратной совместимости в некоторых модулях.
  */
 export async function fetchWines(): Promise<Wine[]> {
     const allProducts = await fetchProducts();
-    // Filter out events. We check if it is a Wine by ensuring it has 'grapeVariety' which is Wine-specific in our mapper.
-    // Events don't have grapeVariety.
+    // Фильтрация товаров, имеющих специфичный для вина атрибут 'grapeVariety'
     return allProducts.filter((p): p is Wine => {
         return (p as Wine).grapeVariety !== undefined;
     });

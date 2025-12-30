@@ -1,6 +1,6 @@
 /**
- * Centralized contact information for Fellbacher Weingärtner eG.
- * Used throughout the application to ensure consistency.
+ * Назначение файла: Централизованная контактная информация винодельни Fellbacher Weingärtner eG.
+ * Используется по всему приложению для обеспечения согласованности данных.
  */
 
 export const CONTACT_PHONE = "0711 57 88 03 – 0";

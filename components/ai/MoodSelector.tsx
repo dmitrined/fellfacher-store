@@ -1,7 +1,7 @@
 /**
- * Назначение: Компонент выбора настроения для AI Sommelier.
- * Зависимости: framer-motion, lucide-react, HeroUI (cn).
- * Особенности: Сетка карточек с анимацией выбора.
+ * Назначение файла: Компонент выбора настроения для рекомендаций (Mood Selector).
+ * Зависимости: framer-motion, lucide-react, i18n.
+ * Особенности: Сетка карточек с интерактивным выбором и индикацией (Check icon).
  */
 
 import React from 'react';
@@ -16,6 +16,7 @@ interface MoodOption {
     color: string;
 }
 
+// Список доступных настроений/поводов
 const moods: MoodOption[] = [
     { id: 'romantic', icon: Flame, labelKey: 'ai_mood_romantic', color: 'bg-rose-500/10 text-rose-500 border-rose-200' },
     { id: 'party', icon: PartyPopper, labelKey: 'ai_mood_party', color: 'bg-purple-500/10 text-purple-500 border-purple-200' },
@@ -29,6 +30,9 @@ interface MoodSelectorProps {
     onSelect: (moodId: string) => void;
 }
 
+/**
+ * Сетка кнопок для выбора повода/настроения.
+ */
 export const MoodSelector: React.FC<MoodSelectorProps> = ({ selectedMood, onSelect }) => {
     const { t } = useTranslation();
 
@@ -49,11 +53,15 @@ export const MoodSelector: React.FC<MoodSelectorProps> = ({ selectedMood, onSele
                         }
                     `}
                 >
+                    {/* Иконка настроения */}
                     <mood.icon className={`w-8 h-8 ${selectedMood === mood.id ? '' : 'text-zinc-400 dark:text-zinc-500'}`} />
+
+                    {/* Заголовок */}
                     <span className={`font-medium text-sm ${selectedMood === mood.id ? '' : 'text-zinc-600 dark:text-zinc-300'}`}>
                         {t(mood.labelKey)}
                     </span>
 
+                    {/* Галочка выбора */}
                     {selectedMood === mood.id && (
                         <motion.div
                             layoutId="check"

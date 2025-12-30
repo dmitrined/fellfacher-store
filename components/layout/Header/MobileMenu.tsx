@@ -1,6 +1,7 @@
 /**
- * Мобильное меню навигации.
- * Появляется при нажатии на "Mehr" в нижней навигации.
+ * Назначение файла: Мобильное навигационное меню (Mobile Menu).
+ * Зависимости: useTranslation, useUIStore, Logo, Lucide Icons, navigation constants.
+ * Особенности: Боковая панель с аккордеон-секциями, анимация slide-in, переключатель языка.
  */
 "use client";
 import React, { useState } from "react";

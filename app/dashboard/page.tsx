@@ -1,9 +1,11 @@
+/**
+ * Назначение файла: Личный кабинет пользователя (Dashboard).
+ * Зависимости: AuthContext, OrdersContext, useWishlistStore, useCartStore, useWinesStore, i18n.
+ * Особенности: Client Component, табы (Profile, Wishlist, Cart, Orders), deep linking через URL params.
+ */
+
 "use client";
 
-/**
- * Личный кабинет (Dashboard) пользователя.
- * Здесь отображаются последние заказы, список избранных вин и информация о профиле.
- */
 import React, { useState } from 'react';
 import { useAuth } from '@/lib/contexts/AuthContext';
 import { useOrders } from '@/lib/contexts/OrdersContext';
@@ -34,15 +36,18 @@ function DashboardContent() {
     const { orders } = useOrders();
     const { wines, fetchProducts, isLoading: isWinesLoading } = useWinesStore();
     const wishlist = useWishlistStore(state => state.wishlist);
-    const wishlistedWines = wines.filter(wine => wishlist.includes(wine.id));
+    // Фильтруем только вина (исключаем события) для отображения в wishlist
+    const wishlistedWines = wines.filter((wine): wine is Wine =>
+        wishlist.includes(wine.id) && 'grapeVariety' in wine
+    );
 
-    const cart = useCartStore(state => state.cart);
+    const items = useCartStore(state => state.items);
     const updateQuantity = useCartStore(state => state.updateQuantity);
     const removeFromCart = useCartStore(state => state.removeFromCart);
-    const cartWines = cart.map(item => {
+    const cartWines = items.map((item: { id: string; quantity: number }) => {
         const wine = wines.find(w => w.id === item.id);
         return wine ? { ...wine, quantity: item.quantity } : null;
-    }).filter(item => item !== null) as (Wine & { quantity: number })[];
+    }).filter((item): item is Wine & { quantity: number } => item !== null);
 
     const [activeTab, setActiveTab] = useState<'profile' | 'wishlist' | 'cart' | 'orders'>('profile');
 
@@ -187,7 +192,7 @@ function DashboardContent() {
                                     <p className="text-zinc-400 font-bold uppercase tracking-widest text-xs">{t("no_wines_found")}</p>
                                 </div>
                             ) : (
-                                wishlistedWines.map((wine) => (
+                                wishlistedWines.map((wine: Wine) => (
                                     <WineCard key={wine.id} wine={wine} />
                                 ))
                             )}

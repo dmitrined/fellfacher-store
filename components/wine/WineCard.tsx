@@ -1,14 +1,15 @@
-"use client";
-
 /**
- * Компонент карточки вина.
- * Используется в списках товаров для отображения краткой информации, цены и кнопок действий (корзина, избранное).
+ * Назначение файла: Компонент карточки вина (Wine Card).
+ * Зависимости: Lucide Icons, useCartStore, useWishlistStore, useTranslation, useAuth.
+ * Особенности: Отображение цены за литр, статус доставки, управление количеством в корзине, избранное.
  */
+
+"use client";
 
 import React, { useState } from 'react';
 import { Heart, ShoppingCart, Plus, Minus } from 'lucide-react';
 import Link from 'next/link';
-import { Wine } from '@/lib/types';
+import { Wine } from '@/lib/types/wine';
 import { useTranslation } from '@/lib/i18n';
 import { useWishlistStore } from '@/lib/store/useWishlistStore';
 import { useCartStore } from '@/lib/store/useCartStore';
@@ -18,13 +19,18 @@ interface WineCardProps {
     wine: Wine;
 }
 
+/**
+ * Карточка вина для списков и каталога.
+ */
 const WineCard: React.FC<WineCardProps> = ({ wine }) => {
     const { t } = useTranslation();
 
+    // Состояние избранного
     const toggleWishlist = useWishlistStore(state => state.toggleWishlist);
     const isInWishlist = useWishlistStore(state => state.isInWishlist);
 
-    const cart = useCartStore(state => state.cart);
+    // Состояние корзины
+    const items = useCartStore(state => state.items);
     const addToCart = useCartStore(state => state.addToCart);
     const isInCart = useCartStore(state => state.isInCart);
     const updateQuantity = useCartStore(state => state.updateQuantity);
@@ -34,11 +40,11 @@ const WineCard: React.FC<WineCardProps> = ({ wine }) => {
 
     const isFavorite = isInWishlist(wine.id);
     const inCart = isInCart(wine.id);
-    const cartItem = cart.find(item => item.id === wine.id);
+    const cartItem = items.find(item => item.id === wine.id);
 
     return (
         <div className="group relative bg-white dark:bg-zinc-900 overflow-hidden rounded-[2.5rem] border border-zinc-100 dark:border-zinc-800 hover:shadow-2xl transition-all duration-500 flex flex-col h-full">
-            {/* Image Section Wrapper */}
+            {/* Секция изображения */}
             <div className="relative h-64 w-full bg-zinc-50 dark:bg-zinc-800 transition-colors group-hover:bg-white dark:group-hover:bg-zinc-900">
                 <Link href={`/shop/${wine.slug}`} className="block h-full w-full p-4">
                     {!imageError ? (
@@ -62,7 +68,7 @@ const WineCard: React.FC<WineCardProps> = ({ wine }) => {
                     )}
                 </Link>
 
-                {/* Wishlist Button - Overlay on Image */}
+                {/* Кнопка "В избранное" (поверх изображения) */}
                 <div className="absolute top-6 right-6 z-30">
                     <button
                         onClick={(e) => {
@@ -82,10 +88,9 @@ const WineCard: React.FC<WineCardProps> = ({ wine }) => {
                         <Heart className={`w-5 h-5 ${isFavorite ? 'fill-current' : ''}`} />
                     </button>
                 </div>
-
             </div>
 
-            {/* Content Section */}
+            {/* Секция информации */}
             <div className="p-6 flex flex-col flex-grow">
                 <div className="flex-grow">
                     <p className="text-[10px] uppercase tracking-[0.2em] text-wine-gold font-black mb-2">
@@ -98,6 +103,7 @@ const WineCard: React.FC<WineCardProps> = ({ wine }) => {
                     </Link>
                 </div>
 
+                {/* Цена и покупка */}
                 <div className="mt-6 border-t border-zinc-100 dark:border-zinc-800 pt-6">
                     <div className="flex flex-col mb-4">
                         <span className="text-3xl font-black text-zinc-900 dark:text-white italic serif">
@@ -113,23 +119,21 @@ const WineCard: React.FC<WineCardProps> = ({ wine }) => {
                     </div>
 
                     <div className="pt-4 border-t border-zinc-50 dark:border-zinc-800/50 flex items-center justify-between">
+                        {/* Статус доставки */}
                         <p className="text-[10px] font-bold text-green-600 dark:text-green-500 uppercase tracking-widest flex items-center gap-1.5">
                             <span className="w-1.5 h-1.5 rounded-full bg-current animate-pulse" />
                             {t('product_delivery_time')}
                         </p>
 
                         <div className="flex items-center gap-2">
+                            {/* Управление количеством в корзине */}
                             {inCart && (
                                 <div className="flex items-center gap-2 bg-zinc-100 dark:bg-zinc-800 rounded-full p-1 border border-zinc-200 dark:border-zinc-700">
                                     <button
                                         onClick={(e) => {
                                             e.preventDefault();
                                             e.stopPropagation();
-                                            if (isLoggedIn) {
-                                                updateQuantity(wine.id, -1);
-                                            } else {
-                                                setAuthModalOpen(true);
-                                            }
+                                            updateQuantity(wine.id, (cartItem?.quantity || 0) - 1);
                                         }}
                                         className="p-1.5 hover:bg-white dark:hover:bg-zinc-700 rounded-full transition-all text-zinc-500"
                                     >
@@ -140,11 +144,7 @@ const WineCard: React.FC<WineCardProps> = ({ wine }) => {
                                         onClick={(e) => {
                                             e.preventDefault();
                                             e.stopPropagation();
-                                            if (isLoggedIn) {
-                                                updateQuantity(wine.id, 1);
-                                            } else {
-                                                setAuthModalOpen(true);
-                                            }
+                                            updateQuantity(wine.id, (cartItem?.quantity || 0) + 1);
                                         }}
                                         className="p-1.5 hover:bg-white dark:hover:bg-zinc-700 rounded-full transition-all text-zinc-500"
                                     >
@@ -152,6 +152,7 @@ const WineCard: React.FC<WineCardProps> = ({ wine }) => {
                                     </button>
                                 </div>
                             )}
+                            {/* Кнопка добавления в корзину */}
                             <button
                                 onClick={(e) => {
                                     e.preventDefault();

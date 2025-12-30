@@ -1,7 +1,8 @@
 /**
- * Назначение: Универсальная карточка продукта (Вино или Мероприятие).
- * Зависимости: i18n, next/image, next/link.
- * Описание: Меняет отображение в зависимости от типа сущности.
+ * Назначение файла: Универсальная карточка продукта (Вино или Мероприятие).
+ * Зависимости: i18n, next/image, next/link, useCartStore, useWishlistStore.
+ * Описание: Меняет отображение и логику в зависимости от типа продукта (вино/ивент).
+ * Особенности: Использование Framer Motion для анимации появления.
  */
 
 "use client";
@@ -22,21 +23,26 @@ interface ProductCardProps {
     product: UnifiedProduct;
 }
 
+/**
+ * Универсальная карточка для каталога.
+ */
 export default function ProductCard({ product }: ProductCardProps) {
     const { t } = useTranslation();
+
+    // Сторы
     const toggleWishlist = useWishlistStore(state => state.toggleWishlist);
     const isInWishlist = useWishlistStore(state => state.isInWishlist);
     const addToCart = useCartStore(state => state.addToCart);
+
     const { isLoggedIn, setAuthModalOpen } = useAuth();
 
-    // Определяем тип: если есть 'grapeVariety', это вино. Если есть 'time'/'location', это Event.
+    // Определение типа продукта
     const isWineItem = (p: UnifiedProduct): p is Wine => {
         return (p as any).grapeVariety !== undefined;
     };
 
     const isWine = isWineItem(product);
     const isEvent = !isWine;
-
     const isFavorite = isInWishlist(product.id);
 
     return (
@@ -46,7 +52,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             viewport={{ once: true }}
             className="group relative bg-white dark:bg-zinc-900 rounded-2xl overflow-hidden border border-zinc-100 dark:border-zinc-800 hover:shadow-xl transition-all duration-300 flex flex-col h-full"
         >
-            {/* Image Container */}
+            {/* Контейнер изображения */}
             <div className="relative aspect-[3/4] overflow-hidden bg-zinc-100 dark:bg-zinc-800">
                 <Link href={isWine ? `/shop/${(product as any).slug}` : `/events/${product.id}`} className="block h-full w-full">
                     <Image
@@ -58,7 +64,16 @@ export default function ProductCard({ product }: ProductCardProps) {
                     />
                 </Link>
 
-                {/* Wishlist Button Overlay */}
+                {/* Бейдж скидки (только для вин) */}
+                {isWine && (product as Wine).regular_price && (product as Wine).regular_price! > (product as Wine).price && (
+                    <div className="absolute top-4 left-4 z-30">
+                        <div className="bg-red-500 text-white text-[10px] font-black px-2 py-1 rounded-lg shadow-lg uppercase tracking-wider">
+                            -{Math.round((1 - (product as Wine).price / (product as Wine).regular_price!) * 100)}%
+                        </div>
+                    </div>
+                )}
+
+                {/* Кнопка избранного (только для вин в данном представлении) */}
                 {isWine && (
                     <div className="absolute top-4 right-4 z-30">
                         <button
@@ -80,14 +95,11 @@ export default function ProductCard({ product }: ProductCardProps) {
                         </button>
                     </div>
                 )}
-
-
             </div>
 
-            {/* Content */}
+            {/* Контентная часть */}
             <div className="p-5 flex flex-col flex-grow gap-3">
-
-                {/* Meta Line */}
+                {/* Мета-данные (Сорт или Дата) */}
                 <div className="flex items-center justify-between text-xs text-zinc-500 font-medium">
                     {isWine ? (
                         <span>{(product as any).grapeVariety}</span>
@@ -99,28 +111,32 @@ export default function ProductCard({ product }: ProductCardProps) {
                     )}
                 </div>
 
-                {/* Title */}
+                {/* Заголовок */}
                 <Link href={isWine ? `/shop/${(product as any).slug}` : `/events/${product.id}`} className="block">
                     <h3 className="text-lg font-bold text-wine-dark dark:text-white group-hover:text-wine-gold transition-colors line-clamp-2 serif">
                         {isEvent ? (product as any).title : (product as any).name}
                     </h3>
                 </Link>
 
-                {/* Description (Short) */}
-                <p className="text-sm text-zinc-600 dark:text-zinc-400 line-clamp-2 min-h-[2.5em] flex-grow">
-                    {/* Event usually has nice 'title' but description might be long. Wine has short_description. */}
-                    {isEvent ? '' : (product as any).short_description}
-                </p>
-
-                {/* Footer: Price & Action */}
+                {/* Подвал: Цена и действия */}
                 <div className="mt-auto pt-4 border-t border-zinc-100 dark:border-zinc-800">
                     <div className="flex items-center justify-between mb-2">
                         <div className="flex flex-col">
-                            <div className="text-wine-dark dark:text-white font-black text-xl italic serif">
-                                {typeof product.price === 'number'
-                                    ? `€ ${product.price.toFixed(2).replace('.', ',')}`
-                                    : product.price ? `€ ${parseFloat(product.price).toFixed(2).replace('.', ',')}` : '€ 0,00'}
+                            {/* Цена */}
+                            <div className="flex items-baseline gap-2">
+                                <div className="text-wine-dark dark:text-white font-black text-xl italic serif">
+                                    {typeof product.price === 'number'
+                                        ? `€ ${product.price.toFixed(2).replace('.', ',')}`
+                                        : product.price ? `€ ${parseFloat(product.price).toFixed(2).replace('.', ',')}` : '€ 0,00'}
+                                </div>
+                                {isWine && (product as Wine).regular_price && (product as Wine).regular_price! > (product as Wine).price && (
+                                    <span className="text-sm text-zinc-400 line-through">
+                                        € {(product as Wine).regular_price!.toFixed(2).replace('.', ',')}
+                                    </span>
+                                )}
                             </div>
+
+                            {/* Информация о цене за литр */}
                             {isWine && (
                                 <div className="text-[10px] text-zinc-500 font-medium leading-tight mt-0.5">
                                     <p>{t('product_tax_inc')}</p>
@@ -132,6 +148,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                             )}
                         </div>
 
+                        {/* Действие: Корзина или Билеты */}
                         {isWine ? (
                             <button
                                 className="w-12 h-12 rounded-2xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-wine-dark dark:text-white hover:bg-wine-gold hover:text-white transition-all shadow-sm hover:shadow-wine-gold/20"
@@ -152,11 +169,12 @@ export default function ProductCard({ product }: ProductCardProps) {
                                 href={`/events/${product.id}`}
                                 className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-wine-gold hover:text-wine-gold/80"
                             >
-                                Tickets <ArrowRight className="w-3 h-3" />
+                                {t('event_book_now')} <ArrowRight className="w-3 h-3" />
                             </Link>
                         )}
                     </div>
 
+                    {/* Время доставки (только для вин) */}
                     {isWine && (
                         <div className="mt-2 pt-2 border-t border-zinc-50 dark:border-zinc-800/50">
                             <p className="text-[10px] font-bold text-green-600 dark:text-green-500 uppercase tracking-widest flex items-center gap-1.5">

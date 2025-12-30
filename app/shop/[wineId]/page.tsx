@@ -34,19 +34,27 @@ export default function WineDetailPage() {
     // Migrated from CartContext
     const addToCart = useCartStore(state => state.addToCart);
 
+    const { getWineById, isLoading, fetchProducts, wines: allProducts } = useWinesStore();
     const { isLoggedIn, setAuthModalOpen } = useAuth();
-    const { getWineById, isLoading, fetchProducts, wines } = useWinesStore();
-
     const params = useParams();
     const wineId = params.wineId as string;
+    const [mounted, setMounted] = React.useState(false);
+
+    // Ensure hydration consistency
+    React.useEffect(() => {
+        setMounted(true);
+    }, []);
+
     const wine = getWineById(wineId);
 
     // Загрузка продуктов если они еще не загружены (например при прямом переходе по ссылке)
     React.useEffect(() => {
-        if (wines.length === 0) {
+        if (allProducts.length === 0) {
             fetchProducts();
         }
-    }, [fetchProducts, wines.length]);
+    }, [fetchProducts, allProducts.length]);
+
+    if (!mounted) return null;
 
     const isFavorite = wine ? isInWishlist(wine.id) : false;
 

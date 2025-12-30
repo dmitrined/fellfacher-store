@@ -2,15 +2,17 @@
 /**
  * Назначение файла: Система международной локализации (i18n).
  * Зависимости: React Context.
- * Особенности: Client Component, поддержка DE/EN, сохранение в localStorage.
+ * Особенности: Client Component, поддержка DE (немецкий) и EN (английский), сохранение выбора в localStorage.
  */
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
-// Доступные языки в приложении
+// Доступные языки
 type Language = 'de' | 'en';
 
-// Структура объекта переводов
+/**
+ * Интерфейс словаря переводов.
+ */
 interface Translations {
     [key: string]: {
         de: string;
@@ -111,6 +113,7 @@ const translations: Translations = {
     no_wines_found: { de: "Keine Weine gefunden", en: "No wines found" },
     adjust_filters: { de: "Versuchen Sie, Ihre Filter или Suchbegriffe anzupassen.", en: "Try adjusting your filters or search terms." },
     clear_filters: { de: "Alle Filter löschen", en: "Clear all filters" },
+    filter_clear_all: { de: "Alle Filter löschen", en: "Clear all filters" },
 
     // Filters & Sorting (Фильтры и сортировка)
     filter_category: { de: "Kategorie", en: "Category" },
@@ -138,7 +141,7 @@ const translations: Translations = {
     sort_price_asc: { de: "Preis aufsteigend", en: "Price Ascending" },
     sort_price_desc: { de: "Preis absteigend", en: "Price Descending" },
     product_characteristic_grape: { de: "Rebsorte", en: "Grape Variety" },
-    product_characteristic_flavor: { de: "Geschmacksrichtung", en: "Flavor" },
+    product_characteristic_flavor: { de: "Geschmack", en: "Flavor" },
     stats_sugar: { de: "Restzucker", en: "Residual Sugar" },
     stats_acidity: { de: "Säure", en: "Acidity" },
     product_characteristic_temp: { de: "Trinktemperatur", en: "Drinking Temperature" },
@@ -146,6 +149,13 @@ const translations: Translations = {
     product_characteristic_producer: { de: "Erzeuger", en: "Producer" },
     product_characteristic_quality: { de: "Qualitätsstufe", en: "Quality Level" },
     product_characteristic_soil: { de: "Bodenart", en: "Soil Type" },
+    flavor_feinherb: { de: "Feinherb", en: "Off-dry" },
+    flavor_fruchtig: { de: "Fruchtig", en: "Fruity" },
+    flavor_trocken: { de: "Trocken", en: "Dry" },
+    quality_edition_c: { de: "Edition >C<", en: "Edition >C<" },
+    quality_edition_p: { de: "Edition >P<", en: "Edition >P<" },
+    quality_edition_s: { de: "Edition >S<", en: "Edition >S<" },
+    quality_literweine: { de: "Literweine", en: "Litre Wines" },
     premium_price: { de: "PREMIUM-PREIS", en: "PREMIUM PRICE" },
     // sort_newest already exists above
     filters_title: { de: "Filter", en: "Filters" },
@@ -515,9 +525,8 @@ const translations: Translations = {
     loyalty_scan_desc: { de: "Scannen Sie den Code im Laden, um Punkte zu sammeln.", en: "Scan the code in store to collect points." },
     redeem_points: { de: "Einlösen", en: "Redeem" },
     syncing: { de: "Synchronisierung...", en: "Syncing..." },
-    loading_real_data: { de: "Synchronisierung mit Katalog...", en: "Syncing with catalog..." },
-    api_error_fallback: { de: "Fehler beim Laden der API, verwende Fallback-Daten.", en: "Error loading API, using fallback data." },
-    api_empty_fallback: { de: "API ist leer oder blockiert (Fallback-Daten werden verwendet).", en: "API is empty or blocked (using fallback data)." },
+    api_error: { de: "Fehler beim Laden der Daten aus der Datenbank.", en: "Error loading data from the database." },
+    api_empty: { de: "Momentan sind keine Produkte im Katalog verfügbar.", en: "There are currently no products available in the catalog." },
 
     // AI Sommelier
     ai_title: { de: "AI Sommelier", en: "AI Sommelier" },
@@ -542,50 +551,57 @@ const translations: Translations = {
     ai_restart: { de: "Neue Suche", en: "New Search" },
 };
 
-// Типизация контекста локализации
+// Интерфейс контекста языка
 interface LanguageContextType {
-    language: Language; // Текущий язык
-    setLanguage: (lang: Language) => void; // Функция смены языка
-    t: (key: string, params?: { [key: string]: any }) => string; // Функция получения перевода по ключу
+    language: Language;
+    setLanguage: (lang: Language) => void;
+    t: (key: string, params?: { [key: string]: string | number }) => string;
 }
 
 // Создание контекста с неопределенным начальным значением
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
-// Провайдер управления языком
+/**
+ * Провайдер языка для обертки всего приложения.
+ */
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     // Состояние текущего языка (по умолчанию немецкий)
     const [language, setLanguage] = useState<Language>('de');
 
-    // Восстановление выбранного языка из localStorage при загрузке
+    // Предварительная загрузка языка из localStorage при монтировании
     useEffect(() => {
         const savedLang = localStorage.getItem('language') as Language;
         if (savedLang && (savedLang === 'de' || savedLang === 'en')) {
             setLanguage(savedLang);
+            document.documentElement.lang = savedLang;
         }
     }, []);
 
     /**
-     * Обработчик смены языка. Сохраняет выбор в хранилище и обновляет атрибут HTML.
+     * Смена языка с сохранением в браузере.
      */
     const handleSetLanguage = (lang: Language) => {
         setLanguage(lang);
         localStorage.setItem('language', lang);
-        document.documentElement.lang = lang; // Помогает SEO и экранным дикторам
+        document.documentElement.lang = lang; // Важно для SEO и доступности
     };
 
     /**
-     * Функция перевода (Translation Function).
-     * Поддерживает подстановку динамических параметров, например: {points}.
+     * Функция перевода (Translation).
+     * Поддерживает вставку динамических параметров через фигурные скобки, напр. {count}.
      */
-    const t = (key: string, params?: { [key: string]: any }) => {
+    const t = (key: string, params?: { [key: string]: string | number }) => {
         const translation = translations[key];
-        // Если ключ не найден, возвращаем сам ключ (помогает в отладке)
-        if (!translation) return key;
+
+        // Если ключ не найден, выводим сам ключ для отладки
+        if (!translation) {
+            // console.warn(`Translation key missing: ${key}`);
+            return key;
+        }
 
         let text = translation[language];
 
-        // Замена параметров в строке, если они переданы
+        // Обработка динамических параметров
         if (params) {
             Object.entries(params).forEach(([paramKey, value]) => {
                 text = text.replace(`{${paramKey}}`, value.toString());
@@ -601,11 +617,13 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     );
 };
 
-// Кастомный хук для использования переводов в компонентах
+/**
+ * Хук для использования системы i18n в функциональных компонентах.
+ */
 export const useTranslation = () => {
     const context = useContext(LanguageContext);
     if (context === undefined) {
-        throw new Error('useTranslation must be used within a LanguageProvider');
+        throw new Error('useTranslation должен использоваться внутри LanguageProvider');
     }
     return context;
 };

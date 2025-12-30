@@ -1,18 +1,22 @@
 /**
- * Назначение: Компонент для отображения контактной информации в подвале сайта.
- * Зависимости: React (FC, useState), Link (next/link).
- * Особенности: Отображение адреса, телефона, электронной почты и ссылки на инструкции.
+ * Назначение файла: Компонент для отображения контактной информации в подвале сайта.
+ * Зависимости: React, Next.js Link, константы контактов.
+ * Особенности: Стилизованное отображение адреса, телефона и email с поддержкой i18n.
  */
-"use client";
-import React from "react";  
-import Link from "next/link";
 
+"use client";
+
+import React from "react";
+import Link from "next/link";
 import { CONTACT_PHONE, CONTACT_EMAIL, CONTACT_ADDRESS } from "@/lib/constants/contact";
 
 interface ContactInfoProps {
     t: (key: string) => string;
 }
 
+/**
+ * Блок контактной информации.
+ */
 const ContactInfo: React.FC<ContactInfoProps> = ({ t }) => {
     return (
         <div className="md:col-span-1 lg:col-span-1">
@@ -20,11 +24,14 @@ const ContactInfo: React.FC<ContactInfoProps> = ({ t }) => {
                 {t("footer_contact_title")}
             </h3>
             <div className="space-y-4 text-sm">
+                {/* Адрес */}
                 <div className="text-zinc-400 leading-relaxed font-bold">
                     <p>{CONTACT_ADDRESS.name}</p>
                     <p>{CONTACT_ADDRESS.street}</p>
                     <p>{CONTACT_ADDRESS.city}</p>
                 </div>
+
+                {/* Телефон */}
                 <div className="space-y-1 font-bold">
                     <p className="text-zinc-400">
                         {t("footer_phone_label")}{" "}
@@ -36,6 +43,8 @@ const ContactInfo: React.FC<ContactInfoProps> = ({ t }) => {
                         </a>
                     </p>
                 </div>
+
+                {/* Email */}
                 <p>
                     <a
                         href={`mailto:${CONTACT_EMAIL}`}
@@ -44,6 +53,8 @@ const ContactInfo: React.FC<ContactInfoProps> = ({ t }) => {
                         {CONTACT_EMAIL}
                     </a>
                 </p>
+
+                {/* Ссылка на карту/проезд */}
                 <Link
                     href="/directions"
                     className="inline-block text-white hover:text-wine-gold transition-colors font-bold underline underline-offset-4 decoration-zinc-800 hover:decoration-wine-gold mt-4"

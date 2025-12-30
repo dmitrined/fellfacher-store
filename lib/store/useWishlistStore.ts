@@ -1,50 +1,58 @@
 /**
- * Назначение: Глобальное состояние списка желаемого (Wishlist State).
- * Зависимости: Zustand, Persist middleware.
- * Особенности:
- * - Клиентский стор с сохранением в LocalStorage ('wishlist-storage').
- * - Хранит массив ID понравившихся вин.
+ * Назначение файла: Хранилище (Store) для управления списком избранного (Wishlist).
+ * Зависимости: Zustand, LocalStorage.
+ * Особенности: Персистентность, переключение состояния избранного (toggle), проверка наличия.
  */
 
 import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
+import { persist } from 'zustand/middleware';
 
-// Интерфейс состояния списка желаемого
+// Интерфейс состояния списка избранного
 interface WishlistState {
-    wishlist: string[]; // Массив ID вин
-    toggleWishlist: (wineId: string) => void; // Переключить состояние (добавить/удалить)
-    isInWishlist: (wineId: string) => boolean; // Проверить наличие
-    clearWishlist: () => void; // Очистить список
+    wishlist: string[]; // Список ID избранных товаров
+
+    // Методы
+    toggleWishlist: (productId: string) => void; // Добавить/удалить из избранного
+    isInWishlist: (productId: string) => boolean; // Проверка на наличие в списке
+    clearWishlist: () => void; // Полная очистка списка
 }
 
+/**
+ * Хук-хранилище избранного с автоматическим сохранением в localStorage.
+ */
 export const useWishlistStore = create<WishlistState>()(
     persist(
         (set, get) => ({
             wishlist: [],
 
-            // Переключение состояния избранного
-            toggleWishlist: (wineId: string) => {
+            /**
+             * Переключение состояния избранного для товара.
+             */
+            toggleWishlist: (productId) => {
                 set((state) => {
-                    const exists = state.wishlist.includes(wineId);
+                    const exists = state.wishlist.includes(productId);
                     return {
                         wishlist: exists
-                            ? state.wishlist.filter((id) => id !== wineId) // Удаляем
-                            : [...state.wishlist, wineId], // Добавляем
+                            ? state.wishlist.filter((id) => id !== productId) // Удаление
+                            : [...state.wishlist, productId], // Добавление
                     };
                 });
             },
 
-            // Проверка, находится ли вино в избранном
-            isInWishlist: (wineId: string) => {
-                return get().wishlist.includes(wineId);
+            /**
+             * Проверка, находится ли товар в избранном.
+             */
+            isInWishlist: (productId) => {
+                return get().wishlist.includes(productId);
             },
 
-            // Очистка списка (например, при выходе из аккаунта)
+            /**
+             * Полная очистка списка избранного.
+             */
             clearWishlist: () => set({ wishlist: [] }),
         }),
         {
-            name: 'wishlist-storage', // Ключ в LocalStorage
-            storage: createJSONStorage(() => localStorage),
+            name: 'wishlist-storage', // Ключ в localStorage
         }
     )
 );

@@ -1,25 +1,29 @@
+/**
+ * Назначение файла: API Route для проксирования запросов к продуктам (вина + мероприятия).
+ * Зависимости: next/server, lib/woocommerce.
+ * Особенности: Безопасный вызов WooCommerce с сервера, скрытие ключей API от клиента.
+ */
+
 import { NextResponse } from 'next/server';
 import { fetchProducts } from '@/lib/woocommerce';
 
-/**
- * API Route to proxy getting all products (wines + events)
- * Securely calls WooCommerce from server side
- */
 export async function GET() {
     try {
         const products = await fetchProducts();
+        
         if (products.length === 0) {
-            // Logically successful but returned no data (likely credentials issue)
+            // Логически успешный запрос, но данных нет (возможно проблема с ключами)
             return NextResponse.json({
-                error: 'No products returned from WooCommerce API. Check server logs for credential errors.',
-                details: 'The API call executed but returned an empty result.'
-            }, { status: 200 }); // Returning 200 to avoid breaking client logic, but with error info
+                error: 'WooCommerce API не вернул продуктов. Проверьте логи сервера.',
+                details: 'Запрос выполнен, но результат пустой.'
+            }, { status: 200 }); 
         }
+        
         return NextResponse.json(products);
     } catch (error: any) {
-        console.error('Error fetching products in API route:', error);
+        console.error('Ошибка при получении продуктов в API route:', error);
         return NextResponse.json({
-            error: 'Failed to fetch products',
+            error: 'Не удалось загрузить продукты',
             message: error.message
         }, { status: 500 });
     }

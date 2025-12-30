@@ -1,13 +1,13 @@
-"use client";
-
 /**
- * Назначение: Панель фильтрации каталога.
+ * Назначение файла: Панель фильтрации каталога (Filter Bar).
  * Зависимости: Zustand (UIStore), Next Navigation, i18n.
  * Особенности:
  * - Генерирует опции динамически на основе доступных вин.
- * - Управляет URL-параметрами.
- * - Адаптивность: Drawer на мобильных, Sidebar на десктопе.
+ * - Управляет URL-параметрами (категория, сорт, год).
+ * - Адаптивность: Drawer на мобильных устройствах, Sidebar на десктопе.
  */
+
+"use client";
 
 import React, { useMemo } from 'react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
@@ -16,28 +16,32 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 import { useTranslation } from '@/lib/i18n';
 import { useUIStore } from '@/lib/store/useUIStore';
-import { Wine } from '@/lib/types';
+import { Wine } from '@/lib/types/wine';
 import { ActiveFilters } from './ActiveFilters';
 
 interface FilterBarProps {
     wines: Wine[];
 }
 
+/**
+ * Панель фильтров для страницы вин.
+ */
 export const FilterBar: React.FC<FilterBarProps> = ({ wines }) => {
     const { t } = useTranslation();
     const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
 
-    // UI Store для мобильного меню
+    // UI Store для управления видимостью мобильных фильтров
     const isFilterOpen = useUIStore((state) => state.isFilterOpen);
     const toggleFilter = useUIStore((state) => state.toggleFilter);
-    const closeFilter = () => useUIStore.getState().setFilterOpen(false);
+    const setFilterOpen = useUIStore((state) => state.setFilterOpen);
+
+    const closeFilter = () => setFilterOpen(false);
 
     // --- 1. Извлечение уникальных опций из данных (Dynamic Options) ---
-
     const options = useMemo(() => {
-        // Категории (из массива categories)
+        // Категории
         const categories = Array.from(new Set(
             wines.flatMap(w => w.categories.map(c => JSON.stringify({ name: c.name, slug: c.slug })))
         )).map(s => JSON.parse(s) as { name: string, slug: string });
@@ -47,31 +51,25 @@ export const FilterBar: React.FC<FilterBarProps> = ({ wines }) => {
             wines.flatMap(w => w.attributes.find(a => a.name.toLowerCase() === 'rebsorte')?.options || [])
         )).sort();
 
-        // Года (из атрибутов или поля year)
+        // Годы
         const years = Array.from(new Set(wines.map(w => w.year))).sort((a, b) => b - a);
 
         return { categories, grapes, years };
     }, [wines]);
 
-    // --- 2. Управление состоянием через URL (Read-Only) ---
-
-    // Получение текущих активных фильтров
+    // --- 2. Управление состоянием через URL ---
     const currentCategory = searchParams.get('category');
-    const currentGrape = searchParams.getAll('grape'); // Поддержка множественного выбора? Пока single для простоты или CSV
-    // useSearchParams.getAll не работает с page router style query string иногда, но в app router ок.
-    // Если мы хотим множественный выбор, нужно парсить.
-    // Для простоты начнем с одиночного выбора или 'OR' логики через запятую.
 
-    // В Helper: обновление параметров updateParams('category', 'red')
+    /**
+     * Обновление параметров в URL.
+     */
     const updateParams = (key: string, value: string | null) => {
         const params = new URLSearchParams(searchParams.toString());
 
         if (value === null) {
             params.delete(key);
         } else {
-            // Если ключ уже есть и это массив (например grape), можно делать toggle
-            // Но для начала сделаем простую замену (Single Select per Filter Group)
-            // Или Toggle логику:
+            // Множественный выбор для сортов и годов через запятую
             if (key === 'grape' || key === 'year') {
                 const current = params.get(key)?.split(',') || [];
                 if (current.includes(value.toString())) {
@@ -83,34 +81,32 @@ export const FilterBar: React.FC<FilterBarProps> = ({ wines }) => {
                     params.set(key, current.join(','));
                 }
             } else {
-                // Для категории (обычно одна)
+                // Одиночный выбор для категорий
                 if (params.get(key) === value) params.delete(key);
                 else params.set(key, value);
             }
         }
 
-        // Сброс страницы при фильтрации (если была бы пагинация)
-        // params.set('page', '1');
-
         router.push(`${pathname}?${params.toString()}`, { scroll: false });
     };
 
+    /**
+     * Сброс всех фильтров.
+     */
     const clearAll = () => {
         router.push(pathname, { scroll: false });
         closeFilter();
     };
 
-    // Подготовка списка активных фильтров для ActiveFilters компонента
+    // Подготовка списка активных фильтров для компонента ActiveFilters
     const activeFiltersList = useMemo(() => {
         const list: { key: string, label: string, value: string, displayValue: string }[] = [];
 
-        // Category
         if (currentCategory) {
             const catName = options.categories.find(c => c.slug === currentCategory)?.name || currentCategory;
             list.push({ key: 'category', label: t('filter_category'), value: currentCategory, displayValue: catName });
         }
 
-        // Grapes
         const grapesParam = searchParams.get('grape');
         if (grapesParam) {
             grapesParam.split(',').forEach(g => {
@@ -118,7 +114,6 @@ export const FilterBar: React.FC<FilterBarProps> = ({ wines }) => {
             });
         }
 
-        // Years
         const yearsParam = searchParams.get('year');
         if (yearsParam) {
             yearsParam.split(',').forEach(y => {
@@ -129,8 +124,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({ wines }) => {
         return list;
     }, [searchParams, options, t, currentCategory]);
 
-    // --- 3. Компоненты рендеринга ---
-
+    // --- 3. Вспомогательные компоненты рендеринга ---
     const FilterSection = ({ title, children }: { title: string, children: React.ReactNode }) => (
         <div className="mb-8 border-b border-zinc-100 dark:border-zinc-800 pb-6 last:border-0">
             <h3 className="text-sm font-bold text-wine-dark dark:text-white uppercase tracking-wider mb-4">
@@ -171,9 +165,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({ wines }) => {
         </button>
     );
 
-    // --- 4. Render ---
-
-    // Контент фильтров (переиспользуется в Desktop и Mobile)
+    // --- 4. Основной рендер ---
     const FilterContent = () => (
         <div className="flex flex-col h-full">
             <div className="flex-1 overflow-y-auto px-1">
@@ -204,7 +196,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({ wines }) => {
                     })}
                 </FilterSection>
 
-                {/* Года */}
+                {/* Годы */}
                 <FilterSection title={t('filter_year')}>
                     {options.years.map(year => {
                         const yStr = year.toString();
@@ -226,7 +218,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({ wines }) => {
                     onClick={clearAll}
                     className="w-full py-3 text-sm font-bold text-zinc-500 hover:text-wine-dark dark:hover:text-white transition-colors border border-dashed border-zinc-300 dark:border-zinc-700 rounded-xl hover:border-wine-dark dark:hover:border-white"
                 >
-                    {t('clear_filters')}
+                    {t('clear_all')}
                 </button>
             </div>
         </div>
@@ -234,28 +226,17 @@ export const FilterBar: React.FC<FilterBarProps> = ({ wines }) => {
 
     return (
         <>
-            {/* Desktop Sidebar */}
+            {/* Боковая панель для десктопа */}
             <div className="hidden lg:block w-64 flex-shrink-0">
                 <div className="sticky top-24 max-h-[calc(100vh-8rem)] overflow-y-auto pr-4 scrollbar-hide">
                     <FilterContent />
                 </div>
             </div>
 
-            {/* Mobile Trigger & Drawer */}
-            <div className="lg:hidden">
-                {/* Кнопка открытия фильтров на мобилке (вставляется обычно в топбар, но может быть и здесь если нужно) */}
-                {/* В нашем дизайне кнопка фильтров может быть рядом с поиском. 
-                    Оставим это управление родительскому компоненту или реализуем Portal?
-                    Для "refactoring" добавим плавающую кнопку или используем Header?
-                    В данном случае FilterBar рендерится на странице Shop. 
-                */}
-            </div>
-
-            {/* Mobile Drawer */}
+            {/* Выезжающая панель для мобильных */}
             <AnimatePresence>
                 {isFilterOpen && (
                     <>
-                        {/* Overlay */}
                         <motion.div
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
@@ -264,7 +245,6 @@ export const FilterBar: React.FC<FilterBarProps> = ({ wines }) => {
                             className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 lg:hidden"
                         />
 
-                        {/* Drawer Panel */}
                         <motion.div
                             initial={{ x: '100%' }}
                             animate={{ x: 0 }}
@@ -291,15 +271,6 @@ export const FilterBar: React.FC<FilterBarProps> = ({ wines }) => {
                     </>
                 )}
             </AnimatePresence>
-
-            {/* Active Filters Display */}
-            {/* Отображаем активные фильтры отдельно, обычно над сеткой товаров */}
-            <div className="lg:col-span-3 mb-6">
-                {/* This part might be better placed in the parent grid, 
-                     but we can expose a helper or just render ActiveFilters if standard layout. 
-                     Wait, ActiveFilters is usually above the grid.
-                 */}
-            </div>
         </>
     );
 };

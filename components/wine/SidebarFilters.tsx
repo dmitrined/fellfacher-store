@@ -1,8 +1,11 @@
 /**
- * Назначение: Боковая панель фильтров (Sidebar).
+ * Назначение файла: Боковая панель фильтров каталога (Sidebar Filters).
  * Зависимости: i18n, next/navigation, Zustand, framer-motion, FilterSection.
- * Описание: Компонент динамически строит список фильтров на основе переданных продуктов.
- * На мобильных устройствах отображается как Drawer.
+ * Особенности: 
+ * - Динамическое построение опций на основе данных о продуктах.
+ * - Управление состоянием через URL-параметры.
+ * - Адаптивность: Боковая панель на десктопе, выезжающее меню (Drawer) на мобильных.
+ * - Поддержка сворачивания сайдбара.
  */
 
 "use client";
@@ -12,7 +15,7 @@ import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { useTranslation } from '@/lib/i18n';
 import { UnifiedProduct } from '@/lib/utils/map-product';
 import { useUIStore } from '@/lib/store/useUIStore';
-import { X, Grid3x3, Grape, ChevronLeft, ChevronRight, Search } from 'lucide-react';
+import { X, Grid3x3, Grape, ChevronLeft, ChevronRight, Search, SlidersHorizontal, ArrowUpDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FilterSection } from './FilterSection';
 
@@ -20,29 +23,33 @@ interface SidebarFiltersProps {
     products: UnifiedProduct[];
 }
 
+/**
+ * Компонент сайдбара с фильтрами.
+ */
 export function SidebarFilters({ products }: SidebarFiltersProps) {
     const { t } = useTranslation();
     const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
 
-    // UI Store for Mobile Drawer
+    // UI Store для управления мобильной версией
     const isFilterOpen = useUIStore((state) => state.isFilterOpen);
     const setFilterOpen = useUIStore((state) => state.setFilterOpen);
 
-    // Sidebar collapse state
+    // Локальное состояние сайдбара
     const [isCollapsed, setIsCollapsed] = useState(false);
     const [grapeSearch, setGrapeSearch] = useState('');
+    const [expandedSection, setExpandedSection] = useState<string | null>('category');
 
-    // --- 1. Extract Dynamic Options ---
+    // --- 1. Динамическое извлечение опций из списка продуктов ---
     const options = useMemo(() => {
-        // Define categories matching Header shopCategories
+        // Категории, соответствующие shopCategories в Header
         const categories = [
             { name: t('nav_red_wines'), slug: 'rot', type: 'category' },
             { name: t('nav_white_wines'), slug: 'weiss', type: 'category' },
             { name: t('wine_type_rose'), slug: 'rose', type: 'category' },
             { name: t('nav_shop_federle'), slug: 'federle', type: 'category' },
-            { name: t('nav_shop_vfb'), slug: 'vfb', type: 'tag' }, // VfB uses tag instead of category
+            { name: t('nav_shop_vfb'), slug: 'vfb', type: 'tag' },
             { name: t('nav_shop_packages'), slug: 'weinpakete', type: 'category' },
             { name: t('wine_type_sparkling'), slug: 'prickelndes', type: 'category' },
             { name: t('nav_shop_alles_gewoehnlich'), slug: 'magnum-sondereditionen', type: 'category' },
@@ -50,30 +57,65 @@ export function SidebarFilters({ products }: SidebarFiltersProps) {
             { name: t('nav_shop_presents'), slug: 'geschenke', type: 'category' },
         ];
 
-        // Collect Rebsorte (Grape Varieties) - Only for wines
+        // Список сортов винограда (только для вин)
         const grapes = Array.from(new Set(
             products
                 .filter(p => (p as any).grapeVariety)
                 .map(p => (p as any).grapeVariety)
         )).filter(Boolean).sort();
 
-        return { categories, grapes };
+        // Список вкусов (feinherb, fruchtig, trocken)
+        const allowedFlavors = ['feinherb', 'fruchtig', 'trocken'];
+        const flavors = Array.from(new Set(
+            products
+                .filter(p => (p as any).flavor)
+                .map(p => (p as any).flavor?.toLowerCase())
+        )).filter(f => allowedFlavors.includes(f as string)).sort() as string[];
+
+        // Уровни качества (Edition >C<, >P<, >S<, Literweine)
+        const allowedQuality = ['edition >c<', 'edition >p<', 'edition >s<', 'literweine'];
+        const qualityLevels = Array.from(new Set(
+            products
+                .filter(p => (p as any).quality_level)
+                .map(p => {
+                    const q = (p as any).quality_level?.toLowerCase() || '';
+                    if (q.includes('edition') && q.includes('c')) return 'edition >c<';
+                    if (q.includes('edition') && q.includes('p')) return 'edition >p<';
+                    if (q.includes('edition') && q.includes('s')) return 'edition >s<';
+                    if (q.includes('liter')) return 'literweine';
+                    return q;
+                })
+        )).filter(q => allowedQuality.includes(q as string)).sort() as string[];
+
+        // Опции сортировки
+        const sorting = [
+            { label: t('sort_newest'), value: 'newest' },
+            { label: t('sort_price_asc'), value: 'price_asc' },
+            { label: t('sort_price_desc'), value: 'price_desc' },
+        ];
+
+        return { categories, grapes, flavors, qualityLevels, sorting };
     }, [products, t]);
 
-    // --- 2. URL Handlers ---
+    // --- 2. Обработчики URL ---
     const currentCategory = searchParams.get('category');
     const currentTag = searchParams.get('tag');
     const currentGrape = searchParams.get('grape');
+    const currentFlavor = searchParams.get('flavor');
+    const currentQuality = searchParams.get('quality');
+    const currentSort = searchParams.get('sort') || 'price_asc';
+    const currentSearch = searchParams.get('search') || '';
 
+    /**
+     * Переключение параметров в URL.
+     */
     const toggleParam = (key: string, value: string) => {
         const params = new URLSearchParams(searchParams.toString());
 
-        // Single select logic for simplicity as requested "Click activates specific category"
-        // If clicked same, remove it? usually yes.
         if (params.get(key) === value) {
             params.delete(key);
         } else {
-            // When selecting a category or tag, clear the other one
+            // При выборе категории или тега, очищаем другой параметр
             if (key === 'category') {
                 params.delete('tag');
             } else if (key === 'tag') {
@@ -82,18 +124,18 @@ export function SidebarFilters({ products }: SidebarFiltersProps) {
             params.set(key, value);
         }
 
-        // Reset page if needed?
-        // params.set('page', '1'); 
-
         router.push(`${pathname}?${params.toString()}`, { scroll: false });
     };
 
+    /**
+     * Сброс всех фильтров.
+     */
     const clearAll = () => {
         router.push(pathname, { scroll: false });
         setFilterOpen(false);
     };
 
-    // Filter grape varieties by search
+    // Фильтрация сортов винограда по поиску внутри секции
     const filteredGrapes = useMemo(() => {
         if (!grapeSearch) return options.grapes;
         return options.grapes.filter((grape: string) =>
@@ -101,10 +143,32 @@ export function SidebarFilters({ products }: SidebarFiltersProps) {
         );
     }, [options.grapes, grapeSearch]);
 
-    // --- 3. Render Content ---
+    // --- 3. Рендеринг контента ---
     const FilterContent = () => (
         <div className="space-y-2">
-            {/* Header / Reset */}
+            {/* Поиск */}
+            <div className="mb-6">
+                <div className="relative">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
+                    <input
+                        type="text"
+                        defaultValue={currentSearch}
+                        placeholder={t('search_input_placeholder')}
+                        className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 focus:outline-none focus:ring-2 focus:ring-wine-gold/50 text-sm shadow-sm transition-all"
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                                const val = e.currentTarget.value;
+                                const params = new URLSearchParams(searchParams.toString());
+                                if (val) params.set('search', val);
+                                else params.delete('search');
+                                router.push(`${pathname}?${params.toString()}`);
+                            }
+                        }}
+                    />
+                </div>
+            </div>
+
+            {/* Заголовок и кнопка сброса */}
             <div className="flex items-center justify-between mb-4 pb-4 border-b border-zinc-200 dark:border-zinc-800">
                 <h3 className="text-xl font-bold text-wine-dark dark:text-white">
                     {t('filters_title')}
@@ -117,12 +181,41 @@ export function SidebarFilters({ products }: SidebarFiltersProps) {
                 </button>
             </div>
 
-            {/* Categories */}
+            {/* Сортировка */}
+            <FilterSection
+                title={t('sort_by')}
+                icon={<ArrowUpDown className="w-4 h-4" />}
+                isExpanded={expandedSection === 'sort'}
+                onToggle={() => setExpandedSection(expandedSection === 'sort' ? null : 'sort')}
+            >
+                <div className="space-y-2">
+                    {options.sorting.map(sort => (
+                        <label key={sort.value} className="flex items-center gap-2 cursor-pointer group">
+                            <input
+                                type="radio"
+                                name="sort"
+                                checked={currentSort === sort.value}
+                                onChange={() => toggleParam('sort', sort.value)}
+                                className="peer sr-only"
+                            />
+                            <div className="w-4 h-4 rounded-full border border-zinc-300 dark:border-zinc-700 peer-checked:border-wine-gold flex items-center justify-center transition-all">
+                                <div className={`w-2 h-2 rounded-full transition-all ${currentSort === sort.value ? 'bg-wine-gold scale-100' : 'bg-transparent scale-0'}`} />
+                            </div>
+                            <span className={`text-sm group-hover:text-wine-gold transition-colors ${currentSort === sort.value ? 'font-medium text-wine-dark dark:text-white' : 'text-zinc-600 dark:text-zinc-400'}`}>
+                                {sort.label}
+                            </span>
+                        </label>
+                    ))}
+                </div>
+            </FilterSection>
+
+            {/* Категории */}
             <FilterSection
                 title={t('filter_category')}
                 icon={<Grid3x3 className="w-4 h-4" />}
                 count={options.categories.length}
-                defaultExpanded={true}
+                isExpanded={expandedSection === 'category'}
+                onToggle={() => setExpandedSection(expandedSection === 'category' ? null : 'category')}
             >
                 <div className="space-y-2">
                     {options.categories.map(cat => {
@@ -151,25 +244,59 @@ export function SidebarFilters({ products }: SidebarFiltersProps) {
                 </div>
             </FilterSection>
 
-            {/* Grapes (Only show if there are options) */}
+            {/* Вкусы */}
+            {options.flavors.length > 0 && (
+                <FilterSection
+                    title={t('product_characteristic_flavor')}
+                    icon={<SlidersHorizontal className="w-4 h-4" />}
+                    count={options.flavors.length}
+                    isExpanded={expandedSection === 'flavor'}
+                    onToggle={() => setExpandedSection(expandedSection === 'flavor' ? null : 'flavor')}
+                >
+                    <div className="space-y-2">
+                        {options.flavors.map((flavor: any) => {
+                            const flavorKey = `flavor_${flavor.toLowerCase()}`;
+                            const displayName = t(flavorKey) !== flavorKey ? t(flavorKey) : flavor;
+
+                            return (
+                                <label key={flavor} className="flex items-center gap-2 cursor-pointer group">
+                                    <input
+                                        type="checkbox"
+                                        checked={currentFlavor === flavor}
+                                        onChange={() => toggleParam('flavor', flavor)}
+                                        className="peer sr-only"
+                                    />
+                                    <div className="w-4 h-4 rounded border border-zinc-300 dark:border-zinc-700 peer-checked:bg-wine-gold peer-checked:border-wine-gold flex items-center justify-center transition-all">
+                                        <div className="w-2 h-2 bg-white rounded-full opacity-0 peer-checked:opacity-100" />
+                                    </div>
+                                    <span className={`text-sm group-hover:text-wine-gold transition-colors ${currentFlavor === flavor ? 'font-medium text-wine-dark dark:text-white' : 'text-zinc-600 dark:text-zinc-400'}`}>
+                                        {displayName}
+                                    </span>
+                                </label>
+                            );
+                        })}
+                    </div>
+                </FilterSection>
+            )}
+
+            {/* Сорта винограда */}
             {options.grapes.length > 0 && (
                 <FilterSection
                     title={t('filter_grape')}
                     icon={<Grape className="w-4 h-4" />}
                     count={options.grapes.length}
-                    defaultExpanded={options.grapes.length <= 10}
+                    isExpanded={expandedSection === 'grape'}
+                    onToggle={() => setExpandedSection(expandedSection === 'grape' ? null : 'grape')}
                 >
-                    {/* Search input if many grapes */}
                     {options.grapes.length > 10 && (
                         <div className="mb-3">
                             <div className="relative">
-                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-zinc-400" />
                                 <input
                                     type="text"
                                     value={grapeSearch}
                                     onChange={(e) => setGrapeSearch(e.target.value)}
                                     placeholder={t('search_input_placeholder')}
-                                    className="w-full pl-9 pr-3 py-2 text-xs rounded-lg bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 focus:outline-none focus:ring-2 focus:ring-wine-gold/50"
+                                    className="w-full px-3 py-2 text-xs rounded-lg bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 focus:outline-none focus:ring-2 focus:ring-wine-gold/50"
                                 />
                             </div>
                         </div>
@@ -194,18 +321,58 @@ export function SidebarFilters({ products }: SidebarFiltersProps) {
                     </div>
                 </FilterSection>
             )}
+
+            {/* Уровни качества */}
+            {options.qualityLevels.length > 0 && (
+                <FilterSection
+                    title={t('product_characteristic_quality')}
+                    icon={<SlidersHorizontal className="w-4 h-4" />}
+                    count={options.qualityLevels.length}
+                    isExpanded={expandedSection === 'quality'}
+                    onToggle={() => setExpandedSection(expandedSection === 'quality' ? null : 'quality')}
+                >
+                    <div className="space-y-2">
+                        {options.qualityLevels.map((quality: any) => {
+                            let qKey = `quality_${quality.toLowerCase()
+                                .replace(/edition >/g, 'edition_')
+                                .replace(/</g, '')
+                                .replace(/>/g, '')
+                                .replace(/\s+/g, '')}`;
+
+                            const displayName = t(qKey) !== qKey ? t(qKey) : quality;
+
+                            return (
+                                <label key={quality} className="flex items-center gap-2 cursor-pointer group">
+                                    <input
+                                        type="checkbox"
+                                        checked={currentQuality === quality}
+                                        onChange={() => toggleParam('quality', quality)}
+                                        className="peer sr-only"
+                                    />
+                                    <div className="w-4 h-4 rounded border border-zinc-300 dark:border-zinc-700 peer-checked:bg-wine-gold peer-checked:border-wine-gold flex items-center justify-center transition-all">
+                                        <div className="w-2 h-2 bg-white rounded-full opacity-0 peer-checked:opacity-100" />
+                                    </div>
+                                    <span className={`text-sm group-hover:text-wine-gold transition-colors ${currentQuality === quality ? 'font-medium text-wine-dark dark:text-white' : 'text-zinc-600 dark:text-zinc-400'}`}>
+                                        {displayName}
+                                    </span>
+                                </label>
+                            );
+                        })}
+                    </div>
+                </FilterSection>
+            )}
         </div>
     );
 
     return (
         <>
-            {/* Desktop Sidebar */}
+            {/* Сайдбар для десктопа */}
             <motion.div
                 className="hidden lg:block flex-shrink-0 relative"
                 animate={{ width: isCollapsed ? '60px' : '280px' }}
                 transition={{ duration: 0.3, ease: 'easeInOut' }}
             >
-                {/* Collapse Toggle Button */}
+                {/* Кнопка сворачивания */}
                 <button
                     onClick={() => setIsCollapsed(!isCollapsed)}
                     className="absolute -right-3 top-8 z-10 p-1.5 rounded-full bg-white dark:bg-zinc-900 border-2 border-zinc-200 dark:border-zinc-800 shadow-lg hover:border-wine-gold transition-colors"
@@ -232,10 +399,11 @@ export function SidebarFilters({ products }: SidebarFiltersProps) {
                 </div>
             </motion.div>
 
-            {/* Mobile Drawer */}
+            {/* Выезжающая панель для мобильных */}
             <AnimatePresence>
                 {isFilterOpen && (
                     <>
+                        {/* Затемнение фона */}
                         <motion.div
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
@@ -243,6 +411,7 @@ export function SidebarFilters({ products }: SidebarFiltersProps) {
                             onClick={() => setFilterOpen(false)}
                             className="fixed inset-0 bg-black/50 z-40 lg:hidden backdrop-blur-sm"
                         />
+                        {/* Панель */}
                         <motion.div
                             initial={{ x: '100%' }}
                             animate={{ x: 0 }}

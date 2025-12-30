@@ -1,7 +1,7 @@
 /**
- * Назначение: Компонент ввода блюда для AI Sommelier.
- * Зависимости: framer-motion, lucide-react.
- * Особенности: Инпут с подсказками (Chips).
+ * Назначение файла: Компонент ввода названия блюда для AI-сомелье (Food Input).
+ * Зависимости: framer-motion, lucide-react, i18n.
+ * Особенности: Инпут с поддержкой быстрого выбора (тэги/подсказки).
  */
 
 import React from 'react';
@@ -15,6 +15,7 @@ interface FoodInputProps {
     onNext: () => void;
 }
 
+// Список подсказок для быстрого выбора блюд
 const foodSuggestions = [
     { id: 'meat', labelKey: 'ai_food_meat' },
     { id: 'fish', labelKey: 'ai_food_fish' },
@@ -23,11 +24,15 @@ const foodSuggestions = [
     { id: 'dessert', labelKey: 'ai_food_dessert' },
 ];
 
+/**
+ * Компонент для ввода текста и отображения подсказок.
+ */
 export const FoodInput: React.FC<FoodInputProps> = ({ value, onChange, onNext }) => {
     const { t } = useTranslation();
 
     return (
         <div className="flex flex-col gap-6">
+            {/* Поле ввода */}
             <div className="relative">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-400" />
                 <input
@@ -45,6 +50,7 @@ export const FoodInput: React.FC<FoodInputProps> = ({ value, onChange, onNext })
                 />
             </div>
 
+            {/* Быстрые подсказки */}
             <div className="flex flex-wrap gap-2">
                 {foodSuggestions.map((item, index) => (
                     <motion.button

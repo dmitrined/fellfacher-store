@@ -1,55 +1,64 @@
 /**
- * Назначение: Глобальное состояние бронирования мероприятий (Booking State).
- * Зависимости: Zustand, Persist middleware.
- * Особенности:
- * - Сохраняет историю бронирований в LocalStorage ('booking-storage').
- * - Управляет созданием и отменой бронирований.
+ * Назначение файла: Хранилище (Store) для управления бронированиями мероприятий.
+ * Зависимости: Zustand, LocalStorage.
+ * Особенности: Персистентность, генерация ID бронирования, фильтрация по событиям.
  */
 
 import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
+import { persist } from 'zustand/middleware';
 
-// Интерфейс бронирования (дублирует BookingContext логику)
+// Интерфейс данных бронирования
 export interface Booking {
-    id: string;
-    eventId: string;
-    eventTitle: string;
-    date: string;
-    time: string;
-    guests: number;
-    totalAmount: number;
-    status: 'pending' | 'confirmed' | 'cancelled';
-    createdAt: string;
+    id: string; // Уникальный номер брони
+    eventId: string; // ID мероприятия из WooCommerce
+    eventTitle: string; // Название мероприятия
+    date: string; // Дата
+    time: string; // Время
+    guests: number; // Количество гостей
+    totalAmount: number; // Итоговая сумма
+    status: 'pending' | 'confirmed' | 'cancelled'; // Статус заказа
+    createdAt: string; // Дата создания записи
 }
 
-// Интерфейс состояния бронирования
+// Интерфейс состояния хранилища бронирований
 interface BookingState {
-    bookings: Booking[]; // Список всех бронирований
-    addBooking: (booking: Omit<Booking, 'id' | 'status' | 'createdAt'>) => void; // Добавить новое
-    cancelBooking: (id: string) => void; // Отменить бронирование
-    getEventBookings: (eventId: string) => Booking[]; // Получить бронирования для конкретного события
+    bookings: Booking[]; // Список всех совершенных бронирований
+
+    // Методы
+    addBooking: (booking: Omit<Booking, 'id' | 'status' | 'createdAt'>) => void;
+    cancelBooking: (id: string) => void;
+    getEventBookings: (eventId: string) => Booking[];
 }
 
+/**
+ * Хук-хранилище бронирований с автоматическим сохранением в localStorage.
+ */
 export const useBookingStore = create<BookingState>()(
     persist(
         (set, get) => ({
             bookings: [],
 
-            // Создание нового бронирования
+            /**
+             * Создание нового бронирования.
+             * Генерирует уникальный ID и устанавливает статус 'confirmed'.
+             */
             addBooking: (newBookingData) => {
                 const newBooking: Booking = {
                     ...newBookingData,
-                    id: Math.random().toString(36).substr(2, 9), // Генерация ID
-                    status: 'confirmed', // Сразу подтверждаем для демо
+                    id: Math.random().toString(36).substring(2, 11).toUpperCase(), // Генерация читаемого ID
+                    status: 'confirmed',
                     createdAt: new Date().toISOString(),
                 };
 
                 set((state) => ({
-                    bookings: [newBooking, ...state.bookings], // Добавляем в начало списка
+                    bookings: [newBooking, ...state.bookings], // Добавление в начало списка
                 }));
             },
 
-            // Отмена бронирования (изменение статуса)
+            /**
+             * Отмена бронирования по ID.
+             * Меняет статус на 'cancelled'.
+             */
             cancelBooking: (id: string) => {
                 set((state) => ({
                     bookings: state.bookings.map((b) =>
@@ -58,14 +67,15 @@ export const useBookingStore = create<BookingState>()(
                 }));
             },
 
-            // Получение списка бронирований для события (фильтрация)
+            /**
+             * Получение списка бронирований для конкретного мероприятия.
+             */
             getEventBookings: (eventId: string) => {
                 return get().bookings.filter((b) => b.eventId === eventId);
             },
         }),
         {
-            name: 'booking-storage',
-            storage: createJSONStorage(() => localStorage),
+            name: 'booking-storage', // Ключ в localStorage
         }
     )
 );

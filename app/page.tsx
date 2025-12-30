@@ -1,3 +1,8 @@
+/**
+ * Назначение файла: Главная страница приложения (Home Page).
+ * Зависимости: WineCard, useWinesStore, useAuth, i18n, Lucide Icons, events data.
+ * Особенности: Client Component, Hero-секция, подборки событий, преимущества компании.
+ */
 
 "use client";
 
@@ -9,13 +14,10 @@ import { useWinesStore } from '@/lib/store/useWinesStore';
 import { useAuth } from '@/lib/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import React, { useEffect } from 'react';
-
 import { getEvents } from '@/lib/data/events';
 
 /**
- * Главная страница приложения.
- * Содержит Hero-секцию, подборки вин по категориям, информацию о программе лояльности и событиях.
- * Данные о винах подгружаются из useWinesStore (умная загрузка: API + моки).
+ * Главная страница с Hero-секцией, событиями и преимуществами.
  */
 export default function Home() {
   const { t } = useTranslation();

@@ -1,12 +1,10 @@
-"use client";
-
 /**
- * Назначение: Отображение активных фильтров в виде чипов.
- * Зависимости: Lucide React, i18n.
- * Особенности:
- * - Позволяет удалять отдельные фильтры или очищать все.
- * - Получает колбэки для изменения URL-параметров.
+ * Назначение файла: Бейджи активных фильтров (Active Filters).
+ * Зависимости: Lucide React (X, Trash2), i18n.
+ * Особенности: Отображение выбранных параметров, возможность точечного или полного удаления.
  */
+
+"use client";
 
 import React from 'react';
 import { X, Trash2 } from 'lucide-react';
@@ -23,6 +21,9 @@ interface ActiveFiltersProps {
     onClear: () => void;
 }
 
+/**
+ * Панель со списком активных фильтров.
+ */
 export const ActiveFilters: React.FC<ActiveFiltersProps> = ({ filters, onRemove, onClear }) => {
     const { t } = useTranslation();
 
@@ -34,6 +35,7 @@ export const ActiveFilters: React.FC<ActiveFiltersProps> = ({ filters, onRemove,
                 {t('filters_title')}:
             </span>
 
+            {/* Список чипов фильтров */}
             {filters.map((filter) => (
                 <button
                     key={`${filter.key}-${filter.value}`}
@@ -51,6 +53,7 @@ export const ActiveFilters: React.FC<ActiveFiltersProps> = ({ filters, onRemove,
                 </button>
             ))}
 
+            {/* Кнопка сброса всех фильтров */}
             {filters.length > 1 && (
                 <button
                     onClick={onClear}

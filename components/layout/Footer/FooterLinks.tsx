@@ -1,8 +1,10 @@
 /**
- * Компонент для отображения списков навигационных ссылок в подвале сайта.
- * Группирует ссылки по категориям (Помощь, Компания и т.д.).
+ * Назначение файла: Список ссылок в подвале сайта.
+ * Особенности: Группировка ссылок по категориям (Помощь, Компания), динамическая генерация списков.
  */
+
 "use client";
+
 import React from "react";
 import Link from "next/link";
 
@@ -10,7 +12,11 @@ interface FooterLinksProps {
     t: (key: string) => string;
 }
 
+/**
+ * Блок навигационных ссылок футера.
+ */
 const FooterLinks: React.FC<FooterLinksProps> = ({ t }) => {
+    // Набор ссылок для отображения
     const footerLinks = {
         [t("footer_help")]: [
             { label: t("footer_contact_us"), path: "/contact" },

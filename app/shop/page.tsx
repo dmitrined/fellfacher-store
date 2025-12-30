@@ -11,7 +11,7 @@
 
 import React, { useMemo, Suspense } from 'react';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
-import { Search, SlidersHorizontal } from 'lucide-react';
+import { SlidersHorizontal } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n';
 import { useWinesStore } from '@/lib/store/useWinesStore';
 import { useUIStore } from '@/lib/store/useUIStore';
@@ -27,7 +27,7 @@ function CatalogContent() {
     const pathname = usePathname();
 
     // Zustand Store
-    const { wines: allProducts, isLoading, fetchProducts } = useWinesStore();
+    const { wines: allProducts, isLoading, error, fetchProducts } = useWinesStore();
 
     // Загрузка данных при монтировании, если они еще не загружены
     React.useEffect(() => {
@@ -44,11 +44,13 @@ function CatalogContent() {
     const category = searchParams.get('category');
     const tag = searchParams.get('tag');
     const grape = searchParams.get('grape');
+    const flavor = searchParams.get('flavor');
+    const quality = searchParams.get('quality');
     const type = searchParams.get('type');
-    const sortBy = searchParams.get('sort') || 'newest';
+    const sortBy = searchParams.get('sort') || 'price_asc';
 
     const updateParams = (newParams: URLSearchParams) => {
-        router.push(`${pathname}?${newParams.toString()}`, { scroll: false });
+        router.push(`${pathname}?${newParams.toString()}`);
     };
 
     // --- 2. Filter & Sort Logic (Unified) ---
@@ -101,6 +103,25 @@ function CatalogContent() {
             result = result.filter(p => (p as any).grapeVariety === grape);
         }
 
+        // 2.6 Flavor (Only for Wines)
+        if (flavor) {
+            result = result.filter(p => (p as any).flavor?.toLowerCase() === flavor.toLowerCase());
+        }
+
+        // 2.7 Quality Level
+        if (quality) {
+            const q = quality.toLowerCase();
+            const isEdition = q.includes('edition');
+            const letter = isEdition ? q.split(' ').pop()?.replace(/[><]/g, '') : '';
+
+            result = result.filter(p => {
+                const pq = (p as any).quality_level?.toLowerCase() || '';
+                if (q === 'literweine') return pq.includes('liter');
+                if (isEdition && letter) return pq.includes('edition') && pq.includes(letter);
+                return pq.includes(q);
+            });
+        }
+
         // 2.5 Sort
         result.sort((a, b) => {
             // Get price helper
@@ -117,7 +138,7 @@ function CatalogContent() {
         });
 
         return result;
-    }, [allProducts, searchQuery, category, type, grape, sortBy]);
+    }, [allProducts, searchQuery, category, tag, type, grape, flavor, quality, sortBy]);
 
     // --- 3. Active Filters Data ---
     const activeFiltersData = useMemo(() => {
@@ -126,8 +147,13 @@ function CatalogContent() {
         if (tag) list.push({ key: 'tag', label: t('filter_tag'), value: tag, displayValue: tag });
         if (type) list.push({ key: 'type', label: t('product_type'), value: type, displayValue: type });
         if (grape) list.push({ key: 'grape', label: t('filter_grape'), value: grape, displayValue: grape });
+        if (flavor) list.push({ key: 'flavor', label: t('product_characteristic_flavor'), value: flavor, displayValue: t(`flavor_${flavor.toLowerCase()}`) });
+        if (quality) {
+            const qKey = `quality_${quality.toLowerCase().replace(/edition >/g, 'edition_').replace(/</g, '').replace(/>/g, '').replace(/\s+/g, '')}`;
+            list.push({ key: 'quality', label: t('product_characteristic_quality'), value: quality, displayValue: t(qKey) !== qKey ? t(qKey) : quality });
+        }
         return list;
-    }, [category, tag, type, grape, t]);
+    }, [category, tag, type, grape, flavor, quality, t]);
 
     return (
         <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 pt-32 pb-20">
@@ -148,15 +174,13 @@ function CatalogContent() {
                     {/* Sidebar Filters (Dynamic) */}
                     <SidebarFilters products={allProducts} />
 
-                    {/* Main Content */}
+                    {/* Main Content (Right Column on Desktop) */}
                     <div className="flex-1">
-
-                        {/* Mobile Filter Toggle & Sort & Search Bar */}
-                        <div className="sticky top-20 z-20 bg-zinc-50/90 dark:bg-zinc-950/90 backdrop-blur-md py-4 mb-6 flex flex-col sm:flex-row gap-4 justify-between items-center border-b border-zinc-200 dark:border-zinc-800">
-                            {/* Mobile Toggle */}
+                        {/* Mobile Filter Toggle (Only visible on small screens) */}
+                        <div className="lg:hidden sticky top-20 z-20 bg-zinc-50/90 dark:bg-zinc-950/90 backdrop-blur-md py-4 mb-6 border-b border-zinc-200 dark:border-zinc-800">
                             <button
                                 onClick={() => toggleFilter()}
-                                className="lg:hidden flex items-center gap-2 px-4 py-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-full font-medium shadow-sm w-full sm:w-auto justify-center"
+                                className="flex items-center gap-2 px-6 py-2.5 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-full font-bold shadow-sm w-full justify-center text-wine-dark dark:text-white"
                             >
                                 <SlidersHorizontal className="w-4 h-4" />
                                 {t('filters_title')}
@@ -166,41 +190,6 @@ function CatalogContent() {
                                     </span>
                                 )}
                             </button>
-
-                            {/* Search Input */}
-                            <div className="relative w-full sm:max-w-xs">
-                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
-                                <input
-                                    type="text"
-                                    defaultValue={searchQuery}
-                                    placeholder={t('search_input_placeholder')}
-                                    className="w-full pl-10 pr-4 py-2 rounded-full bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 focus:outline-none focus:ring-2 focus:ring-wine-gold/50 text-sm"
-                                    onKeyDown={(e) => {
-                                        if (e.key === 'Enter') {
-                                            const val = e.currentTarget.value;
-                                            const params = new URLSearchParams(searchParams.toString());
-                                            if (val) params.set('search', val);
-                                            else params.delete('search');
-                                            updateParams(params);
-                                        }
-                                    }}
-                                />
-                            </div>
-
-                            {/* Sort Dropdown */}
-                            <select
-                                value={sortBy}
-                                onChange={(e) => {
-                                    const params = new URLSearchParams(searchParams.toString());
-                                    params.set('sort', e.target.value);
-                                    updateParams(params);
-                                }}
-                                className="w-full sm:w-auto px-4 py-2 rounded-full bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-wine-gold/50 cursor-pointer"
-                            >
-                                <option value="newest">{t('sort_newest')}</option>
-                                <option value="price_asc">{t('sort_price_asc')}</option>
-                                <option value="price_desc">{t('sort_price_desc')}</option>
-                            </select>
                         </div>
 
                         {/* Active Filters */}
@@ -223,6 +212,24 @@ function CatalogContent() {
                                     <WineCardSkeleton key={i} />
                                 ))}
                             </div>
+                        ) : error ? (
+                            <div className="flex flex-col items-center justify-center py-20 bg-wine-dark/5 dark:bg-wine-gold/5 rounded-3xl border border-dashed border-wine-gold/30">
+                                <div className="w-16 h-16 bg-wine-gold/10 rounded-full flex items-center justify-center mb-6">
+                                    <SlidersHorizontal className="w-8 h-8 text-wine-gold" />
+                                </div>
+                                <h3 className="text-2xl font-bold text-wine-dark dark:text-white mb-2">
+                                    {t("api_error")}
+                                </h3>
+                                <p className="text-zinc-500 mb-8 max-w-sm text-center">
+                                    {error === 'No products found in the database.' ? t('api_empty') : error}
+                                </p>
+                                <button
+                                    onClick={() => fetchProducts()}
+                                    className="px-8 py-3 bg-wine-dark dark:bg-wine-gold text-white rounded-full font-bold hover:scale-105 active:scale-95 transition-transform"
+                                >
+                                    {t('hero_cta')}
+                                </button>
+                            </div>
                         ) : filteredProducts.length > 0 ? (
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
                                 {filteredProducts.map((product) => (
@@ -231,7 +238,9 @@ function CatalogContent() {
                             </div>
                         ) : (
                             <div className="flex flex-col items-center justify-center py-20 bg-white dark:bg-zinc-900 rounded-3xl border border-dashed border-zinc-200 dark:border-zinc-800">
-                                <Search className="w-12 h-12 text-zinc-300 mb-4" />
+                                <div className="w-12 h-12 bg-zinc-100 rounded-full flex items-center justify-center mb-4">
+                                    <SlidersHorizontal className="w-6 h-6 text-zinc-300" />
+                                </div>
                                 <h3 className="text-xl font-bold text-wine-dark dark:text-white mb-2">
                                     {t("no_wines_found")}
                                 </h3>

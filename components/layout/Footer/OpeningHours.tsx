@@ -1,15 +1,19 @@
+/**
+ * Назначение файла: Компонент для отображения графика работы в подвале.
+ * Особенности: Разделение на отдел продаж и офис, поддержка локализации.
+ */
+
 "use client";
 
-/**
- * Компонент для отображения часов работы в подвале сайта.
- * Разделяет время работы отдела продаж/дегустаций и офиса.
- */
 import React from "react";
 
 interface OpeningHoursProps {
     t: (key: string) => string;
 }
 
+/**
+ * Блок часов работы.
+ */
 const OpeningHours: React.FC<OpeningHoursProps> = ({ t }) => {
     return (
         <div className="md:col-span-1 lg:col-span-1">
@@ -17,10 +21,12 @@ const OpeningHours: React.FC<OpeningHoursProps> = ({ t }) => {
                 {t("footer_opening_hours_title")}
             </h3>
             <div className="space-y-6 text-sm">
+                {/* Отдел продаж */}
                 <div>
                     <p className="text-white font-bold mb-1">{t("footer_sales_tasting_label")}</p>
                     <p className="text-zinc-400">{t("footer_sales_tasting_hours")}</p>
                 </div>
+                {/* Офис */}
                 <div>
                     <p className="text-white font-bold mb-1">{t("footer_office_label")}</p>
                     <p className="text-zinc-400">{t("footer_office_hours")}</p>

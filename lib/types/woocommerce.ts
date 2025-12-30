@@ -1,3 +1,9 @@
+/**
+ * Назначение файла: Прямое описание структуры продукта из WooCommerce REST API.
+ * Зависимости: Нет.
+ * Особенности: Отражает сырые данные из API перед маппингом.
+ */
+
 export interface WooCommerceProduct {
     id: number;
     name: string;
@@ -9,10 +15,10 @@ export interface WooCommerceProduct {
     status: 'publish' | 'draft' | 'pending' | 'private';
     featured: boolean;
     catalog_visibility: 'visible' | 'catalog' | 'search' | 'hidden';
-    description: string;       // Contains HTML
-    short_description: string; // Contains HTML
+    description: string;       // Содержит HTML
+    short_description: string; // Содержит HTML
     sku: string;
-    price: string;             // e.g. "59.00"
+    price: string;             // Например "59.00"
     regular_price: string;
     sale_price: string;
     date_on_sale_from: string | null;
@@ -53,7 +59,7 @@ export interface WooCommerceProduct {
     purchase_note: string;
     categories: {
         id: number;
-        name: string; // e.g. "Rotwein"
+        name: string;
         slug: string;
     }[];
     tags: {
@@ -70,21 +76,25 @@ export interface WooCommerceProduct {
     }[];
     attributes: {
         id: number;
-        name: string;      // e.g. "Rebsorte"
-        slug: string;      // e.g. "pa_rebsorte"
+        name: string;
+        slug: string;
         position: number;
         visible: boolean;
         variation: boolean;
-        options: string[]; // e.g. ["Merlot", "Lemberger"]
+        options: string[];
     }[];
-    default_attributes: any[];
+    default_attributes: {
+        id: number;
+        name: string;
+        option: string;
+    }[];
     variations: number[];
     grouped_products: number[];
     menu_order: number;
     meta_data: {
         id: number;
         key: string;
-        value: any;
+        value: string | number | boolean | object | null;
     }[];
     yoast_head?: string;
 }

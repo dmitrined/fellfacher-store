@@ -1,7 +1,7 @@
 /**
- * Назначение: Компонент ответа сомелье (загрузка и результат).
- * Зависимости: framer-motion, WineCard, Skeleton (кастомный или из HeroUI).
- * Особенности: Анимация "печатания" и отображение карточек.
+ * Назначение файла: Компонент чата сомелье (Sommelier Chat).
+ * Зависимости: framer-motion, WineCard, типы Wine.
+ * Особенности: Скелетон загрузки и анимированный вывод рекомендаций.
  */
 
 import React from 'react';
@@ -15,9 +15,13 @@ interface SommelierChatProps {
     recommendedWines: Wine[];
 }
 
+/**
+ * Отображение процесса "обдумывания" или готовых результатов от сомелье.
+ */
 export const SommelierChat: React.FC<SommelierChatProps> = ({ isLoading, recommendedWines }) => {
     const { t } = useTranslation();
 
+    // Состояние загрузки (имитация обдумывания)
     if (isLoading) {
         return (
             <div className="flex flex-col gap-6 w-full">
@@ -38,6 +42,7 @@ export const SommelierChat: React.FC<SommelierChatProps> = ({ isLoading, recomme
 
     return (
         <div className="flex flex-col gap-8 w-full">
+            {/* Текстовый ответ сомелье */}
             <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -55,6 +60,7 @@ export const SommelierChat: React.FC<SommelierChatProps> = ({ isLoading, recomme
                 </div>
             </motion.div>
 
+            {/* Сетка рекомендованных вин */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {recommendedWines.map((wine, index) => (
                     <motion.div
@@ -62,7 +68,7 @@ export const SommelierChat: React.FC<SommelierChatProps> = ({ isLoading, recomme
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.3 + index * 0.1 }}
-                        className="h-[450px]"
+                        className="h-full"
                     >
                         <WineCard wine={wine} />
                     </motion.div>
