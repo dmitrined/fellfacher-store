@@ -39,14 +39,17 @@ export const useWinesStore = create<WinesState>((set, get) => ({
                 const data = await response.json();
                 if (Array.isArray(data) && data.length > 0) {
                     const wines = data.filter((p: UnifiedProduct): p is Wine => (p as any).grapeVariety !== undefined);
+                    console.log(`Successfully loaded ${data.length} products from API.`);
                     set({ products: data, wines, isLoading: false });
                 } else {
-                    console.log('API returned empty list, using mock wines.');
+                    console.warn('API returned empty list or unexpected data format, falling back to mock wines.');
                     const mockUnified = mockWines as unknown as UnifiedProduct[];
                     set({ products: mockUnified, wines: mockWines, isLoading: false });
                 }
             } else {
-                throw new Error('Server returned error');
+                const errorBody = await response.text().catch(() => 'No body');
+                console.error(`API Error: ${response.status} ${response.statusText}, Body: ${errorBody}`);
+                throw new Error(`Server returned error: ${response.status}`);
             }
         } catch (err) {
             console.error('Error loading products from API:', err);

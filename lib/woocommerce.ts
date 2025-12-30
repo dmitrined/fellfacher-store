@@ -18,7 +18,11 @@ const WC_SECRET = process.env.WC_CONSUMER_SECRET; // Доступно тольк
  */
 export async function fetchProducts(): Promise<UnifiedProduct[]> {
     if (!WC_URL || !WC_KEY || !WC_SECRET) {
-        console.error('WooCommerce credentials missing. Check .env.local');
+        const missing = [];
+        if (!WC_URL) missing.push('WC_STORE_URL/NEXT_PUBLIC_WC_URL');
+        if (!WC_KEY) missing.push('WC_CONSUMER_KEY');
+        if (!WC_SECRET) missing.push('WC_CONSUMER_SECRET');
+        console.error(`WooCommerce credentials missing: ${missing.join(', ')}. Check .env.local or Vercel settings.`);
         return [];
     }
 
