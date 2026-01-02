@@ -112,15 +112,6 @@ export default function EventsPage() {
                                             <button disabled className="w-full py-5 bg-zinc-100 dark:bg-zinc-800 text-zinc-400 rounded-2xl text-sm font-black uppercase tracking-widest cursor-not-allowed">
                                                 {t("fully_booked")}
                                             </button>
-                                        ) : event.isKellerblicke ? (
-                                            // Особая логика: если это Kellerblicke, ведем на отдельную страницу (не модалка бронирования)
-                                            <Link
-                                                href="/events/kellerblicke"
-                                                className="group/btn relative w-full inline-flex items-center justify-center py-5 bg-wine-dark hover:bg-wine-gold text-white hover:text-wine-dark rounded-2xl text-sm font-black uppercase tracking-widest transition-all duration-300 overflow-hidden"
-                                            >
-                                                <span className="relative z-10">{t("more_info")}</span>
-                                                <ArrowRight className="w-5 h-5 ml-3 relative z-10 transform group-hover/btn:translate-x-2 transition-transform" />
-                                            </Link>
                                         ) : event.isWeinfeste ? (
                                             // Логика для Weinfeste - переход на отдельную страницу
                                             <Link
@@ -139,15 +130,6 @@ export default function EventsPage() {
                                                 <span className="relative z-10">{t("more_info")}</span>
                                                 <ArrowRight className="w-5 h-5 ml-3 relative z-10 transform group-hover/btn:translate-x-2 transition-transform" />
                                             </Link>
-                                        ) : event.isWeintreff ? (
-                                            // Логика для Weintreff - переход на отдельную страницу
-                                            <Link
-                                                href="/events/weintreff"
-                                                className="group/btn relative w-full inline-flex items-center justify-center py-5 bg-wine-dark hover:bg-wine-gold text-white hover:text-wine-dark rounded-2xl text-sm font-black uppercase tracking-widest transition-all duration-300 overflow-hidden"
-                                            >
-                                                <span className="relative z-10">{t("more_info")}</span>
-                                                <ArrowRight className="w-5 h-5 ml-3 relative z-10 transform group-hover/btn:translate-x-2 transition-transform" />
-                                            </Link>
                                         ) : event.isAfterwork ? (
                                             // Логика для Afterwork - переход на отдельную страницу
                                             <Link
@@ -157,24 +139,7 @@ export default function EventsPage() {
                                                 <span className="relative z-10">{t("more_info")}</span>
                                                 <ArrowRight className="w-5 h-5 ml-3 relative z-10 transform group-hover/btn:translate-x-2 transition-transform" />
                                             </Link>
-                                        ) : event.isWeinWeiter ? (
-                                            // Логика для Wein & Weiter
-                                            <Link
-                                                href="/events/weinweiter"
-                                                className="group/btn relative w-full inline-flex items-center justify-center py-5 bg-wine-dark hover:bg-wine-gold text-white hover:text-wine-dark rounded-2xl text-sm font-black uppercase tracking-widest transition-all duration-300 overflow-hidden"
-                                            >
-                                                <span className="relative z-10">{t("more_info")}</span>
-                                                <ArrowRight className="w-5 h-5 ml-3 relative z-10 transform group-hover/btn:translate-x-2 transition-transform" />
-                                            </Link>
-                                        ) : event.isWeinRaetselTour ? (
-                                            // Логика для Wein(Rätsel)Tour
-                                            <Link
-                                                href="/events/weinraetseltour"
-                                                className="group/btn relative w-full inline-flex items-center justify-center py-5 bg-wine-dark hover:bg-wine-gold text-white hover:text-wine-dark rounded-2xl text-sm font-black uppercase tracking-widest transition-all duration-300 overflow-hidden"
-                                            >
-                                                <span className="relative z-10">{t("more_info")}</span>
-                                                <ArrowRight className="w-5 h-5 ml-3 relative z-10 transform group-hover/btn:translate-x-2 transition-transform" />
-                                            </Link>
+                                       
                                         ) : (
                                             // Стандартная логика: кнопка бронирования.
                                             // Если пользователь не авторизован, открываем модалку входа.

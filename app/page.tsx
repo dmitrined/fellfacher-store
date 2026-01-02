@@ -7,31 +7,20 @@
 "use client";
 
 import Link from 'next/link';
-import WineCard from '@/components/wine/WineCard';
-import { ArrowRight, ShieldCheck, Truck, Award, Calendar, MapPin, Users, Clock, Star } from 'lucide-react';
+import { ArrowRight, ShieldCheck, Truck, Award, Calendar, Clock, MapPin, Users, Star, Sparkles } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n';
-import { useWinesStore } from '@/lib/store/useWinesStore';
 import { useAuth } from '@/lib/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
-import React, { useEffect } from 'react';
 import { getEvents } from '@/lib/data/events';
+import React from 'react';
 
 /**
  * Главная страница с Hero-секцией, событиями и преимуществами.
  */
 export default function Home() {
   const { t } = useTranslation();
-  const { wines: displayWines, isLoading, fetchProducts } = useWinesStore();
   const { isLoggedIn, setAuthModalOpen } = useAuth();
   const router = useRouter();
-
-  // Загрузка данных при монтировании
-  useEffect(() => {
-    if (displayWines.length === 0) {
-      fetchProducts();
-    }
-  }, [fetchProducts, displayWines.length]);
-
   const events = getEvents(t);
 
 
@@ -40,7 +29,7 @@ export default function Home() {
       {/* Hero Section: Главный экран с фоновым изображением и приветствием */}
       <section className="relative h-screen flex items-center overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-wine-gold/10 via-transparent to-transparent opacity-50" />
-        <div className="absolute top-0 left-0 w-full h-full bg-[url('https://fellbacher-weine.de/wp-content/uploads/2025/11/background-9086186_1920-e1764503149424.jpg')] bg-cover bg-center grayscale-[0.2] brightness-[0.4] scale-105" />
+        <div className="absolute top-0 left-0 w-full h-full bg-[url('https://fellbacher-weine.de/wp-content/uploads/2023/12/Banner-Weihnachten-scaled.jpg')] bg-cover bg-center grayscale-[0.2] brightness-[0.4] scale-105" />
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10">
           <div className="max-w-3xl">
@@ -219,8 +208,34 @@ export default function Home() {
         </div >
       </section >
 
+      {/* AI Sommelier Teaser */}
+      <section className="py-24 bg-zinc-900 relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-full bg-[url('https://avatars.mds.yandex.net/i?id=fa5c24669828c413e6eb063898e39d5908088098-5866055-images-thumbs&n=13')] bg-cover bg-center grayscale-[0.2] brightness-[0.4] scale-105" />
+
+        <div className="absolute inset-0 bg-gradient-to-br from-wine-gold/20 via-transparent to-purple-900/20" />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+
+          <div className="inline-flex items-center justify-center p-4 bg-white/10 rounded-2xl mb-8 backdrop-blur-sm">
+            <Sparkles className="w-8 h-8 text-wine-gold" />
+          </div>
+          <h2 className="text-4xl md:text-5xl font-black text-white mb-6 serif">
+            {t("ai_title")}
+          </h2>
+          <p className="text-xl text-zinc-300 mb-10 max-w-2xl mx-auto leading-relaxed">
+            {t("ai_home_description")}
+          </p>
+          <Link
+            href="/ai-sommelier"
+            className="inline-flex items-center px-8 py-4 bg-white text-wine-dark font-bold rounded-xl hover:bg-wine-gold hover:text-white transition-all duration-300"
+          >
+            {t("ai_home_cta")}
+            <ArrowRight className="ml-2 w-5 h-5" />
+          </Link>
+        </div>
+      </section>
+
       {/* Features Grid: Ключевые преимущества (Качество, Отбор, Доставка) */}
-      < section className="py-16 md:py-24 border-t border-zinc-100 dark:border-zinc-800" >
+      <section className="py-16 md:py-24 border-t border-zinc-100 dark:border-zinc-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
             <div className="flex flex-col items-center text-center p-6 md:p-8 bg-zinc-50 dark:bg-zinc-900 rounded-3xl transition-transform hover:-translate-y-2">

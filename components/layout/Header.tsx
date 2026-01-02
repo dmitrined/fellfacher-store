@@ -103,13 +103,9 @@ const Header: React.FC = () => {
 
   const eventCategories = [
     { label: t("events_all_events"), path: "/events" },
-    { label: t("event_kellerblicke"), path: "/events/kellerblicke" },
     { label: t("event_weinfeste"), path: "/events/weinfeste" },
     { label: t("event_weinproben"), path: "/events/weinproben" },
-    { label: t("event_weintreff"), path: "/events/weintreff" },
     { label: t("event_afterwork"), path: "/events/afterwork" },
-    { label: t("event_wein_weiter"), path: "/events/weinweiter" },
-    { label: t("event_wein_raetsel_tour"), path: "/events/weinraetseltour" },
   ];
 
   const aboutCategories = [
@@ -119,9 +115,9 @@ const Header: React.FC = () => {
   ];
 
   const contactCategories = [
-    { label: t("contact_info_hours"), path: "/#" },
-    { label: t("contact_directions"), path: "/#" },
-    { label: t("contact_jobs"), path: "/#" },
+    { label: t("contact_info_hours"), path: "/contact" },
+    { label: t("contact_directions"), path: "/contact" },
+    { label: t("contact_jobs"), path: "/contact" },
   ];
 
   // Эффект Click Outside: закрывает все открытые меню, если клик произошел вне их области.

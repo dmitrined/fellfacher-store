@@ -10,7 +10,7 @@ import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslation } from "@/lib/i18n";
-import { Home, Wine, QrCode, MoreHorizontal, ShoppingBag, LucideIcon } from "lucide-react";
+import { Home, Wine, QrCode, MoreHorizontal, Calendar, LucideIcon } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useUIStore } from "@/lib/store/useUIStore";
 import { useCartStore } from "@/lib/store/useCartStore";
@@ -48,10 +48,9 @@ const BottomNav: React.FC = () => {
             icon: Wine,
         },
         {
-            label: t("bottom_nav_cart"),
-            href: "/cart",
-            icon: ShoppingBag,
-            count: cartCount,
+            label: t("bottom_nav_events"),
+            href: "/events",
+            icon: Calendar,
         },
         {
             label: t("bottom_nav_mycode"),

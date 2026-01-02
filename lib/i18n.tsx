@@ -549,6 +549,8 @@ const translations: Translations = {
     ai_thinking: { de: "Einen Moment, ich suche den perfekten Wein...", en: "One moment, finding the perfect wine..." },
     ai_result_intro: { de: "Exzellente Wahl! Zu diesem Anlass empfehle ich:", en: "Excellent choice! For this occasion I recommend:" },
     ai_restart: { de: "Neue Suche", en: "New Search" },
+    ai_home_description: { de: "Unsicher bei der Weinauswahl? Lassen Sie sich von unserem AI-Sommelier basierend auf Stimmung und Essen zum perfekten Wein führen.", en: "Not sure which wine to choose? Let our AI Sommelier guide you to the perfect bottle based on your mood and meal." },
+    ai_home_cta: { de: "Sommelier fragen", en: "Ask the Sommelier" },
 };
 
 // Интерфейс контекста языка

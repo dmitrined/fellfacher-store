@@ -22,7 +22,7 @@ import {
     LogOut,
     ChevronRight,
     Calendar,
-    ShoppingBag
+    ShoppingCart
 } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
@@ -129,7 +129,7 @@ function DashboardContent() {
                             }`}
                     >
                         <div className="flex items-center gap-2">
-                            <ShoppingBag className="w-4 h-4" />
+                            <ShoppingCart className="w-4 h-4" />
                             {t("tab_cart")}
                         </div>
                         {activeTab === 'cart' && <div className="absolute bottom-0 left-0 w-full h-1 bg-wine-gold animate-in fade-in zoom-in" />}
@@ -203,7 +203,7 @@ function DashboardContent() {
                         <div className="space-y-6">
                             {cartWines.length === 0 ? (
                                 <div className="text-center py-24 bg-zinc-50 dark:bg-zinc-900/50 rounded-[3rem] border-2 border-dashed border-zinc-100 dark:border-zinc-800">
-                                    <ShoppingBag className="w-12 h-12 text-zinc-300 mx-auto mb-4" />
+                                    <ShoppingCart className="w-12 h-12 text-zinc-300 mx-auto mb-4" />
                                     <p className="text-zinc-400 font-bold uppercase tracking-widest text-xs">{t("cart_empty")}</p>
                                 </div>
                             ) : (
@@ -242,7 +242,7 @@ function DashboardContent() {
                         <div className="space-y-6">
                             {orders.length === 0 ? (
                                 <div className="text-center py-24 bg-zinc-50 dark:bg-zinc-900/50 rounded-[3rem] border-2 border-dashed border-zinc-100 dark:border-zinc-800">
-                                    <ShoppingBag className="w-12 h-12 text-zinc-300 mx-auto mb-4" />
+                                    <ShoppingCart className="w-12 h-12 text-zinc-300 mx-auto mb-4" />
                                     <p className="text-zinc-400 font-bold uppercase tracking-widest text-xs">{t("no_orders")}</p>
                                 </div>
                             ) : (

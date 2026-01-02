@@ -31,7 +31,7 @@ export default function ProductCard({ product }: ProductCardProps) {
 
     // Сторы
     const toggleWishlist = useWishlistStore(state => state.toggleWishlist);
-    const isInWishlist = useWishlistStore(state => state.isInWishlist);
+    const wishlist = useWishlistStore(state => state.wishlist);
     const addToCart = useCartStore(state => state.addToCart);
 
     const { isLoggedIn, setAuthModalOpen } = useAuth();
@@ -43,31 +43,31 @@ export default function ProductCard({ product }: ProductCardProps) {
 
     const isWine = isWineItem(product);
     const isEvent = !isWine;
-    const isFavorite = isInWishlist(product.id);
+    const isFavorite = wishlist.includes(product.id);
 
     return (
         <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="group relative bg-white dark:bg-zinc-900 rounded-2xl overflow-hidden border border-zinc-100 dark:border-zinc-800 hover:shadow-xl transition-all duration-300 flex flex-col h-full"
+            className="group relative bg-white dark:bg-zinc-900 rounded-[2rem] md:rounded-2xl overflow-hidden border border-zinc-100 dark:border-zinc-800 hover:shadow-xl transition-all duration-300 flex flex-col h-full"
         >
             {/* Контейнер изображения */}
-            <div className="relative aspect-[3/4] overflow-hidden bg-zinc-100 dark:bg-zinc-800">
+            <div className="relative h-64 md:h-auto md:aspect-[3/4] overflow-hidden bg-white dark:bg-zinc-900">
                 <Link href={isWine ? `/shop/${(product as any).slug}` : `/events/${product.id}`} className="block h-full w-full">
                     <Image
                         src={product.image}
                         alt={isEvent ? (product as any).title : (product as any).name}
                         fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                        className={`${isWine ? 'object-contain p-2' : 'object-cover'} group-hover:scale-105 transition-transform duration-500`}
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     />
                 </Link>
 
                 {/* Бейдж скидки (только для вин) */}
                 {isWine && (product as Wine).regular_price && (product as Wine).regular_price! > (product as Wine).price && (
-                    <div className="absolute top-4 left-4 z-30">
-                        <div className="bg-red-500 text-white text-[10px] font-black px-2 py-1 rounded-lg shadow-lg uppercase tracking-wider">
+                    <div className="absolute top-3 left-3 md:top-4 md:left-4 z-30">
+                        <div className="bg-red-500 text-white text-[9px] md:text-[10px] font-black px-1.5 py-0.5 md:px-2 md:py-1 rounded-lg shadow-lg uppercase tracking-wider">
                             -{Math.round((1 - (product as Wine).price / (product as Wine).regular_price!) * 100)}%
                         </div>
                     </div>
@@ -75,7 +75,7 @@ export default function ProductCard({ product }: ProductCardProps) {
 
                 {/* Кнопка избранного (только для вин в данном представлении) */}
                 {isWine && (
-                    <div className="absolute top-4 right-4 z-30">
+                    <div className="absolute top-3 right-3 md:top-4 md:right-4 z-10">
                         <button
                             onClick={(e) => {
                                 e.preventDefault();
@@ -86,21 +86,21 @@ export default function ProductCard({ product }: ProductCardProps) {
                                     setAuthModalOpen(true);
                                 }
                             }}
-                            className={`p-2.5 rounded-xl transition-all duration-300 backdrop-blur-md ${isFavorite
+                            className={`p-2 md:p-2.5 rounded-xl transition-all duration-300 backdrop-blur-md ${isFavorite
                                 ? 'bg-wine-gold text-white shadow-lg shadow-wine-gold/20'
                                 : 'bg-white/80 dark:bg-zinc-800/80 text-zinc-400 hover:text-wine-gold'
                                 }`}
                         >
-                            <Heart className={`w-4 h-4 ${isFavorite ? 'fill-current' : ''}`} />
+                            <Heart className={`w-3.5 h-3.5 md:w-4 md:h-4 ${isFavorite ? 'fill-current' : ''}`} />
                         </button>
                     </div>
                 )}
             </div>
 
             {/* Контентная часть */}
-            <div className="p-5 flex flex-col flex-grow gap-3">
+            <div className="p-3 md:p-5 flex flex-col flex-grow gap-2 md:gap-3">
                 {/* Мета-данные (Сорт или Дата) */}
-                <div className="flex items-center justify-between text-xs text-zinc-500 font-medium">
+                <div className="flex items-center justify-between text-[10px] md:text-xs text-zinc-500 font-medium">
                     {isWine ? (
                         <span>{(product as any).grapeVariety}</span>
                     ) : (
@@ -113,24 +113,24 @@ export default function ProductCard({ product }: ProductCardProps) {
 
                 {/* Заголовок */}
                 <Link href={isWine ? `/shop/${(product as any).slug}` : `/events/${product.id}`} className="block">
-                    <h3 className="text-lg font-bold text-wine-dark dark:text-white group-hover:text-wine-gold transition-colors line-clamp-2 serif">
+                    <h3 className="text-base md:text-lg font-bold text-wine-dark dark:text-white group-hover:text-wine-gold transition-colors line-clamp-2 serif leading-tight">
                         {isEvent ? (product as any).title : (product as any).name}
                     </h3>
                 </Link>
 
                 {/* Подвал: Цена и действия */}
-                <div className="mt-auto pt-4 border-t border-zinc-100 dark:border-zinc-800">
-                    <div className="flex items-center justify-between mb-2">
+                <div className="mt-auto pt-3 md:pt-4 border-t border-zinc-100 dark:border-zinc-800">
+                    <div className="flex items-center justify-between mb-1 md:mb-2">
                         <div className="flex flex-col">
                             {/* Цена */}
                             <div className="flex items-baseline gap-2">
-                                <div className="text-wine-dark dark:text-white font-black text-xl italic serif">
+                                <div className="text-wine-dark dark:text-white font-black text-lg md:text-xl italic serif">
                                     {typeof product.price === 'number'
                                         ? `€ ${product.price.toFixed(2).replace('.', ',')}`
                                         : product.price ? `€ ${parseFloat(product.price).toFixed(2).replace('.', ',')}` : '€ 0,00'}
                                 </div>
                                 {isWine && (product as Wine).regular_price && (product as Wine).regular_price! > (product as Wine).price && (
-                                    <span className="text-sm text-zinc-400 line-through">
+                                    <span className="text-xs text-zinc-400 line-through">
                                         € {(product as Wine).regular_price!.toFixed(2).replace('.', ',')}
                                     </span>
                                 )}
@@ -138,7 +138,7 @@ export default function ProductCard({ product }: ProductCardProps) {
 
                             {/* Информация о цене за литр */}
                             {isWine && (
-                                <div className="text-[10px] text-zinc-500 font-medium leading-tight mt-0.5">
+                                <div className="text-[9px] md:text-[10px] text-zinc-500 font-medium leading-tight mt-0.5">
                                     <p>{t('product_tax_inc')}</p>
                                     <p>
                                         (€ {((isWine ? (product as Wine).price : 0) / parseFloat((isWine ? (product as Wine).weight : '1') || '0.75')).toFixed(2).replace('.', ',')} {t('product_unit_price')})
@@ -151,7 +151,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                         {/* Действие: Корзина или Билеты */}
                         {isWine ? (
                             <button
-                                className="w-12 h-12 rounded-2xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-wine-dark dark:text-white hover:bg-wine-gold hover:text-white transition-all shadow-sm hover:shadow-wine-gold/20"
+                                className="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-wine-dark dark:text-white hover:bg-wine-gold hover:text-white transition-all shadow-sm hover:shadow-wine-gold/20"
                                 onClick={(e) => {
                                     e.preventDefault();
                                     e.stopPropagation();
@@ -162,7 +162,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                                     }
                                 }}
                             >
-                                <ShoppingCart className="w-5 h-5" />
+                                <ShoppingCart className="w-4 h-4 md:w-5 md:h-5" />
                             </button>
                         ) : (
                             <Link
@@ -176,9 +176,9 @@ export default function ProductCard({ product }: ProductCardProps) {
 
                     {/* Время доставки (только для вин) */}
                     {isWine && (
-                        <div className="mt-2 pt-2 border-t border-zinc-50 dark:border-zinc-800/50">
-                            <p className="text-[10px] font-bold text-green-600 dark:text-green-500 uppercase tracking-widest flex items-center gap-1.5">
-                                <span className="w-1.5 h-1.5 rounded-full bg-current animate-pulse" />
+                        <div className="mt-1.5 md:mt-2 pt-1.5 md:pt-2 border-t border-zinc-50 dark:border-zinc-800/50">
+                            <p className="text-[8px] md:text-[10px] font-bold text-green-600 dark:text-green-500 uppercase tracking-widest flex items-center gap-1 md:gap-1.5">
+                                <span className="w-1 md:w-1.5 h-1 md:h-1.5 rounded-full bg-current animate-pulse" />
                                 {t('product_delivery_time')}
                             </p>
                         </div>
@@ -187,4 +187,4 @@ export default function ProductCard({ product }: ProductCardProps) {
             </div>
         </motion.div>
     );
-}
+};

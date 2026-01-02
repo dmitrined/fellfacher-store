@@ -177,7 +177,7 @@ function CatalogContent() {
                     {/* Main Content (Right Column on Desktop) */}
                     <div className="flex-1">
                         {/* Mobile Filter Toggle (Only visible on small screens) */}
-                        <div className="lg:hidden sticky top-20 z-20 bg-zinc-50/90 dark:bg-zinc-950/90 backdrop-blur-md py-4 mb-6 border-b border-zinc-200 dark:border-zinc-800">
+                        <div className="lg:hidden sticky top-20 z-40 bg-zinc-50/90 dark:bg-zinc-950/90 backdrop-blur-md py-4 mb-6 border-b border-zinc-200 dark:border-zinc-800">
                             <button
                                 onClick={() => toggleFilter()}
                                 className="flex items-center gap-2 px-6 py-2.5 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-full font-bold shadow-sm w-full justify-center text-wine-dark dark:text-white"

@@ -14,11 +14,11 @@ export interface Event {
     price: string;
     category: string;
     image: string;
-    isKellerblicke?: boolean;
-    isWeintreff?: boolean;
     isAfterwork?: boolean;
     isWeinfeste?: boolean;
     isWeinproben?: boolean;
+    isKellerblicke?: boolean;
+    isWeintreff?: boolean;
     isWeinWeiter?: boolean;
     isWeinRaetselTour?: boolean;
 }

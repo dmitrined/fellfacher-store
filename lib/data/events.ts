@@ -4,24 +4,13 @@
  * Используется: Как резервный источник или список для быстрой навигации.
  */
 
-import { Event } from '@/lib/types';
+import { Event } from '@/lib/types/event';
 
 /**
  * Возвращает список мероприятий с локализованными данными.
  */
 export const getEvents = (t: (key: string) => string): Event[] => [
-    {
-        id: 'kellerblicke',
-        title: t("event_kellerblicke"),
-        date: t("kellerblicke_every_saturday"),
-        time: t("by_arrangement"),
-        location: "Fellbacher Weingärtner eG",
-        spots: t("spots_available"),
-        price: "12€",
-        category: t("category_cellar_tour"),
-        image: "https://fellbacher-weine.de/wp-content/uploads/2017/08/Kellerblicke-2-2.jpg",
-        isKellerblicke: true
-    },
+    
     {
         id: 'weinfeste',
         title: t("weinfeste_title"),
@@ -47,18 +36,6 @@ export const getEvents = (t: (key: string) => string): Event[] => [
         isWeinproben: true
     },
     {
-        id: 'weintreff',
-        title: t("weintreff_title"),
-        date: "Donnerstags",
-        time: "ab 17:00",
-        location: "Vinothek",
-        spots: "Offen",
-        price: t("weintreff_entry_value"),
-        category: "Meetup",
-        image: "https://images.unsplash.com/photo-1559339352-11d035aa65de?q=80&w=800&auto=format&fit=crop",
-        isWeintreff: true
-    },
-    {
         id: 'afterwork',
         title: t("afterwork_title"),
         date: "1. Donnerstag/Monat",
@@ -69,29 +46,5 @@ export const getEvents = (t: (key: string) => string): Event[] => [
         category: "Party",
         image: "https://images.unsplash.com/photo-1559339352-11d035aa65de?q=80&w=800&auto=format&fit=crop",
         isAfterwork: true
-    },
-    {
-        id: 'weinweiter',
-        title: t("weinweiter_title"),
-        date: "Mo-Sa",
-        time: "09:00 - 18:30",
-        location: "Neue Kelter",
-        spots: "Offen",
-        price: "Variabel",
-        category: "Open Bar",
-        image: "https://fellbacher-weine.de/wp-content/uploads/2025/06/WeinWeiter_Instafeed1.jpg",
-        isWeinWeiter: true
-    },
-    {
-        id: 'weinraetseltour',
-        title: t("weinraetsel_title"),
-        date: "Mo-Sa",
-        time: "ab 09:00",
-        location: "Weinberg",
-        spots: "Anfrage",
-        price: "ab 119€",
-        category: "Tour",
-        image: "https://fellbacher-weine.de/wp-content/uploads/2025/08/DSC_0091-683x1024.jpg",
-        isWeinRaetselTour: true
     },
 ];
